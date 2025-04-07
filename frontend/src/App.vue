@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import ShowUserWidget from '@/modules/auth/show-user/ShowUserWidget.vue'
 </script>
 
 <template>
-  <header>
-    <nav class="flex flex-row gap-1">
-      <router-link to="/">Home</router-link>
-      <router-link to="/register">Register</router-link>
-      <router-link to="/login">Login</router-link>
+  <header class="bg-base-100 shadow-sm">
+    <nav class="container mx-auto px-4 py-2 flex justify-between items-center">
+      <div class="flex gap-4">
+        <router-link :to="{ name: 'home' }" class="btn btn-ghost">Home</router-link>
+      </div>
+      <ShowUserWidget />
     </nav>
   </header>
-  <router-view></router-view>
+  <main class="container mx-auto px-4 py-8">
+    <router-view></router-view>
+  </main>
 </template>

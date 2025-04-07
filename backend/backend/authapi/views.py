@@ -32,3 +32,11 @@ def logout_view(request):
     # With JWT, we don't need to do anything on the server side
     # The client should simply discard the tokens
     return Response({'message': 'Logout successful'})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_info(request):
+    return Response({
+        'email': request.user.email,
+        'id': request.user.id
+    })
