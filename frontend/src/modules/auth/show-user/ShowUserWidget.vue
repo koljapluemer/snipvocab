@@ -1,38 +1,18 @@
 <script setup lang="ts">
-import { useAuthState } from './useAuthState'
-import { useRouter } from 'vue-router'
+import { useAuthState } from '../useAuthState'
+import LogoutButton from '../logout/LogoutButton.vue'
 
-const router = useRouter()
-const {
-  isAuthenticated,
-  userEmail,
-  isLoading,
-  logout
-} = useAuthState()
-
-const handleLogout = () => {
-  logout()
-  router.push({ name: 'home' })
-}
+const auth = useAuthState()
 </script>
 
 <template>
   <div class="flex items-center gap-4">
-    <div v-if="isLoading" class="loading loading-spinner loading-sm"></div>
-    
-    <template v-else-if="isAuthenticated">
-      <div class="flex items-center gap-2">
-        <span class="text-sm">{{ userEmail }}</span>
-        <button 
-          @click="handleLogout" 
-          class="btn btn-ghost btn-sm"
-        >
-          Logout
-        </button>
-      </div>
-    </template>
+    <div v-if="auth.isAuthenticated.value" class="flex items-center gap-2">
+      <span class="text-sm">{{ auth.userEmail.value }}</span>
+      <LogoutButton />
+    </div>
 
-    <template v-else>
+    <div v-else class="flex items-center gap-2">
       <router-link 
         :to="{ name: 'login' }" 
         class="btn btn-ghost btn-sm"
@@ -45,6 +25,6 @@ const handleLogout = () => {
       >
         Register
       </router-link>
-    </template>
+    </div>
   </div>
 </template>

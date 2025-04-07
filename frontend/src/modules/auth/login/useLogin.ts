@@ -1,9 +1,10 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import api from '@/modules/auth/api'
+import { useAuthState } from '../useAuthState'
 
 export const useLogin = () => {
   const router = useRouter()
+  const { login } = useAuthState()
   const email = ref('')
   const password = ref('')
   const error = ref('')
@@ -14,17 +15,8 @@ export const useLogin = () => {
       isLoading.value = true
       error.value = ''
       
-      const response = await api.post('/auth/login/', {
-        username: email.value,
-        password: password.value
-      })
-
-      // Store tokens in localStorage
-      localStorage.setItem('access_token', response.data.access)
-      localStorage.setItem('refresh_token', response.data.refresh)
-      
-      // Redirect to home page after successful login
-      router.push('/')
+      await login(email.value, password.value)
+      router.push({ name: 'home' })
     } catch (err: any) {
       error.value = err.response?.data?.detail || 'Login failed. Please check your credentials.'
     } finally {
