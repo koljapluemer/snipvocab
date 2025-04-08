@@ -1,4 +1,5 @@
 import axios from 'axios'
+import type { AxiosResponse } from 'axios'
 
 // API Response Types
 export interface AuthUserResponse {
@@ -48,7 +49,7 @@ api.interceptors.response.use(
 )
 
 // Helper function to handle API responses
-export const handleApiResponse = async <T>(promise: Promise<axios.AxiosResponse<T>>): Promise<T> => {
+export const handleApiResponse = async <T>(promise: Promise<AxiosResponse<T>>): Promise<T> => {
   try {
     const response = await promise
     return response.data
