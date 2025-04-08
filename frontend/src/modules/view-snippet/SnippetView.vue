@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Snippet, Flashcard } from '@/shared/types/domainTypes'
 import { getVideoSnippets, getSnippetWords } from '@/modules/videos/videoApi'
@@ -13,8 +13,8 @@ const snippet = ref<Snippet | null>(null)
 const flashcards = ref<Flashcard[]>([])
 const isLearnMode = ref(true)
 const isLoading = ref(true)
-const videoId = route.params.videoId as string
-const snippetIndex = parseInt(route.params.index as string)
+const videoId = ref(route.params.videoId as string)
+const snippetIndex = ref(parseInt(route.params.index as string))
 const coverSubtitles = ref(false)
 
 // Helper function to get snippet by index
@@ -42,19 +42,53 @@ const getFlashcardsForSnippet = async (youtubeId: string, snippetIndex: number):
   return cards
 }
 
-onMounted(async () => {
+// Function to load snippet and flashcards data
+const loadData = async () => {
   try {
-    console.info('Loading snippet and flashcards for:', { videoId, snippetIndex })
-    snippet.value = await getSnippetByIndex(videoId, snippetIndex)
-    console.info('Snippet loaded:', snippet.value)
-    flashcards.value = await getFlashcardsForSnippet(videoId, snippetIndex)
-    console.info('Flashcards loaded:', flashcards.value)
+    isLoading.value = true
     isLearnMode.value = true
-    isLoading.value = false
+    console.info('Loading snippet and flashcards for:', { 
+      videoId: videoId.value, 
+      snippetIndex: snippetIndex.value 
+    })
+    
+    // Clear existing data while loading
+    snippet.value = null
+    flashcards.value = []
+    
+    const [newSnippet, newFlashcards] = await Promise.all([
+      getSnippetByIndex(videoId.value, snippetIndex.value),
+      getFlashcardsForSnippet(videoId.value, snippetIndex.value)
+    ])
+    
+    snippet.value = newSnippet
+    flashcards.value = newFlashcards
+    console.info('Data loaded successfully')
   } catch (error) {
     console.error('Failed to load snippet:', error)
+  } finally {
     isLoading.value = false
   }
+}
+
+// Single source of truth for data loading
+watch(
+  () => ({ 
+    videoId: route.params.videoId, 
+    index: route.params.index 
+  }),
+  async (newParams) => {
+    if (newParams.videoId && newParams.index) {
+      videoId.value = newParams.videoId as string
+      snippetIndex.value = parseInt(newParams.index as string)
+      await loadData()
+    }
+  },
+  { immediate: true }
+)
+
+onMounted(async () => {
+  await loadData()
 })
 
 const handleAllFlashcardsCompleted = () => {
