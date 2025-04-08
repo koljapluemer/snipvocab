@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { api, handleApiResponse } from '../backend-communication/api'
+import { api, handleApiResponse } from '@/modules/backend-communication/api'
 
 interface Video {
   id: number
@@ -61,9 +61,9 @@ onMounted(() => {
           <div class="card-actions justify-end mt-4">
             <button 
               class="btn btn-primary"
-              @click="router.push(`/video/${video.youtube_id}`)"
+              @click="router.push({ name: 'video', params: { videoId: video.youtube_id }})"
             >
-              Watch Video
+              View Video
             </button>
           </div>
         </div>

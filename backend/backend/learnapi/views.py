@@ -2,8 +2,9 @@ from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from .models import Video, Language
-from .serializers import VideoSerializer
+from rest_framework.exceptions import NotFound
+from .models import Video, Language, Snippet
+from .serializers import VideoSerializer, SnippetSerializer
 import logging
 
 logger = logging.getLogger(__name__)
@@ -26,3 +27,15 @@ class VideoListView(generics.ListAPIView):
         except Language.DoesNotExist:
             logger.warning(f"Language with code {language_code} not found")
             return Video.objects.none()
+
+class VideoSnippetsView(generics.ListAPIView):
+    serializer_class = SnippetSerializer
+    renderer_classes = [JSONRenderer]
+    
+    def get_queryset(self):
+        youtube_id = self.kwargs.get('youtube_id')
+        try:
+            video = Video.objects.get(youtube_id=youtube_id)
+            return Snippet.objects.filter(video=video).order_by('index')
+        except Video.DoesNotExist:
+            raise NotFound(f"Video with YouTube ID {youtube_id} not found")
