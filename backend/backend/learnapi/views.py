@@ -3,8 +3,8 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.exceptions import NotFound
-from .models import Video, Language, Snippet
-from .serializers import VideoSerializer, SnippetSerializer
+from .models import Video, Language, Snippet, Word
+from .serializers import VideoSerializer, SnippetSerializer, WordSerializer
 import logging
 
 logger = logging.getLogger(__name__)
@@ -39,3 +39,19 @@ class VideoSnippetsView(generics.ListAPIView):
             return Snippet.objects.filter(video=video).order_by('index')
         except Video.DoesNotExist:
             raise NotFound(f"Video with YouTube ID {youtube_id} not found")
+
+class SnippetWordsView(generics.ListAPIView):
+    serializer_class = WordSerializer
+    renderer_classes = [JSONRenderer]
+    
+    def get_queryset(self):
+        youtube_id = self.kwargs.get('youtube_id')
+        snippet_index = self.kwargs.get('snippet_index')
+        try:
+            video = Video.objects.get(youtube_id=youtube_id)
+            snippet = Snippet.objects.get(video=video, index=snippet_index)
+            return Word.objects.filter(occurs_in_snippets=snippet)
+        except Video.DoesNotExist:
+            raise NotFound(f"Video with YouTube ID {youtube_id} not found")
+        except Snippet.DoesNotExist:
+            raise NotFound(f"Snippet with index {snippet_index} not found in video {youtube_id}")

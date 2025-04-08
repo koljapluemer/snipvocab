@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Video, Snippet
+from .models import Video, Snippet, Word
 
 class VideoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,4 +9,9 @@ class VideoSerializer(serializers.ModelSerializer):
 class SnippetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Snippet
-        fields = ['id', 'index', 'start', 'duration', 'start_time', 'end_time'] 
+        fields = ['id', 'index', 'start', 'duration', 'start_time', 'end_time']
+
+class WordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Word
+        fields = ['id', 'original_word', 'meanings'] 
