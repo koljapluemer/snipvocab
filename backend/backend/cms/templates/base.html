@@ -20,7 +20,11 @@
                     </a>
                     <a href="{% url 'import_channel_videos' %}" 
                        class="text-gray-600 hover:text-gray-900 {% if request.resolver_match.url_name == 'import_channel_videos' %}text-blue-600{% endif %}">
-                        Import Videos
+                        Import Channel
+                    </a>
+                    <a href="{% url 'bulk_import_videos' %}" 
+                       class="text-gray-600 hover:text-gray-900 {% if request.resolver_match.url_name == 'bulk_import_videos' %}text-blue-600{% endif %}">
+                        Bulk Import
                     </a>
                     <a href="{% url 'review_videos' %}" 
                        class="text-gray-600 hover:text-gray-900 {% if request.resolver_match.url_name == 'review_videos' %}text-blue-600{% endif %}">

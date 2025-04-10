@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('', views.cms_home, name='cms_home'),
     path('import/', views.import_channel_videos, name='import_channel_videos'),
+    path('bulk-import/', views.bulk_import_videos, name='bulk_import_videos'),
     path('review/', views.review_videos, name='review_videos'),
     path('update-statuses/', views.update_video_statuses, name='update_video_statuses'),
     path('videos/', views.list_all_videos, name='list_all_videos'),

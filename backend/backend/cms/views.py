@@ -11,6 +11,7 @@ from django.contrib import messages
 from openai import OpenAI, beta
 from pydantic import BaseModel
 from typing import List
+import re
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
@@ -452,3 +453,58 @@ def reset_snippets(request, youtube_id):
         messages.error(request, f"Error resetting snippets: {str(e)}")
     
     return redirect('video_details', youtube_id=youtube_id)
+
+def extract_youtube_id(url):
+    """Extract YouTube video ID from various URL formats."""
+    patterns = [
+        r'(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)',
+        r'(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]+)',
+        r'(?:youtube\.com\/v\/)([a-zA-Z0-9_-]+)',
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            return match.group(1)
+    return None
+
+def bulk_import_videos(request):
+    """View for bulk importing YouTube videos."""
+    if request.method == 'POST':
+        youtube_links = request.POST.get('youtube_links', '').strip()
+        if not youtube_links:
+            messages.error(request, "Please paste at least one YouTube link.")
+            return render(request, 'bulk_import_videos.html')
+        
+        links = youtube_links.split('\n')
+        successful_imports = 0
+        failed_imports = 0
+        
+        for link in links:
+            link = link.strip()
+            if not link:
+                continue
+                
+            video_id = extract_youtube_id(link)
+            if not video_id:
+                failed_imports += 1
+                continue
+                
+            try:
+                Video.objects.get_or_create(
+                    youtube_id=video_id,
+                    defaults={'status': VideoStatus.NEEDS_REVIEW}
+                )
+                successful_imports += 1
+            except Exception as e:
+                failed_imports += 1
+                print(f"Error importing video {video_id}: {str(e)}")
+        
+        if successful_imports > 0:
+            messages.success(request, f"Successfully imported {successful_imports} video(s).")
+        if failed_imports > 0:
+            messages.warning(request, f"Failed to import {failed_imports} video(s). Please check the format of the links.")
+        
+        return render(request, 'bulk_import_videos.html')
+    
+    return render(request, 'bulk_import_videos.html')
