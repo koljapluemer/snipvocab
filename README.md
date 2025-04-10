@@ -6,11 +6,9 @@
 
 |   | Nr | User Story                                                                        |
 |---|----|-----------------------------------------------------------------------------------|
-|   | 1  | As a learner, I want to watch and understand interesting Arabic videos from day 1 |
-|   | 2  | As a learner, I want to learn to communicate in Arabic                            |
-| ![us3 illustration](doc/img/us3.png)  | 3  | As a learner, I want to integrate the app into my long-term Arabic study routine  |
-
-
+| ![User Story 1 illustration](doc/img/us1.png)   | 1  | As a learner, I want to watch and understand interesting Arabic videos from day 1 |
+|  ![User Story 2 illustration](doc/img/us2.png)   | 2  | As a learner, I want to learn to communicate in Arabic                            |
+| ![User Story 3 illustration](doc/img/us3.png)  | 3  | As a learner, I want to integrate the app into my long-term Arabic study routine  |
 
 
 ## Running it
