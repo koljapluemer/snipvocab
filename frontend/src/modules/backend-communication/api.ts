@@ -81,14 +81,6 @@ export const getVideoSnippets = async (youtubeId: string): Promise<Snippet[]> =>
   }
 }
 
-export const getSnippetWords = async (youtubeId: string, snippetIndex: number): Promise<Word[]> => {
-  try {
-    return await handleApiResponse(api.get(`/learn/videos/${youtubeId}/snippets/${snippetIndex}/words/`))
-  } catch (error) {
-    console.error('Error fetching snippet words:', error)
-    throw new Error('Failed to fetch snippet words. Please try again later.')
-  }
-}
 
 export const getSnippetDetails = async (youtubeId: string, index: number): Promise<SnippetDetails> => {
   try {

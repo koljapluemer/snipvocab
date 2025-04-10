@@ -24,6 +24,15 @@
 2. run `npm run dev`
 
 
-## Adding Content
+## Common Things You May Want To Do
+
+### Adding Content
 
 - `http://127.0.0.1:8000/cms/` has everything you want
+
+### Checking Something Regarding Types
+
+- check `frontend/src/shared/types/domainTypes.ts` for frontend stuff
+  - although some stuff may have its own internal types, especially `frontend/src/modules/backend-communication/api.ts`
+- backend is all about `backend/backend/shared/models.py`
+  - however, learning-specific stuff (not yet used) is defined in `backend/backend/learnapi/models.py`
