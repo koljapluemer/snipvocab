@@ -4,10 +4,12 @@ from googleapiclient.discovery import build
 from shared.models import Video, VideoStatus
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+from django.core.paginator import Paginator
 
 def list_channel_videos(request):
     """View to list all videos from a YouTube channel"""
     username = request.GET.get('channel_id')
+    page_number = request.GET.get('page', 1)
     context = {'channel_id': username}
     
     if username:
@@ -46,69 +48,99 @@ def list_channel_videos(request):
             context['channel_title'] = channel['snippet']['title']
             uploads_playlist_id = channel['contentDetails']['relatedPlaylists']['uploads']
             
-            # Get videos from the uploads playlist
+            # Get first 15 videos from the uploads playlist
             videos = []
-            next_page_token = None
+            playlist_response = youtube.playlistItems().list(
+                playlistId=uploads_playlist_id,
+                part='snippet,contentDetails',
+                maxResults=15,
+                pageToken=None
+            ).execute()
             
-            while True:
-                playlist_response = youtube.playlistItems().list(
-                    playlistId=uploads_playlist_id,
-                    part='snippet,contentDetails',
-                    maxResults=50,
-                    pageToken=next_page_token
-                ).execute()
+            if not playlist_response.get('items'):
+                context['error'] = "No videos found in this channel's uploads playlist."
+                return render(request, 'list_channel_videos.html', context)
+            
+            # Get video IDs for batch processing
+            video_ids = [item['contentDetails']['videoId'] for item in playlist_response['items']]
+            
+            # Get video details in a single batch request
+            video_response = youtube.videos().list(
+                id=','.join(video_ids),
+                part='snippet,contentDetails'
+            ).execute()
+            
+            # Create a mapping of video IDs to their details
+            video_details = {item['id']: item for item in video_response.get('items', [])}
+            
+            # Process each video
+            for item in playlist_response['items']:
+                video_id = item['contentDetails']['videoId']
+                video = video_details.get(video_id)
                 
-                if not playlist_response.get('items'):
-                    context['error'] = "No videos found in this channel's uploads playlist."
-                    return render(request, 'list_channel_videos.html', context)
+                if not video:
+                    continue
                 
-                for item in playlist_response['items']:
-                    video_id = item['contentDetails']['videoId']
-                    
-                    # Get video details
-                    video_response = youtube.videos().list(
-                        id=video_id,
-                        part='snippet,contentDetails'
+                # Get available captions for this video
+                try:
+                    caption_response = youtube.captions().list(
+                        part='snippet',
+                        videoId=video_id
                     ).execute()
                     
-                    if not video_response.get('items'):
-                        continue
-                        
-                    video = video_response['items'][0]
-                    # Check if video exists in our database
-                    try:
-                        db_video = Video.objects.get(youtube_id=video_id)
-                        current_status = db_video.status
-                    except Video.DoesNotExist:
-                        current_status = None
-                        
-                    videos.append({
-                        'id': video_id,
-                        'title': video['snippet']['title'],
-                        'description': video['snippet']['description'],
-                        'thumbnail': video['snippet']['thumbnails']['high']['url'],
-                        'published_at': video['snippet']['publishedAt'],
-                        'duration': video['contentDetails']['duration'],
-                        'current_status': current_status
-                    })
+                    available_languages = []
+                    if caption_response.get('items'):
+                        available_languages = [item['snippet']['language'] for item in caption_response['items']]
+                except Exception as caption_error:
+                    # If caption API fails, continue without captions
+                    available_languages = []
+                    print(f"Caption API error for video {video_id}: {str(caption_error)}")
                 
-                next_page_token = playlist_response.get('nextPageToken')
-                if not next_page_token:
-                    break
-                    
+                # Check if video exists in our database
+                try:
+                    db_video = Video.objects.get(youtube_id=video_id)
+                    current_status = db_video.status
+                except Video.DoesNotExist:
+                    # Create new video with default status
+                    db_video = Video.objects.create(
+                        youtube_id=video_id,
+                        status=VideoStatus.NEEDS_REVIEW,
+                        available_subtitle_languages=available_languages
+                    )
+                    current_status = VideoStatus.NEEDS_REVIEW
+                
+                videos.append({
+                    'id': video_id,
+                    'title': video['snippet']['title'],
+                    'description': video['snippet']['description'],
+                    'thumbnail': video['snippet']['thumbnails']['high']['url'],
+                    'published_at': video['snippet']['publishedAt'],
+                    'duration': video['contentDetails']['duration'],
+                    'current_status': current_status,
+                    'available_languages': available_languages
+                })
+            
             if not videos:
                 context['error'] = "No videos could be loaded from this channel."
             else:
-                context['videos'] = videos
+                # Create a simple paginator for the 15 videos
+                paginator = Paginator(videos, 15)
+                page_obj = paginator.get_page(page_number)
+                context['videos'] = page_obj
+                context['page_obj'] = page_obj
                 
         except Exception as e:
             error_message = str(e)
-            if "quota" in error_message.lower():
-                context['error'] = "YouTube API quota exceeded. Please try again later."
-            elif "invalid" in error_message.lower():
-                context['error'] = "Invalid username format. Please check and try again."
-            else:
-                context['error'] = f"An error occurred while fetching videos: {error_message}"
+            error_details = {
+                'message': error_message,
+                'type': type(e).__name__,
+                'args': e.args
+            }
+            
+            if hasattr(e, 'error_details'):
+                error_details['api_error'] = e.error_details
+            
+            context['error'] = f"An error occurred while fetching videos. Details: {error_details}"
             
     return render(request, 'list_channel_videos.html', context)
 

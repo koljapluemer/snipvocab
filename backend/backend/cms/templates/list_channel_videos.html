@@ -37,20 +37,29 @@
     {% if videos %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for video in videos %}
-                <div class="border rounded-lg overflow-hidden">
+                <div class="border rounded-lg overflow-hidden bg-white shadow-sm">
                     <div class="relative pb-[56.25%]">
-                        <iframe 
-                            class="absolute top-0 left-0 w-full h-full"
-                            src="https://www.youtube.com/embed/{{ video.id }}"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen>
-                        </iframe>
+                        <img src="{{ video.thumbnail }}" 
+                             alt="{{ video.title }}"
+                             class="absolute top-0 left-0 w-full h-full object-cover">
                     </div>
                     
                     <div class="p-4">
                         <h3 class="text-lg font-semibold mb-2">{{ video.title }}</h3>
-                        <p class="text-sm text-gray-600 mb-4">{{ video.published_at|date:"F j, Y" }}</p>
+                        <p class="text-sm text-gray-600 mb-2">{{ video.published_at|date:"F j, Y" }}</p>
+                        
+                        {% if video.available_languages %}
+                            <div class="mb-4">
+                                <p class="text-sm font-medium text-gray-700 mb-1">Available Subtitles:</p>
+                                <div class="flex flex-wrap gap-1">
+                                    {% for lang in video.available_languages %}
+                                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                            {{ lang }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
                         
                         <div class="flex flex-wrap gap-2">
                             <form method="post" action="{% url 'update_video_status' video.id %}" class="flex-1">
@@ -78,6 +87,30 @@
                 </div>
             {% endfor %}
         </div>
+
+        {% if page_obj.paginator.num_pages > 1 %}
+            <div class="mt-8 flex justify-center">
+                <div class="flex space-x-2">
+                    {% if page_obj.has_previous %}
+                        <a href="?channel_id={{ channel_id }}&page={{ page_obj.previous_page_number }}" 
+                           class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+                            Previous
+                        </a>
+                    {% endif %}
+                    
+                    <span class="px-4 py-2">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?channel_id={{ channel_id }}&page={{ page_obj.next_page_number }}" 
+                           class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+                            Next
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
     {% endif %}
 </div>
 {% endblock %} 
