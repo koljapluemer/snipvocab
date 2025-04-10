@@ -1,3 +1,4 @@
+import type { Snippet, Word } from '@/shared/types/domainTypes'
 import axios from 'axios'
 import type { AxiosResponse } from 'axios'
 
@@ -58,5 +59,33 @@ export const handleApiResponse = async <T>(promise: Promise<AxiosResponse<T>>): 
       throw new Error(error.response?.data?.detail || error.message)
     }
     throw error
+  }
+}
+
+// Video API functions
+export const getVideos = async (): Promise<string[]> => {
+  try {
+    return await handleApiResponse(api.get('/learn/videos/'))
+  } catch (error) {
+    console.error('Error fetching videos:', error)
+    throw new Error('Failed to fetch videos. Please try again later.')
+  }
+}
+
+export const getVideoSnippets = async (youtubeId: string): Promise<Snippet[]> => {
+  try {
+    return await handleApiResponse(api.get(`/learn/videos/${youtubeId}/snippets/`))
+  } catch (error) {
+    console.error('Error fetching video snippets:', error)
+    throw new Error('Failed to fetch video snippets. Please try again later.')
+  }
+}
+
+export const getSnippetWords = async (youtubeId: string, snippetIndex: number): Promise<Word[]> => {
+  try {
+    return await handleApiResponse(api.get(`/learn/videos/${youtubeId}/snippets/${snippetIndex}/words/`))
+  } catch (error) {
+    console.error('Error fetching snippet words:', error)
+    throw new Error('Failed to fetch snippet words. Please try again later.')
   }
 }

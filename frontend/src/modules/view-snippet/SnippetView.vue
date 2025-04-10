@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import type { Snippet, Flashcard } from '@/shared/types/domainTypes'
-import { getVideoSnippets, getSnippetWords } from '@/modules/videos/videoApi'
+import type { Snippet } from '@/shared/types/domainTypes'
 import FlashCardsWrapper from '@/modules/view-flashcard/FlashCardsWrapper.vue'
 import WatchSnippet from './WatchSnippet.vue'
 import { createEmptyCard, type Card } from 'ts-fsrs'

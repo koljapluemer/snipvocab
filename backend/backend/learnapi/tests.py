@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
-from shared.models import Language, Video, Snippet, Word
+from shared.models import Language, Video, Snippet, Word, VideoStatus
 from .models import UserProfile, VideoProgress, VocabPractice, SnippetPractice
 
 class LearnApiTests(TestCase):
@@ -20,8 +20,14 @@ class LearnApiTests(TestCase):
         self.video = Video.objects.create(
             youtube_id='test123',
             language=self.language,
-            is_blacklisted=False,
-            only_premium=False
+            status=VideoStatus.LIVE
+        )
+        
+        # Create another video that's not live
+        self.non_live_video = Video.objects.create(
+            youtube_id='test456',
+            language=self.language,
+            status=VideoStatus.NEEDS_REVIEW
         )
         
         # Create test snippet
@@ -41,27 +47,22 @@ class LearnApiTests(TestCase):
         self.word.videos.add(self.video)
 
     def test_video_list_view(self):
-        """Test the video list view"""
-        # Test with existing language
-        url = reverse('video-list', kwargs={'language_code': 'en'})
+        """Test the video list view returns only live video IDs"""
+        url = reverse('video-list')
         response = self.client.get(url)
+        
+        # Check response status
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        # Check response format is a list
+        self.assertIsInstance(response.data, list)
+        
+        # Check only live video is returned
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['youtube_id'], 'test123')
+        self.assertEqual(response.data[0], 'test123')
         
-        # Test with non-existent language
-        url = reverse('video-list', kwargs={'language_code': 'nonexistent'})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 0)
-        
-        # Test with blacklisted video
-        self.video.is_blacklisted = True
-        self.video.save()
-        url = reverse('video-list', kwargs={'language_code': 'en'})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 0)
+        # Check non-live video is not returned
+        self.assertNotIn('test456', response.data)
 
     def test_video_snippets_view(self):
         """Test the video snippets view"""

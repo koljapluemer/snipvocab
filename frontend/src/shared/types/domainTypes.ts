@@ -1,32 +1,21 @@
 import type { Card } from "ts-fsrs";
 
-export interface Word {
-    original_word: string;
-    meanings: string[];
+export interface Meaning {
+  en: string
 }
 
-export interface Flashcard extends Card, Word {
+export interface Word {
+    original_word: string;
+    meanings: Meaning[];
 }
 
 export interface Snippet {
     words: Word[];
-    start: number;
-    duration: number;
+    start_time: number;
+    end_time: number;
+    video_id: string;
+    index: number;
 }
-
-export interface Snippet {
-  index: number
-  start: number
-  duration: number
-  start_time: number
-  end_time: number
-}
-
-export interface Video {
-  youtube_id: string
-  only_premium: boolean
-  is_blacklisted: boolean
-} 
 
 
 export const FlashCardButtons = {

@@ -22,3 +22,8 @@
 
 1. go to `frontend/`
 2. run `npm run dev`
+
+
+## Adding Content
+
+- `http://127.0.0.1:8000/cms/` has everything you want
