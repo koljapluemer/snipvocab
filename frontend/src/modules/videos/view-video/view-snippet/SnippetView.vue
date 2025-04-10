@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Snippet } from '@/shared/types/domainTypes'
-import { ref, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, watch } from 'vue'
 import PracticeSnippetVocab from './modes/PracticeSnippetVocab.vue'
 import WatchSnippet from './modes/WatchSnippet.vue';
 
@@ -10,37 +9,36 @@ enum SnippetStatus {
   'WATCHING_SNIPPET'
 }
 
-const route = useRoute()
+const props = defineProps<{
+  snippet: Snippet
+}>()
+
 const status = ref<SnippetStatus>(SnippetStatus.LEARNING_VOCAB)
 
-const createSnippet = (params: typeof route.params): Snippet => ({
-  videoId: params.videoId as string,
-  index: Number(params.index),
-  startTime: Number(params.startTime),
-  endTime: Number(params.endTime)
+// Reset to LEARNING_VOCAB mode whenever snippet changes
+watch(() => props.snippet, () => {
+  status.value = SnippetStatus.LEARNING_VOCAB
 })
 
-const snippet = ref<Snippet>(createSnippet(route.params))
-
-// Watch for route changes
-watch(
-  () => route.params,
-  (newParams) => {
-    snippet.value = createSnippet(newParams)
-    status.value = SnippetStatus.LEARNING_VOCAB
-  }
-)
+const emit = defineEmits<{
+  (e: 'next-snippet'): void
+  (e: 'back-to-video'): void
+}>()
 
 const onPracticeCompleted = () => {
   status.value = SnippetStatus.WATCHING_SNIPPET
+}
+
+const onNextSnippet = () => {
+  emit('next-snippet')
 }
 </script>
 
 <template>
   <div class="container mx-auto p-4">
-    <router-link :to="{ name: 'video', params: { videoId: snippet.videoId } }" class="btn btn-primary">
+    <button @click="emit('back-to-video')" class="btn btn-primary mb-4">
       Back to Video
-    </router-link>
+    </button>
 
     <PracticeSnippetVocab 
       v-if="status === SnippetStatus.LEARNING_VOCAB" 
@@ -51,6 +49,7 @@ const onPracticeCompleted = () => {
       v-if="status === SnippetStatus.WATCHING_SNIPPET" 
       :snippet="snippet"
       @study-again="status = SnippetStatus.LEARNING_VOCAB"
+      @next-snippet="onNextSnippet"
     />
   </div>
 </template>

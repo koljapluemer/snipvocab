@@ -3,7 +3,6 @@ import HomeView from '@/modules/misc-pages/home/HomeView.vue'
 import Register from '@/modules/auth/register/Register.vue'
 import Login from '@/modules/auth/login/Login.vue'
 import VideoView from '@/modules/videos/view-video/VideoView.vue'
-import SnippetView from './modules/snippets/view-snippet/SnippetView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,17 +26,6 @@ const router = createRouter({
       path: '/video/:videoId',
       name: 'video',
       component: VideoView
-    },
-    {
-      path: '/snippet/:videoId/:index/:startTime/:endTime',
-      name: 'snippet',
-      component: SnippetView,
-      props: (route) => ({
-        videoId: route.params.videoId,
-        index: route.params.index,
-        startTime: route.params.startTime,
-        endTime: route.params.endTime
-      })
     }
   ]
 })

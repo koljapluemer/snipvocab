@@ -22,12 +22,9 @@
           <button @click="onStudyAgain" class="btn btn-warning">
             Study Again
           </button>
-          <router-link
-            :to="{ name: 'snippet', params: { videoId: snippet.videoId, index: snippet.index + 1 }}"
-            class="btn btn-success"
-          >
+          <button @click="onNextSnippet" class="btn btn-success">
             Next Snippet
-          </router-link>
+          </button>
         </div>
       </div>
     </div>
@@ -58,9 +55,14 @@ const replaySnippet = () => {
 
 const emit = defineEmits<{
   (e: 'study-again'): void
+  (e: 'next-snippet'): void
 }>()
 
 const onStudyAgain = () => {
   emit('study-again')
+}
+
+const onNextSnippet = () => {
+  emit('next-snippet')
 }
 </script>
