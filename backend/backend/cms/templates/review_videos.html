@@ -38,22 +38,36 @@
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                                    <select name="status_{{ video.youtube_id }}" 
-                                            class="w-full px-3 py-2 border rounded">
-                                        <option value="">Select Status</option>
-                                        <option value="needs_review" {% if video.status == 'needs_review' %}selected{% endif %}>
-                                            Needs Review
-                                        </option>
-                                        <option value="shortlisted" {% if video.status == 'shortlisted' %}selected{% endif %}>
-                                            Shortlist
-                                        </option>
-                                        <option value="longlisted" {% if video.status == 'longlisted' %}selected{% endif %}>
-                                            Longlist
-                                        </option>
-                                        <option value="not_relevant" {% if video.status == 'not_relevant' %}selected{% endif %}>
-                                            Not Relevant
-                                        </option>
-                                    </select>
+                                    <div class="flex flex-wrap gap-2">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="status_{{ video.youtube_id }}" value="needs_review" 
+                                                   class="hidden peer" {% if video.status == 'needs_review' %}checked{% endif %}>
+                                            <span class="px-3 py-1 text-sm rounded cursor-pointer peer-checked:bg-blue-500 peer-checked:text-white bg-gray-100 text-gray-700 hover:bg-gray-200">
+                                                Needs Review
+                                            </span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="status_{{ video.youtube_id }}" value="shortlisted" 
+                                                   class="hidden peer" {% if video.status == 'shortlisted' %}checked{% endif %}>
+                                            <span class="px-3 py-1 text-sm rounded cursor-pointer peer-checked:bg-green-500 peer-checked:text-white bg-gray-100 text-gray-700 hover:bg-gray-200">
+                                                Shortlist
+                                            </span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="status_{{ video.youtube_id }}" value="longlisted" 
+                                                   class="hidden peer" {% if video.status == 'longlisted' %}checked{% endif %}>
+                                            <span class="px-3 py-1 text-sm rounded cursor-pointer peer-checked:bg-yellow-500 peer-checked:text-white bg-gray-100 text-gray-700 hover:bg-gray-200">
+                                                Longlist
+                                            </span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="status_{{ video.youtube_id }}" value="not_relevant" 
+                                                   class="hidden peer" {% if video.status == 'not_relevant' %}checked{% endif %}>
+                                            <span class="px-3 py-1 text-sm rounded cursor-pointer peer-checked:bg-red-500 peer-checked:text-white bg-gray-100 text-gray-700 hover:bg-gray-200">
+                                                Not Relevant
+                                            </span>
+                                        </label>
+                                    </div>
                                 </div>
                                 
                                 <div>
