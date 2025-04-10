@@ -1,13 +1,47 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
 from googleapiclient.discovery import build
-from shared.models import Video, VideoStatus, Snippet
+from shared.models import Video, VideoStatus, Snippet, Word, Meaning
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.core.paginator import Paginator
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.formatters import JSONFormatter
 from django.contrib import messages
+from openai import OpenAI, beta
+from pydantic import BaseModel
+from typing import List
+
+client = OpenAI(api_key=settings.OPENAI_API_KEY)
+
+class WordEntry(BaseModel):
+    word: str
+    meaning: str
+
+class WordEntryResponse(BaseModel):
+    words: list[WordEntry]
+
+def get_words_with_translations(text: str) -> list:
+    prompt = (
+        "You are an expert in Arabic. "
+        "Extract language learning vocab from the following text, ignoring proper nouns like restaurant names, "
+        "exclamations such as 'oh', and other non-translatable words. For each extracted word, provide an English translation suitable to learn the word on its own."
+        "Retain correct capitalization and spelling. If a word appears in a declined, conjugated, or plural form, "
+        "add both the occurring and base form as separate entries (e.g. for 'trees' and 'tree', or 'She ran' and 'running'), both including the translation. Return your answer as a structured list of vocab."
+    )
+    try:
+        response = client.beta.chat.completions.parse(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt + f"\n\nText: {text}\n\nOutput JSON:"}
+            ],
+            response_format=WordEntryResponse,
+        )
+        return response.choices[0].message.parsed.words
+    except Exception as e:
+        print(f"Error processing text snippet: {e}")
+        return []
 
 def cms_home(request):
     """Home view for the CMS"""
@@ -220,9 +254,13 @@ def video_details(request, youtube_id):
         # Get snippet count
         snippet_count = video.snippets.count()
         
+        # Get all words for this video with their meanings
+        words = Word.objects.filter(videos=video).prefetch_related('meanings')
+        
         context = {
             'video': video,
-            'snippet_count': snippet_count
+            'snippet_count': snippet_count,
+            'words': words,
         }
         
         return render(request, 'video_details.html', context)
@@ -234,42 +272,125 @@ def generate_snippets(request, youtube_id):
     """View to generate snippets for a video using YouTube transcript API"""
     try:
         video = Video.objects.get(youtube_id=youtube_id)
+        print(f"Processing video: {youtube_id}")
         
         # Get available languages if not already set
         if not video.available_subtitle_languages:
+            print("Fetching available languages...")
             try:
                 available_languages = YouTubeTranscriptApi.list_transcripts(video.youtube_id)
                 video.available_subtitle_languages = [lang.language_code for lang in available_languages]
                 video.save()
-            except Exception:
+                print(f"Found languages: {video.available_subtitle_languages}")
+            except Exception as e:
+                print(f"Error fetching languages: {str(e)}")
                 video.available_subtitle_languages = []
                 video.save()
+                messages.error(request, f"Error fetching available languages: {str(e)}")
+                return redirect('video_details', youtube_id=youtube_id)
         
-        # Try to get the transcript in the first available language
+        # Try to get the transcript in Arabic (prefer manual over auto-generated)
+        arabic_transcripts = []
         if video.available_subtitle_languages:
             try:
-                transcript = YouTubeTranscriptApi.get_transcript(video.youtube_id, languages=[video.available_subtitle_languages[0]])
+                print("Fetching transcript list...")
+                transcript_list = YouTubeTranscriptApi.list_transcripts(video.youtube_id)
+                print(f"Found transcripts in languages: {[t.language_code for t in transcript_list]}")
+                
+                for transcript in transcript_list:
+                    if transcript.language_code.startswith('ar'):
+                        arabic_transcripts.append(transcript)
+                        print(f"Found Arabic transcript: {transcript.language_code} (manual: {not transcript.is_generated})")
+                
+                if not arabic_transcripts:
+                    print("No Arabic transcripts found")
+                    messages.error(request, "No Arabic subtitles available for this video.")
+                    return redirect('video_details', youtube_id=youtube_id)
+                
+                # Prefer manual transcripts over auto-generated ones
+                manual_transcript = next((t for t in arabic_transcripts if not t.is_generated), None)
+                transcript = manual_transcript or arabic_transcripts[0]
+                print(f"Selected transcript: {transcript.language_code} (manual: {not transcript.is_generated})")
+                
+                print("Fetching transcript data...")
+                transcript_data = transcript.fetch()
+                print(f"Found {len(transcript_data)} segments")
                 
                 # Delete existing snippets
+                print("Deleting existing snippets...")
                 video.snippets.all().delete()
                 
                 # Create new snippets
-                for index, segment in enumerate(transcript):
+                print("Creating new snippets...")
+                for index, segment in enumerate(transcript_data):
                     Snippet.objects.create(
                         video=video,
                         index=index,
-                        content=segment['text'],
-                        start=segment['start'],
-                        duration=segment['duration']
+                        content=segment.text,
+                        start=segment.start,
+                        duration=segment.duration
                     )
                 
-                messages.success(request, f"Successfully generated {len(transcript)} snippets for the video.")
+                print(f"Successfully created {len(transcript_data)} snippets")
+                messages.success(request, f"Successfully generated {len(transcript_data)} snippets from {transcript.language_code} subtitles.")
             except Exception as e:
+                print(f"Error in transcript processing: {str(e)}")
                 messages.error(request, f"Error generating snippets: {str(e)}")
         else:
+            print("No available languages found")
             messages.error(request, "No subtitles available for this video.")
             
     except Video.DoesNotExist:
+        print(f"Video not found: {youtube_id}")
         messages.error(request, "Video not found.")
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        messages.error(request, f"An unexpected error occurred: {str(e)}")
+    
+    return redirect('video_details', youtube_id=youtube_id)
+
+@require_http_methods(["POST"])
+def generate_translations(request, youtube_id):
+    """View to generate translations for all snippets in a video"""
+    try:
+        video = Video.objects.get(youtube_id=youtube_id)
+        
+        if not video.snippets.exists():
+            messages.error(request, "No snippets available. Please generate snippets first.")
+            return redirect('video_details', youtube_id=youtube_id)
+        
+        # Delete existing words and meanings
+        Word.objects.filter(videos=video).delete()
+        
+        # Process each snippet
+        for snippet in video.snippets.all():
+            # Get words and translations for this snippet
+            words_with_translations = get_words_with_translations(snippet.content)
+            
+            # Process each word
+            for word_entry in words_with_translations:
+                # Get or create the word
+                word_obj, _ = Word.objects.get_or_create(
+                    original_word=word_entry.word
+                )
+                
+                # Add the video and snippet to the word's relationships
+                word_obj.videos.add(video)
+                word_obj.occurs_in_snippets.add(snippet)
+                
+                # Create the meaning
+                Meaning.objects.create(
+                    word=word_obj,
+                    en=word_entry.meaning,
+                    snippet_context=snippet,
+                    creation_method="ChatGPT 1.0.0"
+                )
+        
+        messages.success(request, "Successfully generated translations for all snippets.")
+            
+    except Video.DoesNotExist:
+        messages.error(request, "Video not found.")
+    except Exception as e:
+        messages.error(request, f"Error generating translations: {str(e)}")
     
     return redirect('video_details', youtube_id=youtube_id)

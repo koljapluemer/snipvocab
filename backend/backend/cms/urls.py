@@ -9,4 +9,5 @@ urlpatterns = [
     path('videos/', views.list_all_videos, name='list_all_videos'),
     path('videos/<str:youtube_id>/', views.video_details, name='video_details'),
     path('videos/<str:youtube_id>/generate-snippets/', views.generate_snippets, name='generate_snippets'),
+    path('videos/<str:youtube_id>/generate-translations/', views.generate_translations, name='generate_translations'),
 ]
