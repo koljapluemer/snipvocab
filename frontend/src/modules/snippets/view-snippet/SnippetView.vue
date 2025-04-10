@@ -1,67 +1,42 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import type { Snippet } from '@/shared/types/domainTypes'
-import FlashCardsWrapper from '@/modules/view-flashcard/FlashCardsWrapper.vue'
+import type { Snippet, Word } from '@/shared/types/domainTypes'
+import { getVideoSnippets, getSnippetDetails } from '@/modules/backend-communication/api'
 import WatchSnippet from './WatchSnippet.vue'
-import { createEmptyCard, type Card } from 'ts-fsrs'
 
 const route = useRoute()
 
 const snippet = ref<Snippet | null>(null)
-const flashcards = ref<Flashcard[]>([])
+const words = ref<Word[]>([])
 const isLearnMode = ref(true)
 const isLoading = ref(true)
 const videoId = ref(route.params.videoId as string)
 const snippetIndex = ref(parseInt(route.params.index as string))
 const coverSubtitles = ref(false)
 
-// Helper function to get snippet by index
-const getSnippetByIndex = async (youtubeId: string, index: number): Promise<Snippet> => {
-  const snippets = await getVideoSnippets(youtubeId)
-  const snippet = snippets.find((s: Snippet) => s.index === index)
-  if (!snippet) {
-    throw new Error(`Snippet with index ${index} not found`)
-  }
-  return snippet
-}
-
-// Helper function to get flashcards for a snippet
-const getFlashcardsForSnippet = async (youtubeId: string, snippetIndex: number): Promise<Flashcard[]> => {
-  const words = await getSnippetWords(youtubeId, snippetIndex)
-  const cards: Flashcard[] = []
-  for (const word of words) {
-    const card: Card = createEmptyCard()
-    cards.push({
-      ...card,
-      original_word: word.original_word,
-      meanings: word.meanings,
-    })
-  }
-  return cards
-}
-
-// Function to load snippet and flashcards data
+// Function to load snippet and words data
 const loadData = async () => {
   try {
     isLoading.value = true
     isLearnMode.value = true
-    console.info('Loading snippet and flashcards for:', { 
+    console.info('Loading snippet and words for:', { 
       videoId: videoId.value, 
       snippetIndex: snippetIndex.value 
     })
     
     // Clear existing data while loading
     snippet.value = null
-    flashcards.value = []
+    words.value = []
     
-    const [newSnippet, newFlashcards] = await Promise.all([
-      getSnippetByIndex(videoId.value, snippetIndex.value),
-      getFlashcardsForSnippet(videoId.value, snippetIndex.value)
-    ])
-    
-    snippet.value = newSnippet
-    flashcards.value = newFlashcards
+    const snippetDetails = await getSnippetDetails(videoId.value, snippetIndex.value)
+    snippet.value = {
+      start_time: snippetDetails.start_time,
+      end_time: snippetDetails.end_time,
+      video_id: snippetDetails.video_id,
+      index: snippetDetails.index
+    }
+    words.value = snippetDetails.words
     console.info('Data loaded successfully')
   } catch (error) {
     console.error('Failed to load snippet:', error)
@@ -90,13 +65,13 @@ onMounted(async () => {
   await loadData()
 })
 
-const handleAllFlashcardsCompleted = () => {
+const handleAllWordsCompleted = () => {
   isLearnMode.value = false
 }
 
-const handleSingleFlashcardRated = (flashcard: Flashcard, rating: number) => {
-  // TODO: Update flashcard state in database
-  console.log('Flashcard rated:', flashcard, rating)
+const handleSingleWordRated = (word: Word, rating: number) => {
+  // TODO: Update word state in database
+  console.log('Word rated:', word, rating)
 }
 </script>
 
@@ -107,8 +82,8 @@ const handleSingleFlashcardRated = (flashcard: Flashcard, rating: number) => {
         <div class="card-body">
           <h2 class="card-title">Snippet Details</h2>
           <div class="space-y-2">
-            <p><span class="font-semibold">Start Time:</span> {{ snippet.start }}s</p>
-            <p><span class="font-semibold">Duration:</span> {{ snippet.duration }}s</p>
+            <p><span class="font-semibold">Start Time:</span> {{ snippet.start_time }}s</p>
+            <p><span class="font-semibold">End Time:</span> {{ snippet.end_time }}s</p>
             <p><span class="font-semibold">Snippet Index:</span> {{ snippetIndex }}</p>
           </div>
           <div class="card-actions justify-end mt-4">
@@ -123,17 +98,29 @@ const handleSingleFlashcardRated = (flashcard: Flashcard, rating: number) => {
       </div>
 
       <div v-if="isLearnMode && !isLoading">
-        <FlashCardsWrapper
-          :flashcards="flashcards"
-          @single-flashcard-rated="handleSingleFlashcardRated"
-          @all-flashcards-completed="handleAllFlashcardsCompleted"
-        />
+        <div class="space-y-4">
+          <div v-for="word in words" :key="word.original_word" class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+              <h3 class="card-title">{{ word.original_word }}</h3>
+              <div class="space-y-2">
+                <div v-for="meaning in word.meanings" :key="meaning.en" class="p-2 bg-base-200 rounded">
+                  <p>{{ meaning.en }}</p>
+                </div>
+              </div>
+              <div class="card-actions justify-end mt-4">
+                <button class="btn btn-primary" @click="handleSingleWordRated(word, 1)">
+                  Mark as Learned
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <WatchSnippet
         v-else-if="!isLoading"
         :video-id="videoId"
-        :start="snippet.start"
-        :duration="snippet.duration"
+        :start="snippet.start_time"
+        :duration="snippet.end_time - snippet.start_time"
         :current-index="snippetIndex"
         :cover-subtitles="coverSubtitles"
         @study-again="isLearnMode = true"
