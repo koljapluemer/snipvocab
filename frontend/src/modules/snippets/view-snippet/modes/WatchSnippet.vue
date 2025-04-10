@@ -5,6 +5,7 @@
       <div class="max-w-full">
         <div class="mb-4 relative aspect-video">
           <iframe
+            :key="replayKey"
             class="w-full h-full"
             :src="youtubeEmbedUrl"
             frameborder="0"
@@ -36,6 +37,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import type { Snippet } from '@/shared/types/domainTypes'
+
 const props = defineProps<{
   snippet: Snippet
 }>()
@@ -45,19 +47,20 @@ const replayKey = ref(Date.now())
 const youtubeEmbedUrl = computed(() => {
   const start = Math.floor(props.snippet.startTime)
   const end = Math.floor(props.snippet.endTime)
-  return `https://www.youtube.com/embed/${props.snippet.videoId}?start=${start}&end=${end}&autoplay=1`
+  // Added enablejsapi=1 to enable API control and rel=0 to prevent showing related videos
+  return `https://www.youtube.com/embed/${props.snippet.videoId}?start=${start}&end=${end}&autoplay=1&enablejsapi=1&rel=0&version=3`
 })
 
 const replaySnippet = () => {
+  // Update the replayKey to force iframe reload
   replayKey.value = Date.now()
-}
-
-const onStudyAgain = () => {
-  // Emit event to parent to switch back to learn mode
-  emit('study-again')
 }
 
 const emit = defineEmits<{
   (e: 'study-again'): void
 }>()
+
+const onStudyAgain = () => {
+  emit('study-again')
+}
 </script>
