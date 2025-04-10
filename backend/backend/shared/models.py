@@ -8,11 +8,19 @@ class Language(models.Model):
     def __str__(self):
         return self.name + " (" + self.code + ")"
 
+class VideoStatus(models.TextChoices):
+    NEEDS_REVIEW = 'needs_review', 'Needs Review'
+    SHORTLISTED = 'shortlisted', 'Shortlisted'
+    LONGLISTED = 'longlisted', 'Longlisted'
+    NOT_RELEVANT = 'not_relevant', 'Not Relevant'
+    ASSETS_GENERATED = 'assets_generated', 'Assets Generated'
+    BLACKLISTED = 'blacklisted', 'Blacklisted'
+
 class Video(models.Model):
-    language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name="videos")
+    language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name="videos") # largely obsolete
+    available_subtitle_languages = models.JSONField(default=list)
     youtube_id = models.CharField(max_length=20, unique=True)
-    only_premium = models.BooleanField(default=False)  
-    is_blacklisted = models.BooleanField(default=False)  
+    status = models.CharField(max_length=20, choices=VideoStatus.choices, default=VideoStatus.NEEDS_REVIEW)
 
     def __str__(self):
         return f"{self.youtube_id} ({self.language.code})"
