@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-3xl mx-auto">
+        <h1 class="text-4xl font-bold text-gray-900 mb-8">Welcome to Video Management</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold mb-4">Import Videos</h2>
+                <p class="text-gray-600 mb-4">Import videos from any YouTube channel to start the review process.</p>
+                <a href="{% url 'import_channel_videos' %}" 
+                   class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                    Import Videos
+                </a>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold mb-4">Review Videos</h2>
+                <p class="text-gray-600 mb-4">Review imported videos, check available subtitles, and update their status.</p>
+                <a href="{% url 'review_videos' %}" 
+                   class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                    Review Videos
+                </a>
+            </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-sm">
+            <h2 class="text-xl font-semibold mb-4">Quick Stats</h2>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-600">{{ total_videos }}</div>
+                    <div class="text-gray-600">Total Videos</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-yellow-600">{{ needs_review }}</div>
+                    <div class="text-gray-600">Needs Review</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-green-600">{{ shortlisted }}</div>
+                    <div class="text-gray-600">Shortlisted</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-purple-600">{{ longlisted }}</div>
+                    <div class="text-gray-600">Longlisted</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-red-600">{{ not_relevant }}</div>
+                    <div class="text-gray-600">Not Relevant</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

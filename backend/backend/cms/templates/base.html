@@ -11,23 +11,34 @@
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <a href="/" class="text-xl font-bold text-gray-800">Video Management</a>
+                    <a href="{% url 'cms_home' %}" class="text-xl font-bold text-gray-800">Video Management</a>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="{% url 'list_channel_videos' %}" class="text-gray-600 hover:text-gray-900">
-                        Channel Videos
+                    <a href="{% url 'cms_home' %}" 
+                       class="text-gray-600 hover:text-gray-900 {% if request.resolver_match.url_name == 'cms_home' %}text-blue-600{% endif %}">
+                        Home
+                    </a>
+                    <a href="{% url 'import_channel_videos' %}" 
+                       class="text-gray-600 hover:text-gray-900 {% if request.resolver_match.url_name == 'import_channel_videos' %}text-blue-600{% endif %}">
+                        Import Videos
+                    </a>
+                    <a href="{% url 'review_videos' %}" 
+                       class="text-gray-600 hover:text-gray-900 {% if request.resolver_match.url_name == 'review_videos' %}text-blue-600{% endif %}">
+                        Review Videos
                     </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main>
+    <main class="min-h-screen">
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="bg-white border-t mt-8">
- 
+    <footer class="bg-white border-t mt-8 py-4">
+        <div class="container mx-auto px-4 text-center text-gray-600">
+            <p>Video Management System &copy; {% now "Y" %}</p>
+        </div>
     </footer>
 </body>
 </html>

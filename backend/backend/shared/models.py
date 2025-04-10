@@ -20,6 +20,7 @@ class Video(models.Model):
     language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name="videos", null=True, blank=True) # largely obsolete
     available_subtitle_languages = models.JSONField(default=list)
     youtube_id = models.CharField(max_length=20, unique=True)
+    
     status = models.CharField(max_length=20, choices=VideoStatus.choices, default=VideoStatus.NEEDS_REVIEW)
     comment = models.TextField(blank=True)
 
