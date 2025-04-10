@@ -331,6 +331,10 @@ def generate_snippets(request, youtube_id):
                         duration=segment.duration
                     )
                 
+                # Update video status
+                video.status = VideoStatus.SNIPPETS_GENERATED
+                video.save()
+                
                 print(f"Successfully created {len(transcript_data)} snippets")
                 messages.success(request, f"Successfully generated {len(transcript_data)} snippets from {transcript.language_code} subtitles.")
             except Exception as e:
@@ -386,11 +390,65 @@ def generate_translations(request, youtube_id):
                     creation_method="ChatGPT 1.0.0"
                 )
         
+        # Update video status
+        video.status = VideoStatus.SNIPPETS_AND_TRANSLATIONS_GENERATED
+        video.save()
+        
         messages.success(request, "Successfully generated translations for all snippets.")
             
     except Video.DoesNotExist:
         messages.error(request, "Video not found.")
     except Exception as e:
         messages.error(request, f"Error generating translations: {str(e)}")
+    
+    return redirect('video_details', youtube_id=youtube_id)
+
+@require_http_methods(["POST"])
+def publish_video(request, youtube_id):
+    """View to publish a video"""
+    try:
+        video = Video.objects.get(youtube_id=youtube_id)
+        
+        if video.status != VideoStatus.SNIPPETS_AND_TRANSLATIONS_GENERATED:
+            messages.error(request, "Video must have snippets and translations generated before publishing.")
+            return redirect('video_details', youtube_id=youtube_id)
+        
+        video.status = VideoStatus.LIVE
+        video.save()
+        
+        messages.success(request, "Video has been published successfully.")
+            
+    except Video.DoesNotExist:
+        messages.error(request, "Video not found.")
+    except Exception as e:
+        messages.error(request, f"Error publishing video: {str(e)}")
+    
+    return redirect('video_details', youtube_id=youtube_id)
+
+@require_http_methods(["POST"])
+def reset_snippets(request, youtube_id):
+    """View to reset snippets and translations for a video"""
+    try:
+        video = Video.objects.get(youtube_id=youtube_id)
+        
+        if video.status not in [VideoStatus.SNIPPETS_GENERATED, 
+                              VideoStatus.SNIPPETS_AND_TRANSLATIONS_GENERATED, 
+                              VideoStatus.LIVE]:
+            messages.error(request, "Video must have snippets generated to reset them.")
+            return redirect('video_details', youtube_id=youtube_id)
+        
+        # Delete snippets (this will cascade delete words and meanings)
+        video.snippets.all().delete()
+        
+        # Reset status to shortlisted
+        video.status = VideoStatus.SHORTLISTED
+        video.save()
+        
+        messages.success(request, "Snippets and translations have been reset successfully.")
+            
+    except Video.DoesNotExist:
+        messages.error(request, "Video not found.")
+    except Exception as e:
+        messages.error(request, f"Error resetting snippets: {str(e)}")
     
     return redirect('video_details', youtube_id=youtube_id)

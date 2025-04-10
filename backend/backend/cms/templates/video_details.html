@@ -15,15 +15,7 @@
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold">Video: {{ video.youtube_id }}</h1>
             <div>
-                {% if video.status == 'needs_review' %}
-                    <span class="px-3 py-1 text-sm rounded bg-blue-100 text-blue-800">Needs Review</span>
-                {% elif video.status == 'shortlisted' %}
-                    <span class="px-3 py-1 text-sm rounded bg-green-100 text-green-800">Shortlisted</span>
-                {% elif video.status == 'longlisted' %}
-                    <span class="px-3 py-1 text-sm rounded bg-yellow-100 text-yellow-800">Longlisted</span>
-                {% elif video.status == 'not_relevant' %}
-                    <span class="px-3 py-1 text-sm rounded bg-red-100 text-red-800">Not Relevant</span>
-                {% endif %}
+                {% include "includes/video_status.html" %}
             </div>
         </div>
 
@@ -64,19 +56,42 @@
                 <p class="text-gray-600 mb-4">
                     This video has {{ snippet_count }} snippet{{ snippet_count|pluralize }}.
                 </p>
-                <div class="flex gap-4">
-                    <form action="{% url 'generate_snippets' video.youtube_id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Generate Snippets
-                        </button>
-                    </form>
-                    <form action="{% url 'generate_translations' video.youtube_id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            Generate Translations
-                        </button>
-                    </form>
+                <div class="flex flex-wrap gap-4">
+                    {% if video.status != 'snippets_generated' and video.status != 'snippets_and_translations_generated' and video.status != 'live' %}
+                        <form action="{% url 'generate_snippets' video.youtube_id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                Generate Snippets
+                            </button>
+                        </form>
+                    {% endif %}
+                    
+                    {% if video.status == 'snippets_generated' %}
+                        <form action="{% url 'generate_translations' video.youtube_id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                Generate Translations
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    {% if video.status == 'snippets_and_translations_generated' %}
+                        <form action="{% url 'publish_video' video.youtube_id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+                                Publish Video
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    {% if video.status == 'snippets_generated' or video.status == 'snippets_and_translations_generated' or video.status == 'live' %}
+                        <form action="{% url 'reset_snippets' video.youtube_id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                                Reset Snippets
+                            </button>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
         </div>

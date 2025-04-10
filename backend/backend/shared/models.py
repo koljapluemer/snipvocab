@@ -13,7 +13,9 @@ class VideoStatus(models.TextChoices):
     SHORTLISTED = 'shortlisted', 'Shortlisted'
     LONGLISTED = 'longlisted', 'Longlisted'
     NOT_RELEVANT = 'not_relevant', 'Not Relevant'
-    ASSETS_GENERATED = 'assets_generated', 'Assets Generated'
+    SNIPPETS_GENERATED = 'snippets_generated', 'Snippets Generated'
+    SNIPPETS_AND_TRANSLATIONS_GENERATED = 'snippets_and_translations_generated', 'Snippets and Translations Generated'
+    LIVE = 'live', 'Live'
     BLACKLISTED = 'blacklisted', 'Blacklisted'
 
 class Video(models.Model):
@@ -21,7 +23,7 @@ class Video(models.Model):
     available_subtitle_languages = models.JSONField(default=list)
     youtube_id = models.CharField(max_length=20, unique=True)
     
-    status = models.CharField(max_length=20, choices=VideoStatus.choices, default=VideoStatus.NEEDS_REVIEW)
+    status = models.CharField(max_length=100, choices=VideoStatus.choices, default=VideoStatus.NEEDS_REVIEW)
     comment = models.TextField(blank=True)
 
     def __str__(self):

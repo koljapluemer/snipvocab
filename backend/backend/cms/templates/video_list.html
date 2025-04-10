@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">All Videos</h1>
+    
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white">
+            <thead>
+                <tr>
+                    <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">YouTube ID</th>
+                    <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for video in videos %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200">
+                        <a href="{% url 'video_details' video.youtube_id %}" class="text-blue-600 hover:text-blue-900">
+                            {{ video.youtube_id }}
+                        </a>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200">
+                        {% include "includes/video_status.html" %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200">
+                        <a href="{% url 'video_details' video.youtube_id %}" class="text-blue-600 hover:text-blue-900">View Details</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 
