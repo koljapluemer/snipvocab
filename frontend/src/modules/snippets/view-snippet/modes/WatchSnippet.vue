@@ -11,7 +11,6 @@
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen>
           </iframe>
-          <div v-if="coverSubtitles" class="absolute bottom-6 left-0 right-0 h-32 bg-gray-800"></div>
         </div>
       </div>
       <div class="flex flex-col items-center space-y-4">
@@ -23,7 +22,7 @@
             Study Again
           </button>
           <router-link
-            :to="{ name: 'snippet', params: { videoId, index: currentIndex + 1 }}"
+            :to="{ name: 'snippet', params: { videoId: snippet.videoId, index: snippet.index + 1 }}"
             class="btn btn-success"
           >
             Next Snippet
@@ -36,21 +35,17 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-
+import type { Snippet } from '@/shared/types/domainTypes'
 const props = defineProps<{
-  videoId: string
-  start: number
-  end: number
-  currentIndex: number
-  coverSubtitles: boolean
+  snippet: Snippet
 }>()
 
 const replayKey = ref(Date.now())
 
 const youtubeEmbedUrl = computed(() => {
-  const start = Math.floor(props.start)
-  const end = Math.floor(props.end)
-  return `https://www.youtube.com/embed/${props.videoId}?start=${start}&end=${end}&autoplay=1`
+  const start = Math.floor(props.snippet.startTime)
+  const end = Math.floor(props.snippet.endTime)
+  return `https://www.youtube.com/embed/${props.snippet.videoId}?start=${start}&end=${end}&autoplay=1`
 })
 
 const replaySnippet = () => {

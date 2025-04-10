@@ -5,7 +5,7 @@ export interface Meaning {
 }
 
 export interface Word {
-    original_word: string;
+    originalWord: string;
     meanings: Meaning[];
 }
 
