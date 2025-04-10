@@ -17,16 +17,16 @@ export interface WordFlashCard extends Word {
 }
 
 export interface Snippet {
-    start_time: number;
-    end_time: number;
-    video_id: string;
+    videoId: string;
     index: number;
+    startTime: number;
+    endTime: number;
 }
 
 export interface SnippetDetails {
-  start_time: number;
-  end_time: number;
-  video_id: string;
+  startTime: number;
+  endTime: number;
+  videoId: string;
   index: number;
   words: Word[];
 }

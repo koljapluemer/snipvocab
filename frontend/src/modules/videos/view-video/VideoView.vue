@@ -17,7 +17,7 @@
             </div>
             <router-link 
               v-if="snippetCount > 0"
-              :to="{ name: 'snippet', params: { videoId, index: 0 }}" 
+              :to="{ name: 'snippet', params: { videoId, index: 0, startTime: snippets[0].startTime, endTime: snippets[0].endTime }}" 
               class="btn btn-primary"
             >
               Start Practice
@@ -32,12 +32,11 @@
                 v-for="snippet in snippets" 
                 :key="snippet.index"
                 class="p-2 border rounded hover:bg-base-200 cursor-pointer"
-                @click="router.push({ name: 'snippet', params: { videoId, index: snippet.index }})"
               >
                 <div class="flex justify-between">
                   <span>Snippet {{ snippet.index + 1 }}</span>
                   <span class="text-sm text-gray-500">
-                    {{ formatTime(snippet.start_time) }} - {{ formatTime(snippet.end_time) }}
+                    {{ formatTime(snippet.startTime) }} - {{ formatTime(snippet.endTime) }}
                   </span>
                 </div>
               </div>

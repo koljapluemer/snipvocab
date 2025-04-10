@@ -29,9 +29,15 @@ const router = createRouter({
       component: VideoView
     },
     {
-      path: '/snippet/:videoId/:index',
+      path: '/snippet/:videoId/:index/:startTime/:endTime',
       name: 'snippet',
-      component: SnippetView
+      component: SnippetView,
+      props: (route) => ({
+        videoId: route.params.videoId,
+        index: route.params.index,
+        startTime: route.params.startTime,
+        endTime: route.params.endTime
+      })
     }
   ]
 })

@@ -6,5 +6,5 @@ urlpatterns = [
     path('videos/', VideoListView.as_view(), name='video-list'),
     path('videos/<str:youtube_id>/snippets/', VideoSnippetsView.as_view(), name='video-snippets'),
     path('videos/<str:youtube_id>/snippets/<int:index>/', SnippetDetailsView.as_view(), name='snippet-details'),
-    path('videos/<str:youtube_id>/snippets/<int:index>/due-words/<int:user_id>/', SnippetDueWordsView.as_view(), name='snippet-due-words'),
+    path('videos/<str:youtube_id>/snippets/<int:index>/due-words/', SnippetDueWordsView.as_view(), name='snippet-due-words'),
 ]

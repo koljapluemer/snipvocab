@@ -30,7 +30,7 @@
               <div class="card-body">
                 <div class="card-actions justify-end">
                   <span class="text-sm text-gray-500">
-                    {{ formatTime(snippet.start_time) }} - {{ formatTime(snippet.end_time) }}
+                    {{ formatTime(snippet.startTime) }} - {{ formatTime(snippet.endTime) }}
                   </span>
                 </div>
               </div>

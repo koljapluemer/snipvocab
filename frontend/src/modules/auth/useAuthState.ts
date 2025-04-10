@@ -16,6 +16,7 @@ const checkAuth = async () => {
     userEmail.value = ''
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token')
+    localStorage.removeItem('user_id')
   }
 }
 
@@ -27,6 +28,7 @@ const login = async (email: string, password: string) => {
   
   localStorage.setItem('access_token', response.access)
   localStorage.setItem('refresh_token', response.refresh)
+  localStorage.setItem('user_id', response.user_id.toString())
   isAuthenticated.value = true
   userEmail.value = email
 }
@@ -34,6 +36,7 @@ const login = async (email: string, password: string) => {
 const logout = () => {
   localStorage.removeItem('access_token')
   localStorage.removeItem('refresh_token')
+  localStorage.removeItem('user_id')
   isAuthenticated.value = false
   userEmail.value = ''
 }

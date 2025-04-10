@@ -40,7 +40,7 @@ import { computed, ref } from 'vue'
 const props = defineProps<{
   videoId: string
   start: number
-  duration: number
+  end: number
   currentIndex: number
   coverSubtitles: boolean
 }>()
@@ -49,7 +49,7 @@ const replayKey = ref(Date.now())
 
 const youtubeEmbedUrl = computed(() => {
   const start = Math.floor(props.start)
-  const end = Math.floor(props.start + props.duration + 0.6)
+  const end = Math.floor(props.end)
   return `https://www.youtube.com/embed/${props.videoId}?start=${start}&end=${end}&autoplay=1`
 })
 

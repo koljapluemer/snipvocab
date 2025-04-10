@@ -1,4 +1,4 @@
-import type { Snippet, Word, SnippetDetails } from '@/shared/types/domainTypes'
+import type { Snippet, Word, SnippetDetails, WordFlashCard } from '@/shared/types/domainTypes'
 import axios from 'axios'
 import type { AxiosResponse } from 'axios'
 
@@ -81,12 +81,20 @@ export const getVideoSnippets = async (youtubeId: string): Promise<Snippet[]> =>
   }
 }
 
-
 export const getSnippetDetails = async (youtubeId: string, index: number): Promise<SnippetDetails> => {
   try {
     return await handleApiResponse(api.get(`/learn/videos/${youtubeId}/snippets/${index}/`))
   } catch (error) {
     console.error('Error fetching snippet details:', error)
     throw new Error('Failed to fetch snippet details. Please try again later.')
+  }
+}
+
+export const getSnippetDueWords = async (youtubeId: string, index: number): Promise<WordFlashCard[]> => {
+  try {
+    return await handleApiResponse(api.get(`/learn/videos/${youtubeId}/snippets/${index}/due-words/`))
+  } catch (error) {
+    console.error('Error fetching due words:', error)
+    throw new Error('Failed to fetch due words. Please try again later.')
   }
 }

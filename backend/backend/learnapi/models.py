@@ -6,12 +6,9 @@ from django.contrib.auth.models import User
 from shared.models import Video, Snippet, Word
 
 
-class UserProfile(models.Model):
-    daily_vocab_goal = models.PositiveIntegerField(default=25)
-    daily_snippet_goal = models.PositiveIntegerField(default=10)
 
 class VideoProgress(models.Model):
-    user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="video_progress")
+    user_profile = models.ForeignKey(User, on_delete=models.CASCADE, related_name="video_progress")
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name="progresses")
     # Update last_watched whenever the video is viewed.
     last_watched = models.DateTimeField(default=datetime.datetime.now)
@@ -44,11 +41,11 @@ class VocabPractice(models.Model):
         unique_together = ('user', 'word')
     
     def __str__(self):
-        return f"{self.user_profile} - {self.word} practice"
+        return f"{self.user} - {self.word} practice"
 
 
 class SnippetPractice(models.Model):
-    user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="snippet_practices")
+    user_profile = models.ForeignKey(User, on_delete=models.CASCADE, related_name="snippet_practices")
     snippet = models.ForeignKey(Snippet, on_delete=models.CASCADE, related_name="snippet_practices")
     
     # FSRS attributes
