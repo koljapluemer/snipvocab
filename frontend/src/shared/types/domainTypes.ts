@@ -9,6 +9,13 @@ export interface Word {
     meanings: Meaning[];
 }
 
+export interface WordFlashCard extends Word {
+  isDue: boolean;
+  isNew: boolean;
+  isFavorite: boolean;
+  isBlacklisted: boolean;
+}
+
 export interface Snippet {
     start_time: number;
     end_time: number;

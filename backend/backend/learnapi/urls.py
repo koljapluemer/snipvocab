@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import VideoListView, VideoSnippetsView, SnippetDetailsView
+from .views import VideoListView, VideoSnippetsView, SnippetDetailsView, SnippetDueWordsView
 
 urlpatterns = [
     path('videos/', VideoListView.as_view(), name='video-list'),
     path('videos/<str:youtube_id>/snippets/', VideoSnippetsView.as_view(), name='video-snippets'),
     path('videos/<str:youtube_id>/snippets/<int:index>/', SnippetDetailsView.as_view(), name='snippet-details'),
+    path('videos/<str:youtube_id>/snippets/<int:index>/due-words/<int:user_id>/', SnippetDueWordsView.as_view(), name='snippet-due-words'),
 ]

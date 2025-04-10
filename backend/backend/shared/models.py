@@ -1,13 +1,6 @@
 from django.db import models
 import math
 
-class Language(models.Model):
-    code = models.CharField(max_length=10, primary_key=True)
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name + " (" + self.code + ")"
-
 class VideoStatus(models.TextChoices):
     NEEDS_REVIEW = 'needs_review', 'Needs Review'
     SHORTLISTED = 'shortlisted', 'Shortlisted'
@@ -19,7 +12,6 @@ class VideoStatus(models.TextChoices):
     BLACKLISTED = 'blacklisted', 'Blacklisted'
 
 class Video(models.Model):
-    language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name="videos", null=True, blank=True) # largely obsolete
     available_subtitle_languages = models.JSONField(default=list)
     youtube_id = models.CharField(max_length=20, unique=True)
     

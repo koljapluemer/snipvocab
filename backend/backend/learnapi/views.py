@@ -3,7 +3,11 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.exceptions import NotFound
-from shared.models import Video, Language, Snippet, Word, VideoStatus
+from shared.models import Video, Snippet, Word, VideoStatus
+from .models import VocabPractice
+from django.contrib.auth.models import User
+from fsrs import Scheduler, Card, Rating
+from datetime import datetime, timezone
 import logging
 import re
 from difflib import SequenceMatcher
@@ -123,4 +127,76 @@ class SnippetDetailsView(generics.RetrieveAPIView):
             raise NotFound(f"Video with YouTube ID {youtube_id} not found or not live")
         except Snippet.DoesNotExist:
             raise NotFound(f"Snippet with index {index} not found for video {youtube_id}")
+
+class SnippetDueWordsView(generics.ListAPIView):
+    renderer_classes = [JSONRenderer]
+    
+    def get(self, request, *args, **kwargs):
+        youtube_id = self.kwargs.get('youtube_id')
+        index = self.kwargs.get('index')
+        user_id = self.kwargs.get('user_id')
+        
+        try:
+            # Get the video and snippet
+            video = Video.objects.get(youtube_id=youtube_id, status=VideoStatus.LIVE)
+            snippet = Snippet.objects.get(video=video, index=index)
+            user = User.objects.get(id=user_id)
+            
+            # Get all words associated with this snippet
+            words = Word.objects.filter(occurs_in_snippets=snippet)
+            
+            # Initialize FSRS scheduler
+            scheduler = Scheduler()
+            
+            # Transform words to match frontend interface
+            transformed_words = []
+            for word in words:
+                # Get or create VocabPractice for this word and user
+                vocab_practice, created = VocabPractice.objects.get_or_create(
+                    user=user,
+                    word=word,
+                    defaults={
+                        'state': 'Learning',
+                        'step': 0,
+                        'stability': 0,
+                        'difficulty': 0,
+                        'due': datetime.now(timezone.utc),
+                        'last_review': datetime.now(timezone.utc)
+                    }
+                )
+                
+                # Get all meanings for this word and deduplicate them
+                meanings = [meaning.en for meaning in word.meanings.all()]
+                unique_meanings = deduplicate_meanings(meanings)
+                
+                # If it's a new practice, mark it as due and new
+                if created:
+                    transformed_words.append({
+                        'original_word': word.original_word,
+                        'meanings': [{'en': meaning} for meaning in unique_meanings],
+                        'isDue': True,
+                        'isNew': True,
+                        'isFavorite': False,
+                        'isBlacklisted': False
+                    })
+                else:
+                    # Check if the word is due
+                    if vocab_practice.due and vocab_practice.due <= datetime.now(timezone.utc):
+                        transformed_words.append({
+                            'original_word': word.original_word,
+                            'meanings': [{'en': meaning} for meaning in unique_meanings],
+                            'isDue': True,
+                            'isNew': False,
+                            'isFavorite': vocab_practice.is_favorite,
+                            'isBlacklisted': vocab_practice.is_blacklisted
+                        })
+            
+            return Response(transformed_words)
+            
+        except Video.DoesNotExist:
+            raise NotFound(f"Video with YouTube ID {youtube_id} not found or not live")
+        except Snippet.DoesNotExist:
+            raise NotFound(f"Snippet with index {index} not found for video {youtube_id}")
+        except User.DoesNotExist:
+            raise NotFound(f"User with ID {user_id} not found")
 

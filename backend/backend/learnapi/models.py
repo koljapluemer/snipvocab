@@ -3,11 +3,10 @@ import datetime
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
-from shared.models import Language, Video, Snippet, Word
+from shared.models import Video, Snippet, Word
 
 
 class UserProfile(models.Model):
-    learning_language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True, blank=True)
     daily_vocab_goal = models.PositiveIntegerField(default=25)
     daily_snippet_goal = models.PositiveIntegerField(default=10)
 
@@ -24,7 +23,7 @@ class VideoProgress(models.Model):
         return f"{self.user_profile} - {self.video} last watched on {self.last_watched}"
 
 class VocabPractice(models.Model):
-    user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="vocab_practices")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="vocab_practices")
     word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name="vocab_practices")
     
     # Store fsrs Card attributes exactly as defined.
@@ -42,7 +41,7 @@ class VocabPractice(models.Model):
     updated = models.DateTimeField(auto_now=True)
     
     class Meta:
-        unique_together = ('user_profile', 'word')
+        unique_together = ('user', 'word')
     
     def __str__(self):
         return f"{self.user_profile} - {self.word} practice"
