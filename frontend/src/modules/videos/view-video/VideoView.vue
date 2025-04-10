@@ -30,7 +30,7 @@
             <div class="space-y-2">
               <div 
                 v-for="snippet in snippets" 
-                :key="snippet.id"
+                :key="snippet.index"
                 class="p-2 border rounded hover:bg-base-200 cursor-pointer"
                 @click="router.push({ name: 'snippet', params: { videoId, index: snippet.index }})"
               >
@@ -52,6 +52,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import type { Snippet } from '@/shared/types/domainTypes';
+import { getVideoSnippets } from '@/modules/backend-communication/api';
 
 const route = useRoute();
 const router = useRouter();

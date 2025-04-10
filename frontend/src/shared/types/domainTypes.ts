@@ -10,7 +10,6 @@ export interface Word {
 }
 
 export interface Snippet {
-    words: Word[];
     start_time: number;
     end_time: number;
     video_id: string;

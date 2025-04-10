@@ -4,6 +4,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 from shared.models import Language, Video, Snippet, Word, VideoStatus
 from .models import UserProfile, VideoProgress, VocabPractice, SnippetPractice
+import json
 
 class LearnApiTests(TestCase):
     def setUp(self):
@@ -108,3 +109,37 @@ class LearnApiTests(TestCase):
         })
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+class VideoListViewTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.video = Video.objects.create(
+            youtube_id='test123',
+            title='Test Video',
+            status=VideoStatus.LIVE
+        )
+        self.snippet = Snippet.objects.create(
+            video=self.video,
+            index=0,
+            start_time=0.0,
+            end_time=10.0
+        )
+
+    def test_get_video_snippets(self):
+        url = reverse('video-snippets', kwargs={'youtube_id': 'test123'})
+        response = self.client.get(url)
+        
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        
+        self.assertEqual(len(data), 1)
+        snippet = data[0]
+        self.assertEqual(snippet['video_id'], 'test123')
+        self.assertEqual(snippet['index'], 0)
+        self.assertEqual(snippet['start_time'], 0.0)
+        self.assertEqual(snippet['end_time'], 10.0)
+
+    def test_get_video_snippets_not_found(self):
+        url = reverse('video-snippets', kwargs={'youtube_id': 'nonexistent'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
