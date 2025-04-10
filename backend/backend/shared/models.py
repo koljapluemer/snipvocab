@@ -21,6 +21,7 @@ class Video(models.Model):
     available_subtitle_languages = models.JSONField(default=list)
     youtube_id = models.CharField(max_length=20, unique=True)
     status = models.CharField(max_length=20, choices=VideoStatus.choices, default=VideoStatus.NEEDS_REVIEW)
+    comment = models.TextField(blank=True)
 
     def __str__(self):
         return f"{self.youtube_id} ({self.language.code})"
