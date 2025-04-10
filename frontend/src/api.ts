@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { useApi } from './composables/useApi'
-import type { Video, Snippet } from './types'
+import type { Snippet } from './shared/types/domainTypes'
 
 const { api } = useApi()
 
