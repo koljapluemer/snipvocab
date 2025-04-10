@@ -2,7 +2,8 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
-from .models import Language, Video, Snippet, Word, UserProfile, VideoProgress, VocabPractice, SnippetPractice
+from shared.models import Language, Video, Snippet, Word
+from .models import UserProfile, VideoProgress, VocabPractice, SnippetPractice
 
 class LearnApiTests(TestCase):
     def setUp(self):

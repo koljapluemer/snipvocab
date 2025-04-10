@@ -3,7 +3,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.exceptions import NotFound
-from .models import Video, Language, Snippet, Word
+from shared.models import Video, Language, Snippet, Word
 from .serializers import VideoSerializer, SnippetSerializer, WordSerializer
 import logging
 

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Video, Snippet, Word
+from shared.models import Video, Snippet, Word
 
 class VideoSerializer(serializers.ModelSerializer):
     class Meta:

@@ -3,70 +3,13 @@ import datetime
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
-import math
+from shared.models import Language, Video, Snippet, Word
 
-class Language(models.Model):
-    code = models.CharField(max_length=10, primary_key=True)
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name + " (" + self.code + ")"
-
-
-class PremiumCode(models.Model):
-    hrid = models.CharField(max_length=256)
-
-    def __str__(self):
-        return self.hrid
 
 class UserProfile(models.Model):
-    user_identification_code = models.CharField(max_length=512, unique=True)
-
     learning_language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True, blank=True)
-    premium_code = models.ForeignKey(PremiumCode, on_delete=models.SET_NULL, null=True, blank=True)
-
     daily_vocab_goal = models.PositiveIntegerField(default=25)
     daily_snippet_goal = models.PositiveIntegerField(default=10)
-
-class Video(models.Model):
-    language = models.ForeignKey(Language, on_delete=models.CASCADE, related_name="videos")
-    youtube_id = models.CharField(max_length=20, unique=True)
-    only_premium = models.BooleanField(default=False)  
-    is_blacklisted = models.BooleanField(default=False)  
-
-    def __str__(self):
-        return f"{self.youtube_id} ({self.language.code})"
-    
-
-class Snippet(models.Model):
-    video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name="snippets")
-    index = models.PositiveIntegerField()  # position of the snippet in the video
-    start = models.FloatField()
-    duration = models.FloatField()
-
-    class Meta:
-        ordering = ['index']
-
-    def __str__(self):
-        return f"Snippet {self.index} for {self.video.youtube_id}"
-    
-    @property
-    def end_time(self):
-        return math.floor(self.start + self.duration + 1)
-    
-    @property
-    def start_time(self):
-        return math.floor(self.start - 1)
-
-class Word(models.Model):
-    original_word = models.CharField(max_length=100, unique=True)
-    videos = models.ManyToManyField(Video, related_name="words", blank=True)
-    meanings = models.JSONField(default=list)
-    occurs_in_snippets = models.ManyToManyField(Snippet, related_name="words", blank=True)
-
-    def __str__(self):
-        return self.original_word
-
 
 class VideoProgress(models.Model):
     user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="video_progress")
@@ -82,7 +25,7 @@ class VideoProgress(models.Model):
 
 class VocabPractice(models.Model):
     user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="vocab_practices")
-    word = models.ForeignKey('Word', on_delete=models.CASCADE, related_name="vocab_practices")
+    word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name="vocab_practices")
     
     # Store fsrs Card attributes exactly as defined.
     card_id = models.BigIntegerField(null=True, blank=True)
@@ -107,7 +50,7 @@ class VocabPractice(models.Model):
 
 class SnippetPractice(models.Model):
     user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="snippet_practices")
-    snippet = models.ForeignKey('Snippet', on_delete=models.CASCADE, related_name="snippet_practices")
+    snippet = models.ForeignKey(Snippet, on_delete=models.CASCADE, related_name="snippet_practices")
     
     # FSRS attributes
     card_id = models.BigIntegerField(null=True, blank=True)
