@@ -5,16 +5,22 @@
     <h1 class="mb-8 text-3xl font-bold">YouTube Channel Videos</h1>
     
     <form method="get" class="mb-8">
-        <div class="flex items-center">
-            <input type="text" 
-                   name="channel_id" 
-                   value="{{ channel_id|default:'' }}" 
-                   placeholder="Enter YouTube Channel ID"
-                   class="flex-1 px-4 py-2 border rounded-l"
-                   required>
-            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-r hover:bg-blue-600">
-                Load Videos
-            </button>
+        <div class="flex flex-col space-y-4">
+            <div class="flex items-center">
+                <span class="px-4 py-2 bg-gray-100 border rounded-l">@</span>
+                <input type="text" 
+                       name="channel_id" 
+                       value="{{ channel_id|default:'' }}" 
+                       placeholder="Enter YouTube channel username"
+                       class="flex-1 px-4 py-2 border-t border-b"
+                       required>
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-r hover:bg-blue-600">
+                    Load Videos
+                </button>
+            </div>
+            <div class="text-sm text-gray-600">
+                <p>Enter the channel's username (e.g., GoogleDevelopers)</p>
+            </div>
         </div>
     </form>
 
