@@ -52,7 +52,7 @@
                                 {% endif %}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <a href="#" class="text-blue-600 hover:text-blue-900">View Details</a>
+                                <a href="{% url 'video_details' video.youtube_id %}" class="text-blue-600 hover:text-blue-900">View Details</a>
                             </td>
                         </tr>
                     {% endfor %}

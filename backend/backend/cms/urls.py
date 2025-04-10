@@ -7,4 +7,5 @@ urlpatterns = [
     path('review/', views.review_videos, name='review_videos'),
     path('update-statuses/', views.update_video_statuses, name='update_video_statuses'),
     path('videos/', views.list_all_videos, name='list_all_videos'),
+    path('videos/<str:youtube_id>/', views.video_details, name='video_details'),
 ]

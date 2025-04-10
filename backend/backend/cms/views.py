@@ -200,3 +200,30 @@ def list_all_videos(request):
     }
     
     return render(request, 'list_all_videos.html', context)
+
+def video_details(request, youtube_id):
+    """View to show details of a specific video"""
+    try:
+        video = Video.objects.get(youtube_id=youtube_id)
+        
+        # Get available languages if not already set
+        if not video.available_subtitle_languages:
+            try:
+                available_languages = YouTubeTranscriptApi.list_transcripts(video.youtube_id)
+                video.available_subtitle_languages = [lang.language_code for lang in available_languages]
+                video.save()
+            except Exception:
+                video.available_subtitle_languages = []
+                video.save()
+        
+        # Get snippet count
+        snippet_count = video.snippets.count()
+        
+        context = {
+            'video': video,
+            'snippet_count': snippet_count
+        }
+        
+        return render(request, 'video_details.html', context)
+    except Video.DoesNotExist:
+        return render(request, '404.html', {'message': 'Video not found'}, status=404)

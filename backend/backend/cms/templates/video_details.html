@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Back to list link -->
+        <a href="{% url 'list_all_videos' %}" class="inline-flex items-center text-blue-600 hover:text-blue-900 mb-6">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to All Videos
+        </a>
+
+        <!-- Video ID and Status -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold">Video: {{ video.youtube_id }}</h1>
+            <div>
+                {% if video.status == 'needs_review' %}
+                    <span class="px-3 py-1 text-sm rounded bg-blue-100 text-blue-800">Needs Review</span>
+                {% elif video.status == 'shortlisted' %}
+                    <span class="px-3 py-1 text-sm rounded bg-green-100 text-green-800">Shortlisted</span>
+                {% elif video.status == 'longlisted' %}
+                    <span class="px-3 py-1 text-sm rounded bg-yellow-100 text-yellow-800">Longlisted</span>
+                {% elif video.status == 'not_relevant' %}
+                    <span class="px-3 py-1 text-sm rounded bg-red-100 text-red-800">Not Relevant</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Video Player -->
+        <div class="mb-8">
+            <div class="relative pb-[56.25%]">
+                <iframe 
+                    class="absolute top-0 left-0 w-full h-full"
+                    src="https://www.youtube.com/embed/{{ video.youtube_id }}"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+
+        <!-- Video Info -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Available Subtitles -->
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold mb-4">Available Subtitles</h2>
+                {% if video.available_subtitle_languages %}
+                    <div class="flex flex-wrap gap-2">
+                        {% for lang in video.available_subtitle_languages %}
+                            <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm">
+                                {{ lang }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-600">No subtitles available</p>
+                {% endif %}
+            </div>
+
+            <!-- Snippets -->
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold mb-4">Snippets</h2>
+                <p class="text-gray-600">
+                    This video has {{ snippet_count }} snippet{{ snippet_count|pluralize }}.
+                </p>
+            </div>
+        </div>
+
+        <!-- Comment -->
+        {% if video.comment %}
+            <div class="mt-6 bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold mb-4">Comment</h2>
+                <p class="text-gray-700">{{ video.comment }}</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 
