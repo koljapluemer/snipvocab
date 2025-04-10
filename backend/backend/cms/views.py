@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
 from googleapiclient.discovery import build
-from shared.models import Video, VideoStatus
+from shared.models import Video, VideoStatus, Snippet
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.core.paginator import Paginator
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.formatters import JSONFormatter
+from django.contrib import messages
 
 def cms_home(request):
     """Home view for the CMS"""
@@ -227,3 +228,48 @@ def video_details(request, youtube_id):
         return render(request, 'video_details.html', context)
     except Video.DoesNotExist:
         return render(request, '404.html', {'message': 'Video not found'}, status=404)
+
+@require_http_methods(["POST"])
+def generate_snippets(request, youtube_id):
+    """View to generate snippets for a video using YouTube transcript API"""
+    try:
+        video = Video.objects.get(youtube_id=youtube_id)
+        
+        # Get available languages if not already set
+        if not video.available_subtitle_languages:
+            try:
+                available_languages = YouTubeTranscriptApi.list_transcripts(video.youtube_id)
+                video.available_subtitle_languages = [lang.language_code for lang in available_languages]
+                video.save()
+            except Exception:
+                video.available_subtitle_languages = []
+                video.save()
+        
+        # Try to get the transcript in the first available language
+        if video.available_subtitle_languages:
+            try:
+                transcript = YouTubeTranscriptApi.get_transcript(video.youtube_id, languages=[video.available_subtitle_languages[0]])
+                
+                # Delete existing snippets
+                video.snippets.all().delete()
+                
+                # Create new snippets
+                for index, segment in enumerate(transcript):
+                    Snippet.objects.create(
+                        video=video,
+                        index=index,
+                        content=segment['text'],
+                        start=segment['start'],
+                        duration=segment['duration']
+                    )
+                
+                messages.success(request, f"Successfully generated {len(transcript)} snippets for the video.")
+            except Exception as e:
+                messages.error(request, f"Error generating snippets: {str(e)}")
+        else:
+            messages.error(request, "No subtitles available for this video.")
+            
+    except Video.DoesNotExist:
+        messages.error(request, "Video not found.")
+    
+    return redirect('video_details', youtube_id=youtube_id)

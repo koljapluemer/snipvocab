@@ -5,3 +5,5 @@ djangorestframework_simplejwt==5.5.0
 google-api-python-client==2.166.0
 python-dotenv==1.1.0
 youtube-transcript-api==1.0.3
+openai==1.72.0
+pydantic==2.11.3

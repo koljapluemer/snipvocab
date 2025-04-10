@@ -29,6 +29,7 @@ class Video(models.Model):
     
 
 class Snippet(models.Model):
+    content = models.TextField()
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name="snippets")
     index = models.PositiveIntegerField()  # position of the snippet in the video
     start = models.FloatField()
@@ -51,8 +52,17 @@ class Snippet(models.Model):
 class Word(models.Model):
     original_word = models.CharField(max_length=100, unique=True)
     videos = models.ManyToManyField(Video, related_name="words", blank=True)
-    meanings = models.JSONField(default=list)
     occurs_in_snippets = models.ManyToManyField(Snippet, related_name="words", blank=True)
 
     def __str__(self):
         return self.original_word
+
+
+class Meaning(models.Model):
+    word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name="meanings")
+    en = models.TextField()
+    snippet_context = models.ForeignKey(Snippet, on_delete=models.CASCADE, related_name="meanings", null=True, blank=True)
+    creation_method = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.word.original_word} - {self.meaning}"
