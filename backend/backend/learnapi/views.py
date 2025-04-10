@@ -5,8 +5,49 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.exceptions import NotFound
 from shared.models import Video, Language, Snippet, Word, VideoStatus
 import logging
+import re
+from difflib import SequenceMatcher
 
 logger = logging.getLogger(__name__)
+
+def normalize_meaning(meaning: str) -> str:
+    """Normalize a meaning by removing parentheses and converting to lowercase."""
+    # Remove everything in parentheses
+    meaning = re.sub(r'\([^)]*\)', '', meaning)
+    # Remove extra whitespace and convert to lowercase
+    return meaning.strip().lower()
+
+def are_meanings_similar(meaning1: str, meaning2: str) -> bool:
+    """Check if two meanings are similar based on the given criteria."""
+    # Get normalized versions
+    norm1 = normalize_meaning(meaning1)
+    norm2 = normalize_meaning(meaning2)
+    
+    # If they're exactly the same after normalization, they're duplicates
+    if norm1 == norm2:
+        return True
+        
+    # If they differ by only one character (Levenshtein distance of 1)
+    if len(norm1) == len(norm2):
+        differences = sum(1 for a, b in zip(norm1, norm2) if a != b)
+        if differences <= 1:
+            return True
+            
+    # If they're very similar (90% or more)
+    similarity = SequenceMatcher(None, norm1, norm2).ratio()
+    if similarity >= 0.9:
+        return True
+        
+    return False
+
+def deduplicate_meanings(meanings: list) -> list:
+    """Remove duplicate meanings based on similarity criteria."""
+    unique_meanings = []
+    for meaning in meanings:
+        # Check if this meaning is similar to any we've already added
+        if not any(are_meanings_similar(meaning, existing) for existing in unique_meanings):
+            unique_meanings.append(meaning)
+    return unique_meanings
 
 class VideoListView(generics.ListAPIView):
     renderer_classes = [JSONRenderer]
@@ -56,16 +97,17 @@ class SnippetDetailsView(generics.RetrieveAPIView):
             words = Word.objects.filter(occurs_in_snippets=snippet)
             
             # Transform words to match frontend interface
-            transformed_words = [
-                {
+            transformed_words = []
+            for word in words:
+                # Get all meanings for this word
+                meanings = [meaning.en for meaning in word.meanings.all()]
+                # Deduplicate meanings
+                unique_meanings = deduplicate_meanings(meanings)
+                # Create word object with deduplicated meanings
+                transformed_words.append({
                     'original_word': word.original_word,
-                    'meanings': [
-                        {'en': meaning.en}
-                        for meaning in word.meanings.all()
-                    ]
-                }
-                for word in words
-            ]
+                    'meanings': [{'en': meaning} for meaning in unique_meanings]
+                })
             
             # Transform snippet to match frontend interface
             response_data = {
