@@ -16,6 +16,14 @@ export interface Snippet {
     index: number;
 }
 
+export interface SnippetDetails {
+  start_time: number;
+  end_time: number;
+  video_id: string;
+  index: number;
+  words: Word[];
+}
+
 
 export const FlashCardButtons = {
   again: 'Again',

@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
-from shared.models import Language, Video, Snippet, Word, VideoStatus
+from shared.models import Language, Video, Snippet, Word, VideoStatus, Meaning
 from .models import UserProfile, VideoProgress, VocabPractice, SnippetPractice
 import json
 
@@ -41,11 +41,17 @@ class LearnApiTests(TestCase):
         
         # Create test word
         self.word = Word.objects.create(
-            original_word='test',
-            meanings=['meaning1', 'meaning2']
+            original_word='test'
         )
         self.word.occurs_in_snippets.add(self.snippet)
         self.word.videos.add(self.video)
+        
+        # Create test meaning
+        self.meaning = Meaning.objects.create(
+            word=self.word,
+            en='test meaning',
+            creation_method='manual'
+        )
 
     def test_video_list_view(self):
         """Test the video list view returns only live video IDs"""
@@ -73,73 +79,61 @@ class LearnApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['index'], 1)
-        self.assertEqual(response.data[0]['start'], 0.0)
-        self.assertEqual(response.data[0]['duration'], 5.0)
+        self.assertEqual(response.data[0]['start_time'], -1)  # start - 1
+        self.assertEqual(response.data[0]['end_time'], 6)     # start + duration + 1
         
         # Test with non-existent video
         url = reverse('video-snippets', kwargs={'youtube_id': 'nonexistent'})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_snippet_words_view(self):
-        """Test the snippet words view"""
-        # Test with existing video and snippet
-        url = reverse('snippet-words', kwargs={
+    def test_snippet_details_view(self):
+        """Test the snippet details view"""
+        url = reverse('snippet-details', kwargs={
             'youtube_id': 'test123',
-            'snippet_index': 1
+            'index': 1
         })
         response = self.client.get(url)
+        
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['original_word'], 'test')
-        self.assertEqual(response.data[0]['meanings'], ['meaning1', 'meaning2'])
-        
-        # Test with non-existent video
-        url = reverse('snippet-words', kwargs={
-            'youtube_id': 'nonexistent',
-            'snippet_index': 1
-        })
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        
-        # Test with non-existent snippet
-        url = reverse('snippet-words', kwargs={
-            'youtube_id': 'test123',
-            'snippet_index': 999
-        })
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-class VideoListViewTest(TestCase):
-    def setUp(self):
-        self.client = APIClient()
-        self.video = Video.objects.create(
-            youtube_id='test123',
-            title='Test Video',
-            status=VideoStatus.LIVE
-        )
-        self.snippet = Snippet.objects.create(
-            video=self.video,
-            index=0,
-            start_time=0.0,
-            end_time=10.0
-        )
-
-    def test_get_video_snippets(self):
-        url = reverse('video-snippets', kwargs={'youtube_id': 'test123'})
-        response = self.client.get(url)
-        
-        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         
-        self.assertEqual(len(data), 1)
-        snippet = data[0]
-        self.assertEqual(snippet['video_id'], 'test123')
-        self.assertEqual(snippet['index'], 0)
-        self.assertEqual(snippet['start_time'], 0.0)
-        self.assertEqual(snippet['end_time'], 10.0)
+        # Check snippet details
+        self.assertEqual(data['video_id'], 'test123')
+        self.assertEqual(data['index'], 1)
+        self.assertEqual(data['start_time'], -1)  # start - 1
+        self.assertEqual(data['end_time'], 6)     # start + duration + 1
+        
+        # Check words
+        self.assertEqual(len(data['words']), 1)
+        word = data['words'][0]
+        self.assertEqual(word['original_word'], 'test')
+        self.assertEqual(len(word['meanings']), 1)
+        self.assertEqual(word['meanings'][0]['en'], 'test meaning')
 
-    def test_get_video_snippets_not_found(self):
-        url = reverse('video-snippets', kwargs={'youtube_id': 'nonexistent'})
+    def test_snippet_details_not_found_video(self):
+        """Test getting details for a non-existent video"""
+        url = reverse('snippet-details', kwargs={
+            'youtube_id': 'nonexistent',
+            'index': 1
+        })
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_snippet_details_not_found_snippet(self):
+        """Test getting details for a non-existent snippet index"""
+        url = reverse('snippet-details', kwargs={
+            'youtube_id': 'test123',
+            'index': 999
+        })
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_snippet_details_non_live_video(self):
+        """Test getting details for a non-live video"""
+        url = reverse('snippet-details', kwargs={
+            'youtube_id': 'test456',
+            'index': 1
+        })
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
