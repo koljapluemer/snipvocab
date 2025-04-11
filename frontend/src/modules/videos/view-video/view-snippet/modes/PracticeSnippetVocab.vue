@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { Snippet, WordFlashCard } from '@/shared/types/domainTypes'
+import type { FlashCardStack, Snippet, WordFlashCard } from '@/shared/types/domainTypes'
+import { LearningEventType } from '@/shared/types/domainTypes'
 import { getSnippetDueWords } from '@/modules/backend-communication/api'
+import { shuffleArray } from '@/shared/utils/listUtils';
 
 const props = defineProps<{
   snippet: Snippet
@@ -11,25 +13,24 @@ const emit = defineEmits<{
   (e: 'practice-completed'): void
 }>()
 
-const dueWords = ref<WordFlashCard[]>([])
+const cardStack = ref<FlashCardStack>([])
 const isLoading = ref(true)
 const error = ref<string | null>(null)
 
 // Current practice state
-const currentIndex = ref(-1)
+const currentCard = ref<WordFlashCard | null>(null)
 const isRevealed = ref(false)
-const shuffledWords = ref<WordFlashCard[]>([])
 
 const fetchDueWords = async () => {
   try {
     isLoading.value = true
     error.value = null
-    dueWords.value = await getSnippetDueWords(props.snippet.videoId, props.snippet.index)
-    console.log('dueWords', dueWords.value)
+    cardStack.value = await getSnippetDueWords(props.snippet.videoId, props.snippet.index)
+    console.log('dueWords', cardStack.value)
     // Shuffle the words
-    shuffledWords.value = [...dueWords.value].sort(() => Math.random() - 0.5)
-    if (shuffledWords.value.length > 0) {
-      currentIndex.value = 0
+    cardStack.value = shuffleArray(cardStack.value)
+    if (cardStack.value.length > 0) {
+      currentCard.value = cardStack.value[0]
     }
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Failed to fetch due words'
@@ -43,13 +44,19 @@ const reveal = () => {
 }
 
 const nextCard = () => {
-  if (currentIndex.value < shuffledWords.value.length - 1) {
-    currentIndex.value++
+  const currentIndex = cardStack.value.indexOf(currentCard.value!)
+  if (currentIndex < cardStack.value.length - 1) {
+    currentCard.value = cardStack.value[currentIndex + 1]
     isRevealed.value = false
   } else {
     // We've gone through all cards
     emit('practice-completed')
   }
+}
+
+const scoreCurrentCard = (eventType: LearningEventType) => {
+  console.log('scoring card', currentCard.value, eventType)
+  nextCard()
 }
 
 onMounted(() => {
@@ -67,38 +74,40 @@ onMounted(() => {
       {{ error }}
     </div>
 
-    <div v-else-if="shuffledWords.length === 0" class="alert alert-info">
+    <div v-else-if="cardStack.length === 0" class="alert alert-info">
       No words to practice in this snippet.
     </div>
 
-    <div v-else-if="currentIndex >= 0" class="card bg-base-100 shadow-xl">
+    <div v-else-if="currentCard" class="card bg-base-100 shadow-xl">
       <div class="card-body">
         <!-- Word -->
         <h2 class="card-title text-4xl">
-          {{ shuffledWords[currentIndex].originalWord }}
+          {{ currentCard.originalWord }}
         </h2>
 
         <!-- Meanings (hidden until revealed) -->
-        <div v-if="isRevealed" class="mt-4 space-y-2">
-          <div v-for="meaning in shuffledWords[currentIndex].meanings" 
-               :key="meaning.en"
-               class="p-2 bg-base-200 rounded">
+        <div v-if="isRevealed || currentCard.isNew" class="mt-4 space-y-2">
+          <div v-for="meaning in currentCard.meanings" :key="meaning.en" class="p-2 bg-base-200 rounded">
             {{ meaning.en }}
           </div>
         </div>
 
         <!-- Action Buttons -->
-        <div class="card-actions justify-end mt-4">
-          <button v-if="!isRevealed" 
-                  @click="reveal" 
-                  class="btn btn-primary">
-            Reveal
-          </button>
-          <div v-else class="flex gap-2">
-            <button @click="nextCard" class="btn btn-error">Again</button>
-            <button @click="nextCard" class="btn btn-warning">Hard</button>
-            <button @click="nextCard" class="btn btn-success">Good</button>
-            <button @click="nextCard" class="btn btn-accent">Easy</button>
+        <div class="card-actions  mt-4">
+          <div class="flex gap-2" v-if="currentCard.isNew">
+            <button @click="scoreCurrentCard(LearningEventType.HARD)" class="btn btn-warning">Seems Hard</button>
+            <button @click="scoreCurrentCard(LearningEventType.GOOD)" class="btn btn-success">Seems Easy</button>
+          </div>
+          <div class="flex gap-2" v-else>
+            <button v-if="!isRevealed" @click="reveal" class="btn btn-primary">
+              Reveal
+            </button>
+            <div v-else>
+              <button @click="scoreCurrentCard(LearningEventType.AGAIN)" class="btn btn-error">Again</button>
+              <button @click="scoreCurrentCard(LearningEventType.HARD)" class="btn btn-warning">Hard</button>
+              <button @click="scoreCurrentCard(LearningEventType.GOOD)" class="btn btn-success">Good</button>
+              <button @click="scoreCurrentCard(LearningEventType.EASY)" class="btn btn-accent">Easy</button>
+            </div>
           </div>
         </div>
       </div>

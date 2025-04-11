@@ -16,6 +16,8 @@ export interface WordFlashCard extends Word {
   isBlacklisted: boolean;
 }
 
+export type FlashCardStack = WordFlashCard[]
+
 export interface Snippet {
     videoId: string;
     index: number;
@@ -31,13 +33,10 @@ export interface SnippetDetails {
   words: Word[];
 }
 
+export enum LearningEventType {
+  AGAIN,
+  HARD,
+  GOOD,
+  EASY
+}
 
-export const FlashCardButtons = {
-  again: 'Again',
-  hard: 'Hard',
-  good: 'Good',
-  easy: 'Easy',
-  seen: 'I Will Remember'
-} as const
-
-export type FlashCardButtonLabel = keyof typeof FlashCardButtons
