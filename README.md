@@ -36,3 +36,23 @@
   - although some stuff may have its own internal types, especially `frontend/src/modules/backend-communication/api.ts`
 - backend is all about `backend/backend/shared/models.py`
   - however, learning-specific stuff (not yet used) is defined in `backend/backend/learnapi/models.py`
+
+
+
+### Deployment
+
+#### Backend
+
+
+```
+git push heroku main
+heroku run python backend/manage.py migrate
+```
+
+...and log:
+
+
+```
+heroku logs --tail --app snipvocab-backend
+
+```

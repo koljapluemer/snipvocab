@@ -33,7 +33,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG', default=False)
 
 
-ALLOWED_HOSTS = ['https://snipvocab-backend-4991c989741a.herokuapp.com', 'snipvocab-backend-4991c989741a.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'https://snipvocab-backend-4991c989741a.herokuapp.com', 'snipvocab-backend-4991c989741a.herokuapp.com']
 
 
 # Application definition
