@@ -1,56 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Video Management{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50">
+  </head>
+  <body class="bg-gray-50">
     <nav class="bg-white shadow-sm">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <a href="{% url 'cms_home' %}" class="text-xl font-bold text-gray-800">Video Management</a>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <a href="{% url 'cms_home' %}" 
-                       class="text-gray-600 hover:text-gray-900 {% if request.resolver_match.url_name == 'cms_home' %}text-blue-600{% endif %}">
-                        Home
-                    </a>
-                    <a href="{% url 'import_channel_videos' %}" 
-                       class="text-gray-600 hover:text-gray-900 {% if request.resolver_match.url_name == 'import_channel_videos' %}text-blue-600{% endif %}">
-                        Import Channel
-                    </a>
-                    <a href="{% url 'bulk_import_videos' %}" 
-                       class="text-gray-600 hover:text-gray-900 {% if request.resolver_match.url_name == 'bulk_import_videos' %}text-blue-600{% endif %}">
-                        Bulk Import
-                    </a>
-                    <a href="{% url 'review_videos' %}" 
-                       class="text-gray-600 hover:text-gray-900 {% if request.resolver_match.url_name == 'review_videos' %}text-blue-600{% endif %}">
-                        Review Videos
-                    </a>
-                    <a href="{% url 'actions' %}" 
-                       class="text-gray-600 hover:text-gray-900 {% if request.resolver_match.url_name == 'actions' %}text-blue-600{% endif %}">
-                        Actions
-                    </a>
-                    <a href="{% url 'list_all_videos' %}" 
-                       class="text-gray-600 hover:text-gray-900 {% if request.resolver_match.url_name == 'list_all_videos' %}text-blue-600{% endif %}">
-                        All Videos
-                    </a>
-                </div>
-            </div>
+      <div class="container mx-auto px-4">
+        <div class="flex justify-center gap-3 h-16">
+          <a
+            href="{% url 'cms_home' %}"
+            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+          >
+            Home
+          </a>
+          <a
+            href="{% url 'import_channel_videos' %}"
+            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+          >
+            Import Channel
+          </a>
+          <a
+            href="{% url 'import_playlist_videos' %}"
+            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+          >
+            Import Playlist
+          </a>
+          <a
+            href="{% url 'bulk_import_videos' %}"
+            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+          >
+            Bulk Import
+          </a>
+          <a
+            href="{% url 'review_videos' %}"
+            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+          >
+            Review Videos
+          </a>
+          <a
+            href="{% url 'list_all_videos' %}"
+            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+          >
+            All Videos
+          </a>
+          <a
+            href="{% url 'actions' %}"
+            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+          >
+            Actions
+          </a>
         </div>
+      </div>
     </nav>
 
-    <main class="min-h-screen">
-        {% block content %}{% endblock %}
-    </main>
+    <main class="min-h-screen">{% block content %}{% endblock %}</main>
 
     <footer class="bg-white border-t mt-8 py-4">
-        <div class="container mx-auto px-4 text-center text-gray-600">
-            <p>Video Management System &copy; {% now "Y" %}</p>
-        </div>
+      <div class="container mx-auto px-4 text-center text-gray-600">
+        <p>Video Management System &copy; {% now "Y" %}</p>
+      </div>
     </footer>
-</body>
+  </body>
 </html>

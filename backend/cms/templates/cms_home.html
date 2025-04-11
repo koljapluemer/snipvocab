@@ -16,6 +16,15 @@
             </div>
             
             <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold mb-4">Import Playlist Videos</h2>
+                <p class="text-gray-600 mb-4">Import videos from any YouTube playlist to start the review process.</p>
+                <a href="{% url 'import_playlist_videos' %}" 
+                   class="inline-block px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600">
+                    Import Playlist
+                </a>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow-sm">
                 <h2 class="text-xl font-semibold mb-4">Bulk Import Videos</h2>
                 <p class="text-gray-600 mb-4">Import multiple videos at once by pasting their YouTube links.</p>
                 <a href="{% url 'bulk_import_videos' %}" 
@@ -39,6 +48,15 @@
                 <a href="{% url 'list_all_videos' %}" 
                    class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                     View All Videos
+                </a>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold mb-4">Bulk Actions</h2>
+                <p class="text-gray-600 mb-4">Perform bulk operations on videos, such as checking subtitles or generating snippets.</p>
+                <a href="{% url 'actions' %}" 
+                   class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                    View Actions
                 </a>
             </div>
         </div>

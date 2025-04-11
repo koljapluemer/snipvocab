@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.cms_home, name='cms_home'),
     path('actions/', views.actions, name='actions'),
     path('import/', views.import_channel_videos, name='import_channel_videos'),
+    path('import-playlist/', views.import_playlist_videos, name='import_playlist_videos'),
     path('bulk-import/', views.bulk_import_videos, name='bulk_import_videos'),
     path('review/', views.review_videos, name='review_videos'),
     path('update-statuses/', views.update_video_statuses, name='update_video_statuses'),
