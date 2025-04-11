@@ -77,17 +77,14 @@ CORS_ALLOWED_ORIGINS = [
     "https://snipvocab-ar.netlify.app",  # Production frontend
 ]
 
+if DEBUG:
+    CORS_ALLOWED_ORIGINS.extend([
+        "http://127.0.0.1:5173",  # Additional dev server
+    ])
+
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
-]
-
+# Allow all headers and methods
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
@@ -98,6 +95,15 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+]
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
 ]
 
 # Add these additional CORS settings

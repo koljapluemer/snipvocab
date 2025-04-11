@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { FlashCardStack, Snippet, WordFlashCard } from '@/shared/types/domainTypes'
+import type { FlashCardStack, LearningEvent, Snippet, WordFlashCard } from '@/shared/types/domainTypes'
 import { LearningEventType } from '@/shared/types/domainTypes'
-import { getSnippetDueWords } from '@/modules/backend-communication/api'
+import { getSnippetDueWords, sendLearningEvents } from '@/modules/backend-communication/api'
 import { shuffleArray } from '@/shared/utils/listUtils';
 
 const props = defineProps<{
@@ -16,6 +16,7 @@ const emit = defineEmits<{
 const cardStack = ref<FlashCardStack>([])
 const isLoading = ref(true)
 const error = ref<string | null>(null)
+const learningEvents = ref<LearningEvent[]>([])
 
 // Current practice state
 const currentCard = ref<WordFlashCard | null>(null)
@@ -50,12 +51,18 @@ const nextCard = () => {
     isRevealed.value = false
   } else {
     // We've gone through all cards
+    console.log('sending learning events', learningEvents.value)
+    sendLearningEvents(learningEvents.value)
     emit('practice-completed')
   }
 }
 
 const scoreCurrentCard = (eventType: LearningEventType) => {
-  console.log('scoring card', currentCard.value, eventType)
+  learningEvents.value.push({
+    eventType,
+    timestamp: Date.now(),
+    originalWord: currentCard.value!.originalWord
+  })
   nextCard()
 }
 

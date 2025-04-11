@@ -1,4 +1,4 @@
-import type { Snippet, Word, SnippetDetails, WordFlashCard } from '@/shared/types/domainTypes'
+import type { Snippet, Word, SnippetDetails, WordFlashCard, LearningEvent } from '@/shared/types/domainTypes'
 import axios from 'axios'
 import type { AxiosResponse } from 'axios'
 
@@ -96,5 +96,21 @@ export const getSnippetDueWords = async (youtubeId: string, index: number): Prom
   } catch (error) {
     console.error('Error fetching due words:', error)
     throw new Error('Failed to fetch due words. Please try again later.')
+  }
+}
+
+export interface LearningEventResponse {
+  originalWord: string
+  success: boolean
+  newDueDate?: string
+  error?: string
+}
+
+export const sendLearningEvents = async (events: LearningEvent[]): Promise<LearningEventResponse[]> => {
+  try {
+    return await handleApiResponse(api.post('/learn/learning-events/', events))
+  } catch (error) {
+    console.error('Error sending learning events:', error)
+    throw new Error('Failed to save learning progress. Please try again later.')
   }
 }

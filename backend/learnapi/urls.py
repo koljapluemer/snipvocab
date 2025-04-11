@@ -8,4 +8,6 @@ urlpatterns = [
     path('videos/<str:youtube_id>/snippets/<int:index>/', SnippetDetailsView.as_view(), name='snippet-details'),
     path('videos/<str:youtube_id>/snippets/<int:index>/due-words/', SnippetDueWordsView.as_view(), name='snippet-due-words'),
     path('learning-events/', LearningEventsView.as_view(), name='learning-events'),
+    # admin
+    path('admin/', admin.site.urls),
 ]
