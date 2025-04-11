@@ -150,22 +150,16 @@ def import_channel_videos(request):
 
 def review_videos(request):
     """View to review videos that need review"""
-    # Get videos that need review
-    videos = Video.objects.filter(status=VideoStatus.NEEDS_REVIEW)
-    
-    # Get page number from request
-    page_number = request.GET.get('page', 1)
-    
-    # Paginate the videos
-    paginator = Paginator(videos, 20)
-    page_obj = paginator.get_page(page_number)
+    # Get first 50 videos that need review, ordered by youtube_id
+    videos = Video.objects.filter(status=VideoStatus.NEEDS_REVIEW).order_by('youtube_id')[:50]
     
     # Process each video to get available languages
-    for video in page_obj:
+    for video in videos:
         try:
             # Get available languages using youtube_transcript_api
             available_languages = YouTubeTranscriptApi.list_transcripts(video.youtube_id)
             video.available_subtitle_languages = [lang.language_code for lang in available_languages]
+            video.checked_for_arabic_subtitles = True
             video.save()
         except Exception as e:
             # If no transcripts available, set empty list
@@ -173,8 +167,7 @@ def review_videos(request):
             video.save()
     
     context = {
-        'videos': page_obj,
-        'page_obj': page_obj
+        'videos': videos
     }
     
     return render(request, 'review_videos.html', context)
@@ -684,4 +677,43 @@ def generate_translations_for_all_snippets(request):
 
 def actions(request):
     """View for the actions page"""
-    return render(request, 'actions.html')
+    unchecked_count = Video.objects.filter(checked_for_arabic_subtitles=False).count()
+    context = {
+        'unchecked_count': unchecked_count
+    }
+    return render(request, 'actions.html', context)
+
+@require_http_methods(["POST"])
+def bulk_check_subtitles(request):
+    """View to check subtitles for all videos that haven't been checked yet"""
+    try:
+        # Get all videos that haven't been checked for Arabic subtitles
+        videos = Video.objects.filter(checked_for_arabic_subtitles=False)
+        processed_count = 0
+        error_count = 0
+        error_videos = []
+        
+        for video in videos:
+            try:
+                # Get available languages
+                available_languages = YouTubeTranscriptApi.list_transcripts(video.youtube_id)
+                video.available_subtitle_languages = [lang.language_code for lang in available_languages]
+                video.checked_for_arabic_subtitles = True
+                video.save()
+                processed_count += 1
+            except Exception as e:
+                error_count += 1
+                error_videos.append(f"{video.youtube_id} (Error: {str(e)})")
+                # Mark as checked even if there was an error to avoid retrying
+                video.checked_for_arabic_subtitles = True
+                video.save()
+        
+        if processed_count > 0:
+            messages.success(request, f"Successfully checked subtitles for {processed_count} videos.")
+        if error_count > 0:
+            messages.error(request, f"Failed to check subtitles for {error_count} videos: {', '.join(error_videos)}")
+            
+    except Exception as e:
+        messages.error(request, f"Error checking subtitles: {str(e)}")
+    
+    return redirect('actions')

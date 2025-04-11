@@ -94,30 +94,6 @@
                 </a>
             </div>
         </form>
-
-        {% if page_obj.paginator.num_pages > 1 %}
-            <div class="mt-8 flex justify-center">
-                <div class="flex space-x-2">
-                    {% if page_obj.has_previous %}
-                        <a href="?page={{ page_obj.previous_page_number }}" 
-                           class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
-                            Previous
-                        </a>
-                    {% endif %}
-                    
-                    <span class="px-4 py-2">
-                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                    </span>
-                    
-                    {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}" 
-                           class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
-                            Next
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-        {% endif %}
     {% else %}
         <div class="text-center py-8">
             <p class="text-gray-600">No videos need review at the moment.</p>

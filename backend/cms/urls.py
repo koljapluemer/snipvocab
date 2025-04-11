@@ -17,4 +17,5 @@ urlpatterns = [
     path('mark-videos-without-arabic/', views.mark_videos_without_arabic_subtitles, name='mark_videos_without_arabic'),
     path('generate-snippets-all/', views.generate_snippets_for_all_shortlisted, name='generate_snippets_all'),
     path('generate-translations-all/', views.generate_translations_for_all_snippets, name='generate_translations_all'),
+    path('bulk-check-subtitles/', views.bulk_check_subtitles, name='bulk_check_subtitles'),
 ]
