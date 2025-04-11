@@ -16,9 +16,12 @@
           </div>
           <div v-else>
             <div class="flex justify-between items-center">
-
-              <button v-if="snippets.length > 0" @click="startPractice" class="btn btn-primary">
-                Start Practice
+              <button 
+                v-if="snippets.length > 0"
+                @click="startPractice" 
+                class="btn btn-primary"
+              >
+                {{ hasUnratedSnippets ? 'Practice Next Snippet' : 'Start Practice' }}
               </button>
             </div>
 
@@ -75,6 +78,22 @@ const currentSnippetIndex = ref<number | null>(null);
 const isLoading = ref(true);
 const error = ref<string | null>(null);
 
+// Find the first unrated snippet index
+const firstUnratedSnippetIndex = computed(() => {
+  if (snippets.value.length === 0 || enrichedSnippets.value.length !== snippets.value.length) {
+    return 0; // If no data yet, default to first snippet
+  }
+  return enrichedSnippets.value.findIndex(snippet => snippet.perceivedDifficulty === null) ?? 0;
+});
+
+// Check if all snippets are rated
+const hasUnratedSnippets = computed(() => {
+  if (snippets.value.length === 0 || enrichedSnippets.value.length !== snippets.value.length) {
+    return true; // If no data yet, assume there are unrated snippets
+  }
+  return enrichedSnippets.value.some(snippet => snippet.perceivedDifficulty === null);
+});
+
 // Compute total duration from the last snippet's end time
 const totalDuration = computed(() => {
   if (snippets.value.length === 0) return 0;
@@ -105,7 +124,7 @@ const formatTime = (seconds: number): string => {
 
 const startPractice = () => {
   if (snippets.value.length > 0) {
-    currentSnippetIndex.value = 0;
+    currentSnippetIndex.value = firstUnratedSnippetIndex.value;
   }
 };
 
