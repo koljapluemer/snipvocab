@@ -10,6 +10,23 @@
 |  ![User Story 2 illustration](doc/img/us2.png)   | 2  | As a learner, I want to learn to communicate in Arabic                            |
 | ![User Story 3 illustration](doc/img/us3.png)  | 3  | As a learner, I want to integrate the app into my long-term Arabic study routine  |
 
+## The Project
+
+### Vue Frontend
+
+![screenshot frontend](/doc/img/frontend.png)
+
+- Learner facing web-app, see [documentation](/frontend/README.md)
+
+### CMS
+
+![screenshots cms](/doc/img/cms.png)
+
+- Admin-only (maybe later for translators) "CMS" to decide which videos to translate when and how
+
+### Django REST backend
+
+*...to be documented*
 
 ## Running it
 
