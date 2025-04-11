@@ -30,6 +30,10 @@
                        class="text-gray-600 hover:text-gray-900 {% if request.resolver_match.url_name == 'review_videos' %}text-blue-600{% endif %}">
                         Review Videos
                     </a>
+                    <a href="{% url 'actions' %}" 
+                       class="text-gray-600 hover:text-gray-900 {% if request.resolver_match.url_name == 'actions' %}text-blue-600{% endif %}">
+                        Actions
+                    </a>
                     <a href="{% url 'list_all_videos' %}" 
                        class="text-gray-600 hover:text-gray-900 {% if request.resolver_match.url_name == 'list_all_videos' %}text-blue-600{% endif %}">
                         All Videos

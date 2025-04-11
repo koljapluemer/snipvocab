@@ -19,14 +19,6 @@
             {% endfor %}
         </div>
     </div>
-
-    <!-- Mark Videos Without Arabic Button -->
-    <form method="post" action="{% url 'mark_videos_without_arabic' %}" class="mb-6">
-        {% csrf_token %}
-        <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
-            Mark Videos Without Arabic Subtitles as Not Relevant
-        </button>
-    </form>
     
     {% if videos %}
         <div class="bg-white shadow-sm rounded-lg overflow-hidden">

@@ -12,7 +12,8 @@ class VideoStatus(models.TextChoices):
     BLACKLISTED = 'blacklisted', 'Blacklisted'
 
 class Video(models.Model):
-    available_subtitle_languages = models.JSONField(default=list)
+    available_subtitle_languages = models.JSONField(default=list, blank=True, null=True)
+    checked_for_arabic_subtitles = models.BooleanField(default=False)
     youtube_id = models.CharField(max_length=20, unique=True)
     
     status = models.CharField(max_length=100, choices=VideoStatus.choices, default=VideoStatus.NEEDS_REVIEW)

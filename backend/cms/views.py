@@ -531,3 +531,157 @@ def mark_videos_without_arabic_subtitles(request):
         messages.error(request, f"Error marking videos: {str(e)}")
     
     return redirect('list_all_videos')
+
+@require_http_methods(["POST"])
+def generate_snippets_for_all_shortlisted(request):
+    """View to generate snippets for all shortlisted videos"""
+    try:
+        # Get all shortlisted videos
+        videos = Video.objects.filter(status=VideoStatus.SHORTLISTED)
+        processed_count = 0
+        error_count = 0
+        no_arabic_count = 0
+        error_videos = []
+        
+        for video in videos:
+            try:
+                # Get available languages if not already set
+                if not video.available_subtitle_languages:
+                    try:
+                        available_languages = YouTubeTranscriptApi.list_transcripts(video.youtube_id)
+                        video.available_subtitle_languages = [lang.language_code for lang in available_languages]
+                        video.save()
+                    except Exception:
+                        video.available_subtitle_languages = []
+                        video.save()
+                
+                # Try to get the transcript in Arabic
+                arabic_transcripts = []
+                if video.available_subtitle_languages:
+                    try:
+                        transcript_list = YouTubeTranscriptApi.list_transcripts(video.youtube_id)
+                        
+                        for transcript in transcript_list:
+                            if transcript.language_code.startswith('ar'):
+                                arabic_transcripts.append(transcript)
+                        
+                        if arabic_transcripts:
+                            # Prefer manual transcripts over auto-generated ones
+                            manual_transcript = next((t for t in arabic_transcripts if not t.is_generated), None)
+                            transcript = manual_transcript or arabic_transcripts[0]
+                            
+                            transcript_data = transcript.fetch()
+                            
+                            # Delete existing snippets
+                            video.snippets.all().delete()
+                            
+                            # Create new snippets
+                            for index, segment in enumerate(transcript_data):
+                                Snippet.objects.create(
+                                    video=video,
+                                    index=index,
+                                    content=segment.text,
+                                    start=segment.start,
+                                    duration=segment.duration
+                                )
+                            
+                            # Update video status
+                            video.status = VideoStatus.SNIPPETS_GENERATED
+                            video.save()
+                            processed_count += 1
+                        else:
+                            no_arabic_count += 1
+                            error_videos.append(f"{video.youtube_id} (No Arabic subtitles)")
+                    except Exception as e:
+                        error_count += 1
+                        error_videos.append(f"{video.youtube_id} (Error: {str(e)})")
+                else:
+                    no_arabic_count += 1
+                    error_videos.append(f"{video.youtube_id} (No subtitles available)")
+            except Exception as e:
+                error_count += 1
+                error_videos.append(f"{video.youtube_id} (Error: {str(e)})")
+        
+        if processed_count > 0:
+            messages.success(request, f"Successfully generated snippets for {processed_count} videos.")
+        if no_arabic_count > 0:
+            messages.warning(request, f"{no_arabic_count} videos had no Arabic subtitles available.")
+        if error_count > 0:
+            messages.error(request, f"Failed to process {error_count} videos: {', '.join(error_videos)}")
+            
+    except Exception as e:
+        messages.error(request, f"Error processing videos: {str(e)}")
+    
+    return redirect('list_all_videos')
+
+@require_http_methods(["POST"])
+def generate_translations_for_all_snippets(request):
+    """View to generate translations for all videos with snippets"""
+    try:
+        # Get all videos with snippets generated
+        videos = Video.objects.filter(status=VideoStatus.SNIPPETS_GENERATED)
+        processed_count = 0
+        error_count = 0
+        no_snippets_count = 0
+        error_videos = []
+        
+        for video in videos:
+            try:
+                if not video.snippets.exists():
+                    no_snippets_count += 1
+                    error_videos.append(f"{video.youtube_id} (No snippets found)")
+                    continue
+                
+                # Delete existing words and meanings
+                Word.objects.filter(videos=video).delete()
+                
+                # Process each snippet
+                total_words = 0
+                for snippet in video.snippets.all():
+                    # Get words and translations for this snippet
+                    words_with_translations = get_words_with_translations(snippet.content)
+                    total_words += len(words_with_translations)
+                    
+                    # Process each word
+                    for word_entry in words_with_translations:
+                        # Get or create the word
+                        word_obj, _ = Word.objects.get_or_create(
+                            original_word=word_entry.word
+                        )
+                        
+                        # Add the video and snippet to the word's relationships
+                        word_obj.videos.add(video)
+                        word_obj.occurs_in_snippets.add(snippet)
+                        
+                        # Create the meaning
+                        Meaning.objects.create(
+                            word=word_obj,
+                            en=word_entry.meaning,
+                            snippet_context=snippet,
+                            creation_method="ChatGPT 1.0.0"
+                        )
+                
+                # Update video status
+                video.status = VideoStatus.SNIPPETS_AND_TRANSLATIONS_GENERATED
+                video.save()
+                processed_count += 1
+                messages.success(request, f"Video {video.youtube_id}: Generated {total_words} words and translations.")
+            except Exception as e:
+                error_count += 1
+                error_videos.append(f"{video.youtube_id} (Error: {str(e)})")
+        
+        if processed_count > 0:
+            messages.success(request, f"Successfully processed {processed_count} videos.")
+        if no_snippets_count > 0:
+            messages.warning(request, f"{no_snippets_count} videos had no snippets available.")
+        if error_count > 0:
+            messages.error(request, f"Failed to process {error_count} videos: {', '.join(error_videos)}")
+            
+    except Exception as e:
+        messages.error(request, f"Error processing videos: {str(e)}")
+    
+    return redirect('list_all_videos')
+
+def actions(request):
+    """View for the actions page"""
+    return render(request, 'actions.html')

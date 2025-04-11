@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('', views.cms_home, name='cms_home'),
+    path('actions/', views.actions, name='actions'),
     path('import/', views.import_channel_videos, name='import_channel_videos'),
     path('bulk-import/', views.bulk_import_videos, name='bulk_import_videos'),
     path('review/', views.review_videos, name='review_videos'),
@@ -14,4 +15,6 @@ urlpatterns = [
     path('videos/<str:youtube_id>/publish/', views.publish_video, name='publish_video'),
     path('videos/<str:youtube_id>/reset-snippets/', views.reset_snippets, name='reset_snippets'),
     path('mark-videos-without-arabic/', views.mark_videos_without_arabic_subtitles, name='mark_videos_without_arabic'),
+    path('generate-snippets-all/', views.generate_snippets_for_all_shortlisted, name='generate_snippets_all'),
+    path('generate-translations-all/', views.generate_translations_for_all_snippets, name='generate_translations_all'),
 ]
