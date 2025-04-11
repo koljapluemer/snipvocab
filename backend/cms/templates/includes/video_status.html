@@ -1,15 +1,15 @@
 {% if video.status == 'needs_review' %}
-    <span class="px-3 py-1 text-sm rounded bg-blue-100 text-blue-800">Needs Review</span>
+    <span class="px-3 py-1 text-sm rounded bg-yellow-100 text-yellow-800">Needs Review</span>
 {% elif video.status == 'shortlisted' %}
     <span class="px-3 py-1 text-sm rounded bg-green-100 text-green-800">Shortlisted</span>
 {% elif video.status == 'longlisted' %}
-    <span class="px-3 py-1 text-sm rounded bg-yellow-100 text-yellow-800">Longlisted</span>
+    <span class="px-3 py-1 text-sm rounded bg-purple-100 text-purple-800">Longlisted</span>
 {% elif video.status == 'not_relevant' %}
     <span class="px-3 py-1 text-sm rounded bg-red-100 text-red-800">Not Relevant</span>
 {% elif video.status == 'snippets_generated' %}
     <span class="px-3 py-1 text-sm rounded bg-indigo-100 text-indigo-800">Snippets Generated</span>
 {% elif video.status == 'snippets_and_translations_generated' %}
-    <span class="px-3 py-1 text-sm rounded bg-purple-100 text-purple-800">Snippets and Translations Generated</span>
+    <span class="px-3 py-1 text-sm rounded bg-pink-100 text-pink-800">Snippets & Translations</span>
 {% elif video.status == 'live' %}
     <span class="px-3 py-1 text-sm rounded bg-emerald-100 text-emerald-800">Live</span>
 {% elif video.status == 'blacklisted' %}

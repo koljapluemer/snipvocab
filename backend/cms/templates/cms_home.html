@@ -45,7 +45,7 @@
         
         <div class="bg-white p-6 rounded-lg shadow-sm">
             <h2 class="text-xl font-semibold mb-4">Quick Stats</h2>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="text-center">
                     <div class="text-3xl font-bold text-blue-600">{{ total_videos }}</div>
                     <div class="text-gray-600">Total Videos</div>
@@ -65,6 +65,22 @@
                 <div class="text-center">
                     <div class="text-3xl font-bold text-red-600">{{ not_relevant }}</div>
                     <div class="text-gray-600">Not Relevant</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-indigo-600">{{ snippets_generated }}</div>
+                    <div class="text-gray-600">Snippets Generated</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-pink-600">{{ snippets_and_translations_generated }}</div>
+                    <div class="text-gray-600">Snippets & Translations</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-emerald-600">{{ live }}</div>
+                    <div class="text-gray-600">Live</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-gray-600">{{ blacklisted }}</div>
+                    <div class="text-gray-600">Blacklisted</div>
                 </div>
             </div>
         </div>

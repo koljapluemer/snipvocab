@@ -52,13 +52,21 @@ def cms_home(request):
     shortlisted = Video.objects.filter(status=VideoStatus.SHORTLISTED).count()
     longlisted = Video.objects.filter(status=VideoStatus.LONGLISTED).count()
     not_relevant = Video.objects.filter(status=VideoStatus.NOT_RELEVANT).count()
+    snippets_generated = Video.objects.filter(status=VideoStatus.SNIPPETS_GENERATED).count()
+    snippets_and_translations_generated = Video.objects.filter(status=VideoStatus.SNIPPETS_AND_TRANSLATIONS_GENERATED).count()
+    live = Video.objects.filter(status=VideoStatus.LIVE).count()
+    blacklisted = Video.objects.filter(status=VideoStatus.BLACKLISTED).count()
     
     context = {
         'total_videos': total_videos,
         'needs_review': needs_review,
         'shortlisted': shortlisted,
         'longlisted': longlisted,
-        'not_relevant': not_relevant
+        'not_relevant': not_relevant,
+        'snippets_generated': snippets_generated,
+        'snippets_and_translations_generated': snippets_and_translations_generated,
+        'live': live,
+        'blacklisted': blacklisted
     }
     
     return render(request, 'cms_home.html', context)
@@ -116,16 +124,22 @@ def import_channel_videos(request):
                 # Get existing video IDs from our database
                 existing_video_ids = set(Video.objects.values_list('youtube_id', flat=True))
                 
+                # Get the most recent video ID we've processed for this channel
+                last_processed_video = Video.objects.filter(
+                    comment__startswith=f'Imported from channel {username}'
+                ).order_by('-youtube_id').first()
+                
                 # Get videos from the playlist
                 next_page_token = None
                 imported_count = 0
                 remaining_videos = total_videos
                 batch_size = 100
+                found_last_processed = False
                 
                 while True:
                     playlist_response = youtube.playlistItems().list(
                         playlistId=uploads_playlist_id,
-                        part='contentDetails',
+                        part='contentDetails,snippet',
                         maxResults=50,
                         pageToken=next_page_token
                     ).execute()
@@ -133,10 +147,24 @@ def import_channel_videos(request):
                     # Create Video objects for each video that doesn't exist yet
                     for item in playlist_response['items']:
                         video_id = item['contentDetails']['videoId']
+                        
+                        # If we've found our last processed video, we can start importing
+                        if last_processed_video and video_id == last_processed_video.youtube_id:
+                            found_last_processed = True
+                            continue
+                            
+                        # If we haven't found our last processed video yet, skip
+                        if last_processed_video and not found_last_processed:
+                            continue
+                        
                         if video_id not in existing_video_ids:
                             Video.objects.get_or_create(
                                 youtube_id=video_id,
-                                defaults={'status': VideoStatus.NEEDS_REVIEW, 'comment': f'Imported from channel {username}'}
+                                defaults={
+                                    'status': VideoStatus.NEEDS_REVIEW,
+                                    'comment': f'Imported from channel {username}',
+                                    'youtube_title': item['snippet']['title']
+                                }
                             )
                             imported_count += 1
                             existing_video_ids.add(video_id)
@@ -530,7 +558,7 @@ def bulk_import_videos(request):
             try:
                 Video.objects.get_or_create(
                     youtube_id=video_id,
-                    defaults={'status': VideoStatus.NEEDS_REVIEW}
+                    defaults={'status': VideoStatus.NEEDS_REVIEW, 'comment': 'bulk imported'}
                 )
                 successful_imports += 1
             except Exception as e:
