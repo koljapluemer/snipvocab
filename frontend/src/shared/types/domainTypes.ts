@@ -40,3 +40,8 @@ export enum LearningEventType {
   EASY
 }
 
+export interface LearningEvent {
+  eventType: LearningEventType;
+  timestamp: number;
+  originalWord: string;
+}

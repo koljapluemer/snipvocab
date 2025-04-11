@@ -196,3 +196,102 @@ class SnippetDueWordsView(generics.ListAPIView):
             logger.error(f"Unexpected error in SnippetDueWordsView: {str(e)}")
             raise
 
+class LearningEventsView(generics.CreateAPIView):
+    renderer_classes = [JSONRenderer]
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request, *args, **kwargs):
+        learning_events = request.data
+        logger.info(f"Received {len(learning_events)} learning events for user {request.user.id}")
+        
+        if not isinstance(learning_events, list):
+            logger.error("Invalid request: learning_events must be a list")
+            return Response({"error": "learning_events must be a list"}, status=400)
+            
+        scheduler = Scheduler()
+        results = []
+        
+        for event in learning_events:
+            try:
+                # Convert frontend LearningEventType to FSRS Rating
+                # Rating.Again (==1) forgot the card
+                # Rating.Hard (==2) remembered the card with serious difficulty
+                # Rating.Good (==3) remembered the card after a hesitation
+                # Rating.Easy (==4) remembered the card easily
+                rating_map = {
+                    0: 1,  # AGAIN -> Rating.Again
+                    1: 2,  # HARD -> Rating.Hard
+                    2: 3,  # GOOD -> Rating.Good
+                    3: 4   # EASY -> Rating.Easy
+                }
+                
+                rating = rating_map.get(event.get('eventType'))
+                if rating is None:
+                    logger.error(f"Invalid event type: {event.get('eventType')}")
+                    continue
+                    
+                original_word = event.get('originalWord')
+                if not original_word:
+                    logger.error("Missing originalWord in learning event")
+                    continue
+                    
+                # Get or create the word
+                try:
+                    word = Word.objects.get(original_word=original_word)
+                except Word.DoesNotExist:
+                    logger.error(f"Word not found: {original_word}")
+                    continue
+                    
+                # Get or create the vocab practice
+                vocab_practice, created = VocabPractice.objects.get_or_create(
+                    user=request.user,
+                    word=word,
+                    defaults={
+                        'state': 'Learning',
+                        'last_review': datetime.fromtimestamp(event.get('timestamp', 0) / 1000, timezone.utc)
+                    }
+                )
+                
+                # Create FSRS card from existing practice or new card
+                if created:
+                    card = Card()
+                else:
+                    card = Card(
+                        state=vocab_practice.state,
+                        step=vocab_practice.step,
+                        stability=vocab_practice.stability,
+                        difficulty=vocab_practice.difficulty,
+                        due=vocab_practice.due,
+                        last_review=vocab_practice.last_review
+                    )
+                
+                # Review the card with FSRS
+                card, review_log = scheduler.review_card(card, rating)
+                
+                # Update the vocab practice with new FSRS values
+                vocab_practice.state = card.state
+                vocab_practice.step = card.step
+                vocab_practice.stability = card.stability
+                vocab_practice.difficulty = card.difficulty
+                vocab_practice.due = card.due
+                vocab_practice.last_review = review_log.review_datetime
+                vocab_practice.save()
+                
+                results.append({
+                    'originalWord': original_word,
+                    'success': True,
+                    'newDueDate': card.due.isoformat() if card.due else None
+                })
+                
+                logger.info(f"Processed learning event for word {original_word} with rating {rating}")
+                
+            except Exception as e:
+                logger.error(f"Error processing learning event: {str(e)}")
+                results.append({
+                    'originalWord': event.get('originalWord'),
+                    'success': False,
+                    'error': str(e)
+                })
+        
+        return Response(results)
+
