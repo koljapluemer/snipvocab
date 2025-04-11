@@ -44,9 +44,21 @@
 #### Backend
 
 
+##### Create Fixture
+
+```
+python manage.py dumpdata shared --indent 2 > fixture.json
+```
+
+...and on heroku
+
+```
+
+##### Rest of Deploy
+
 ```
 git push heroku main
-heroku run python backend/manage.py migrate
+heroku run python manage.py migrate
 ```
 
 ...and log:
@@ -54,5 +66,4 @@ heroku run python backend/manage.py migrate
 
 ```
 heroku logs --tail --app snipvocab-backend
-
 ```

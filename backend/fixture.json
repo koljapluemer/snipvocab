@@ -1,0 +1,1348 @@
+[
+{
+  "model": "shared.video",
+  "pk": 1,
+  "fields": {
+    "available_subtitle_languages": [
+      "ar"
+    ],
+    "youtube_id": "1Ov6_gO7unY",
+    "status": "live",
+    "comment": "",
+    "youtube_title": null
+  }
+},
+{
+  "model": "shared.snippet",
+  "pk": 1,
+  "fields": {
+    "content": "♪ الرنة أحسن من البشر ♪",
+    "video": 1,
+    "index": 0,
+    "start": 5.428,
+    "duration": 3.577
+  }
+},
+{
+  "model": "shared.snippet",
+  "pk": 2,
+  "fields": {
+    "content": "♪ سفن مش كلامي معقول؟ ♪",
+    "video": 1,
+    "index": 1,
+    "start": 9.52,
+    "duration": 3.291
+  }
+},
+{
+  "model": "shared.snippet",
+  "pk": 3,
+  "fields": {
+    "content": "♪ الناس بتغشك تضربك وتهشك ♪",
+    "video": 1,
+    "index": 2,
+    "start": 13.005,
+    "duration": 3.029
+  }
+},
+{
+  "model": "shared.snippet",
+  "pk": 4,
+  "fields": {
+    "content": "♪ هم خاينين وأنت ابن أصول ♪",
+    "video": 1,
+    "index": 3,
+    "start": 16.16,
+    "duration": 2.548
+  }
+},
+{
+  "model": "shared.snippet",
+  "pk": 5,
+  "fields": {
+    "content": "أها، شكراً يا صاحبي",
+    "video": 1,
+    "index": 4,
+    "start": 18.834,
+    "duration": 1.691
+  }
+},
+{
+  "model": "shared.snippet",
+  "pk": 6,
+  "fields": {
+    "content": "♪ وريحتهم أحسن من الرنات ♪",
+    "video": 1,
+    "index": 5,
+    "start": 20.822,
+    "duration": 3.509
+  }
+},
+{
+  "model": "shared.snippet",
+  "pk": 7,
+  "fields": {
+    "content": "♪ سفن مش الحق يتقال؟ ♪",
+    "video": 1,
+    "index": 6,
+    "start": 24.33,
+    "duration": 3.658
+  }
+},
+{
+  "model": "shared.snippet",
+  "pk": 8,
+  "fields": {
+    "content": "♪ أكيد طبعاً كلهم ♪",
+    "video": 1,
+    "index": 7,
+    "start": 27.99,
+    "duration": 2.01
+  }
+},
+{
+  "model": "shared.snippet",
+  "pk": 9,
+  "fields": {
+    "content": "♪ بس أنت مش زيهم ♪",
+    "video": 1,
+    "index": 8,
+    "start": 30.0,
+    "duration": 1.988
+  }
+},
+{
+  "model": "shared.snippet",
+  "pk": 10,
+  "fields": {
+    "content": "♪ فاهمني ♪",
+    "video": 1,
+    "index": 9,
+    "start": 32.24,
+    "duration": 1.074
+  }
+},
+{
+  "model": "shared.snippet",
+  "pk": 11,
+  "fields": {
+    "content": "♪ تصبح على خير ♪",
+    "video": 1,
+    "index": 10,
+    "start": 33.31,
+    "duration": 2.14
+  }
+},
+{
+  "model": "shared.snippet",
+  "pk": 12,
+  "fields": {
+    "content": "♪ على خير ♪",
+    "video": 1,
+    "index": 11,
+    "start": 35.45,
+    "duration": 2.207
+  }
+},
+{
+  "model": "shared.snippet",
+  "pk": 13,
+  "fields": {
+    "content": "♪ واتدفى كويس ♪",
+    "video": 1,
+    "index": 12,
+    "start": 37.874,
+    "duration": 3.794
+  }
+},
+{
+  "model": "shared.snippet",
+  "pk": 14,
+  "fields": {
+    "content": "♪ ونام ♪",
+    "video": 1,
+    "index": 13,
+    "start": 42.0,
+    "duration": 3.005
+  }
+},
+{
+  "model": "shared.snippet",
+  "pk": 15,
+  "fields": {
+    "content": "برافو عليك",
+    "video": 1,
+    "index": 14,
+    "start": 45.01,
+    "duration": 1.652
+  }
+},
+{
+  "model": "shared.snippet",
+  "pk": 16,
+  "fields": {
+    "content": "أنتي تاني؟",
+    "video": 1,
+    "index": 15,
+    "start": 47.028,
+    "duration": 1.486
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 1,
+  "fields": {
+    "original_word": "الرنة",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      1
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 2,
+  "fields": {
+    "original_word": "رنة",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      1,
+      6
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 3,
+  "fields": {
+    "original_word": "أحسن",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      1,
+      6
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 4,
+  "fields": {
+    "original_word": "بشر",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      1
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 5,
+  "fields": {
+    "original_word": "سفن",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      2,
+      7
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 6,
+  "fields": {
+    "original_word": "كلامي",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      2
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 7,
+  "fields": {
+    "original_word": "مستحيل",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      2
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 8,
+  "fields": {
+    "original_word": "معقول",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      2
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 9,
+  "fields": {
+    "original_word": "الناس",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      3
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 10,
+  "fields": {
+    "original_word": "بتغشك",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      3
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 11,
+  "fields": {
+    "original_word": "تضربك",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      3
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 12,
+  "fields": {
+    "original_word": "تهشك",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      3
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 13,
+  "fields": {
+    "original_word": "خاينين",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      4
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 14,
+  "fields": {
+    "original_word": "خائن",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      4
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 15,
+  "fields": {
+    "original_word": "ابن",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      4
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 16,
+  "fields": {
+    "original_word": "أصول",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      4
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 17,
+  "fields": {
+    "original_word": "أها",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      5
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 18,
+  "fields": {
+    "original_word": "شكراً",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      5
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 19,
+  "fields": {
+    "original_word": "صاحبي",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      5
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 20,
+  "fields": {
+    "original_word": "صاحب",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      5
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 21,
+  "fields": {
+    "original_word": "وريحتهم",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      6
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 22,
+  "fields": {
+    "original_word": "ريح",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      6
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 23,
+  "fields": {
+    "original_word": "من",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      6
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 24,
+  "fields": {
+    "original_word": "الرنات",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      6
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 25,
+  "fields": {
+    "original_word": "رنات",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      6
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 26,
+  "fields": {
+    "original_word": "مش",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      7,
+      9
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 27,
+  "fields": {
+    "original_word": "الحق",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      7
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 28,
+  "fields": {
+    "original_word": "يتقال",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      7
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 29,
+  "fields": {
+    "original_word": "أكيد",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      8
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 30,
+  "fields": {
+    "original_word": "طبعاً",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      8
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 31,
+  "fields": {
+    "original_word": "كلهم",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      8
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 32,
+  "fields": {
+    "original_word": "كل",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      8
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 33,
+  "fields": {
+    "original_word": "أنت",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      9
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 34,
+  "fields": {
+    "original_word": "زيهم",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      9
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 35,
+  "fields": {
+    "original_word": "فاهمني",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      10
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 36,
+  "fields": {
+    "original_word": "فاهم",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      10
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 37,
+  "fields": {
+    "original_word": "تصبح",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      11
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 38,
+  "fields": {
+    "original_word": "على",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      11,
+      12
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 39,
+  "fields": {
+    "original_word": "خير",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      11,
+      12
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 40,
+  "fields": {
+    "original_word": "واتدفى",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      13
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 41,
+  "fields": {
+    "original_word": "كويس",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      13
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 42,
+  "fields": {
+    "original_word": "ونام",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      14
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 43,
+  "fields": {
+    "original_word": "نام",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      14
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 44,
+  "fields": {
+    "original_word": "برافو",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      15
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 45,
+  "fields": {
+    "original_word": "عليك",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      15
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 46,
+  "fields": {
+    "original_word": "أنتي",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      16
+    ]
+  }
+},
+{
+  "model": "shared.word",
+  "pk": 47,
+  "fields": {
+    "original_word": "تاني",
+    "videos": [
+      1
+    ],
+    "occurs_in_snippets": [
+      16
+    ]
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 1,
+  "fields": {
+    "word": 1,
+    "en": "the ring (sound)",
+    "snippet_context": 1,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 2,
+  "fields": {
+    "word": 2,
+    "en": "ring (sound)",
+    "snippet_context": 1,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 3,
+  "fields": {
+    "word": 3,
+    "en": "better",
+    "snippet_context": 1,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 4,
+  "fields": {
+    "word": 4,
+    "en": "human (humans)",
+    "snippet_context": 1,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 5,
+  "fields": {
+    "word": 5,
+    "en": "ships",
+    "snippet_context": 2,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 6,
+  "fields": {
+    "word": 6,
+    "en": "my speech",
+    "snippet_context": 2,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 7,
+  "fields": {
+    "word": 7,
+    "en": "impossible",
+    "snippet_context": 2,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 8,
+  "fields": {
+    "word": 8,
+    "en": "reasonable",
+    "snippet_context": 2,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 9,
+  "fields": {
+    "word": 9,
+    "en": "people",
+    "snippet_context": 3,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 10,
+  "fields": {
+    "word": 10,
+    "en": "deceive you",
+    "snippet_context": 3,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 11,
+  "fields": {
+    "word": 11,
+    "en": "hit you",
+    "snippet_context": 3,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 12,
+  "fields": {
+    "word": 12,
+    "en": "hurt you",
+    "snippet_context": 3,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 13,
+  "fields": {
+    "word": 13,
+    "en": "traitors",
+    "snippet_context": 4,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 14,
+  "fields": {
+    "word": 14,
+    "en": "traitor",
+    "snippet_context": 4,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 15,
+  "fields": {
+    "word": 15,
+    "en": "son",
+    "snippet_context": 4,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 16,
+  "fields": {
+    "word": 16,
+    "en": "origins",
+    "snippet_context": 4,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 17,
+  "fields": {
+    "word": 17,
+    "en": "Ah",
+    "snippet_context": 5,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 18,
+  "fields": {
+    "word": 18,
+    "en": "Thank you",
+    "snippet_context": 5,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 19,
+  "fields": {
+    "word": 19,
+    "en": "My friend",
+    "snippet_context": 5,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 20,
+  "fields": {
+    "word": 20,
+    "en": "Friend",
+    "snippet_context": 5,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 21,
+  "fields": {
+    "word": 21,
+    "en": "their scent",
+    "snippet_context": 6,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 22,
+  "fields": {
+    "word": 22,
+    "en": "scent",
+    "snippet_context": 6,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 23,
+  "fields": {
+    "word": 3,
+    "en": "better",
+    "snippet_context": 6,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 24,
+  "fields": {
+    "word": 23,
+    "en": "than",
+    "snippet_context": 6,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 25,
+  "fields": {
+    "word": 24,
+    "en": "the tones",
+    "snippet_context": 6,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 26,
+  "fields": {
+    "word": 25,
+    "en": "tones",
+    "snippet_context": 6,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 27,
+  "fields": {
+    "word": 2,
+    "en": "tone",
+    "snippet_context": 6,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 28,
+  "fields": {
+    "word": 5,
+    "en": "ships",
+    "snippet_context": 7,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 29,
+  "fields": {
+    "word": 26,
+    "en": "not",
+    "snippet_context": 7,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 30,
+  "fields": {
+    "word": 27,
+    "en": "truth",
+    "snippet_context": 7,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 31,
+  "fields": {
+    "word": 28,
+    "en": "is said",
+    "snippet_context": 7,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 32,
+  "fields": {
+    "word": 29,
+    "en": "Sure",
+    "snippet_context": 8,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 33,
+  "fields": {
+    "word": 30,
+    "en": "Of course",
+    "snippet_context": 8,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 34,
+  "fields": {
+    "word": 31,
+    "en": "All of them",
+    "snippet_context": 8,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 35,
+  "fields": {
+    "word": 32,
+    "en": "All",
+    "snippet_context": 8,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 36,
+  "fields": {
+    "word": 33,
+    "en": "You",
+    "snippet_context": 9,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 37,
+  "fields": {
+    "word": 26,
+    "en": "Not",
+    "snippet_context": 9,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 38,
+  "fields": {
+    "word": 34,
+    "en": "Like them",
+    "snippet_context": 9,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 39,
+  "fields": {
+    "word": 35,
+    "en": "understand me",
+    "snippet_context": 10,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 40,
+  "fields": {
+    "word": 36,
+    "en": "understanding (base form)",
+    "snippet_context": 10,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 41,
+  "fields": {
+    "word": 37,
+    "en": "become",
+    "snippet_context": 11,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 42,
+  "fields": {
+    "word": 37,
+    "en": "goodbye",
+    "snippet_context": 11,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 43,
+  "fields": {
+    "word": 38,
+    "en": "on",
+    "snippet_context": 11,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 44,
+  "fields": {
+    "word": 39,
+    "en": "goodness",
+    "snippet_context": 11,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 45,
+  "fields": {
+    "word": 38,
+    "en": "on",
+    "snippet_context": 12,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 46,
+  "fields": {
+    "word": 39,
+    "en": "good",
+    "snippet_context": 12,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 47,
+  "fields": {
+    "word": 40,
+    "en": "and it was warm",
+    "snippet_context": 13,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 48,
+  "fields": {
+    "word": 41,
+    "en": "good",
+    "snippet_context": 13,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 49,
+  "fields": {
+    "word": 42,
+    "en": "and he slept",
+    "snippet_context": 14,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 50,
+  "fields": {
+    "word": 43,
+    "en": "to sleep",
+    "snippet_context": 14,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 51,
+  "fields": {
+    "word": 44,
+    "en": "Bravo",
+    "snippet_context": 15,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 52,
+  "fields": {
+    "word": 45,
+    "en": "to you",
+    "snippet_context": 15,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 53,
+  "fields": {
+    "word": 46,
+    "en": "You (feminine singular)",
+    "snippet_context": 16,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+},
+{
+  "model": "shared.meaning",
+  "pk": 54,
+  "fields": {
+    "word": 47,
+    "en": "Again",
+    "snippet_context": 16,
+    "creation_method": "ChatGPT 1.0.0"
+  }
+}
+]
