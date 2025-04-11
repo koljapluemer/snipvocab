@@ -67,6 +67,7 @@ def import_channel_videos(request):
     """View to import videos from a YouTube channel"""
     if request.method == 'POST':
         username = request.POST.get('channel_id')
+        import_all = request.POST.get('import_all') == 'true'
         context = {'channel_id': username}
         
         if username:
@@ -103,9 +104,23 @@ def import_channel_videos(request):
                     
                 uploads_playlist_id = channel_response['items'][0]['contentDetails']['relatedPlaylists']['uploads']
                 
-                # Get all videos from the uploads playlist
+                # Get total number of videos in the playlist
+                playlist_response = youtube.playlists().list(
+                    id=uploads_playlist_id,
+                    part='contentDetails',
+                    maxResults=1
+                ).execute()
+                
+                total_videos = playlist_response['items'][0]['contentDetails']['itemCount']
+                
+                # Get existing video IDs from our database
+                existing_video_ids = set(Video.objects.values_list('youtube_id', flat=True))
+                
+                # Get videos from the playlist
                 next_page_token = None
-                total_videos = 0
+                imported_count = 0
+                remaining_videos = total_videos
+                batch_size = 100
                 
                 while True:
                     playlist_response = youtube.playlistItems().list(
@@ -115,21 +130,34 @@ def import_channel_videos(request):
                         pageToken=next_page_token
                     ).execute()
                     
-                    # Create Video objects for each video
+                    # Create Video objects for each video that doesn't exist yet
                     for item in playlist_response['items']:
                         video_id = item['contentDetails']['videoId']
-                        # Only create if it doesn't exist
-                        Video.objects.get_or_create(
-                            youtube_id=video_id,
-                            defaults={'status': VideoStatus.NEEDS_REVIEW, 'comment': f'Imported from channel {username}'}
-                        )
-                        total_videos += 1
+                        if video_id not in existing_video_ids:
+                            Video.objects.get_or_create(
+                                youtube_id=video_id,
+                                defaults={'status': VideoStatus.NEEDS_REVIEW, 'comment': f'Imported from channel {username}'}
+                            )
+                            imported_count += 1
+                            existing_video_ids.add(video_id)
+                        
+                        remaining_videos -= 1
+                        
+                        # If we've imported the batch size and not importing all, stop
+                        if imported_count >= batch_size and not import_all:
+                            break
                     
+                    if not import_all and imported_count >= batch_size:
+                        break
+                        
                     next_page_token = playlist_response.get('nextPageToken')
                     if not next_page_token:
                         break
                 
-                context['success'] = f"Successfully imported {total_videos} videos from channel @{username}"
+                context['success'] = f"Successfully imported {imported_count} new videos from channel @{username}"
+                if remaining_videos > 0:
+                    context['remaining'] = remaining_videos
+                    context['channel_id'] = username
                 
             except Exception as e:
                 error_message = str(e)

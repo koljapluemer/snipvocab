@@ -21,7 +21,7 @@ class Video(models.Model):
     youtube_title = models.CharField(max_length=500, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.youtube_id} ({self.language.code})"
+        return f"{self.youtube_id}"
     
 
 class Snippet(models.Model):
