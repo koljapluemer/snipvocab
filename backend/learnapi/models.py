@@ -22,8 +22,6 @@ class VocabPractice(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="vocab_practices")
     word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name="vocab_practices")
     
-    # Store fsrs Card attributes exactly as defined.
-    card_id = models.BigIntegerField(null=True, blank=True)
     state = models.CharField(max_length=20, default="Learning")  # We'll store the name of the state.
     step = models.IntegerField(null=True, blank=True)
     stability = models.FloatField(null=True, blank=True)

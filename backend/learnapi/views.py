@@ -6,12 +6,13 @@ from rest_framework.exceptions import NotFound
 from shared.models import Video, Snippet, Word, VideoStatus
 from .models import VocabPractice, SnippetPractice
 from django.contrib.auth.models import User
-from fsrs import Scheduler, Card, Rating
+from fsrs import Scheduler, Card, Rating, State
 from datetime import datetime, timezone
 import logging
 import re
 from difflib import SequenceMatcher
 from rest_framework.permissions import IsAuthenticated
+import traceback
 
 logger = logging.getLogger(__name__)
 
@@ -218,18 +219,20 @@ class LearningEventsView(generics.CreateAPIView):
                 # Rating.Hard (==2) remembered the card with serious difficulty
                 # Rating.Good (==3) remembered the card after a hesitation
                 # Rating.Easy (==4) remembered the card easily
+                event_type = event.get('eventType')
                 rating_map = {
-                    0: 1,  # AGAIN -> Rating.Again
-                    1: 2,  # HARD -> Rating.Hard
-                    2: 3,  # GOOD -> Rating.Good
-                    3: 4   # EASY -> Rating.Easy
+                    'AGAIN': Rating.Again,
+                    'HARD': Rating.Hard,
+                    'GOOD': Rating.Good,
+                    'EASY': Rating.Easy
                 }
                 
-                rating = rating_map.get(event.get('eventType'))
-                if rating is None:
-                    logger.error(f"Invalid event type: {event.get('eventType')}")
+                if event_type not in rating_map:
+                    logger.error(f"Invalid event type: {event_type}")
                     continue
                     
+                rating = rating_map[event_type]
+                
                 original_word = event.get('originalWord')
                 if not original_word:
                     logger.error("Missing originalWord in learning event")
@@ -255,26 +258,52 @@ class LearningEventsView(generics.CreateAPIView):
                 # Create FSRS card from existing practice or new card
                 if created:
                     card = Card()
+                    vocab_practice.state = card.state.name if card.state else "Learning"
+                    vocab_practice.step = card.step
+                    vocab_practice.stability = card.stability
+                    vocab_practice.difficulty = card.difficulty
+                    vocab_practice.due = card.due
+                    vocab_practice.last_review = card.last_review
+                    vocab_practice.save()
+                    logger.info(f"Created new card for word {original_word}")
                 else:
+                    # Create card from existing practice data
+                    state_map = {
+                        'Learning': State.Learning,
+                        'Review': State.Review,
+                        'Relearning': State.Relearning
+                    }
                     card = Card(
-                        state=vocab_practice.state,
+                        state=state_map.get(vocab_practice.state, State.Learning),
                         step=vocab_practice.step,
                         stability=vocab_practice.stability,
                         difficulty=vocab_practice.difficulty,
                         due=vocab_practice.due,
                         last_review=vocab_practice.last_review
                     )
+                    logger.info(f"Loaded existing card for word {original_word} with state {card.state}, step {card.step}, stability {card.stability}, difficulty {card.difficulty}")
                 
                 # Review the card with FSRS
-                card, review_log = scheduler.review_card(card, rating)
+                try:
+                    logger.debug(f"Reviewing card for word {original_word} with state {card.state}, step {card.step}, stability {card.stability}, difficulty {card.difficulty}")
+                    card, review_log = scheduler.review_card(card, rating)
+                    logger.debug(f"Card review successful. New state: {card.state}, new due date: {card.due}")
+                except Exception as e:
+                    logger.error(f"Error reviewing card for word {original_word}: {str(e)}")
+                    # If the review fails, we'll still save the card with its current state
+                    review_log = None
                 
                 # Update the vocab practice with new FSRS values
-                vocab_practice.state = card.state
+                vocab_practice.state = card.state.name if card.state else "Learning"
                 vocab_practice.step = card.step
                 vocab_practice.stability = card.stability
                 vocab_practice.difficulty = card.difficulty
                 vocab_practice.due = card.due
-                vocab_practice.last_review = review_log.review_datetime
+                # Immediately re-practice wrong answers
+                if rating == Rating.Again:
+                    vocab_practice.due = datetime.now(timezone.utc)
+                if review_log:
+                    vocab_practice.last_review = review_log.review_datetime
                 vocab_practice.save()
                 
                 results.append({
@@ -286,11 +315,12 @@ class LearningEventsView(generics.CreateAPIView):
                 logger.info(f"Processed learning event for word {original_word} with rating {rating}")
                 
             except Exception as e:
-                logger.error(f"Error processing learning event: {str(e)}")
+                logger.error(f"Error processing learning event for word '{event.get('originalWord')}':")
+                logger.error(traceback.format_exc())
                 results.append({
                     'originalWord': event.get('originalWord'),
                     'success': False,
-                    'error': str(e)
+                    'error': f"Error processing learning event: {str(e)}"
                 })
         
         return Response(results)

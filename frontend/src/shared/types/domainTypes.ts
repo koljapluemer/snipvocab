@@ -39,10 +39,10 @@ export interface EnrichedSnippetDetails extends SnippetDetails {
 }
 
 export enum LearningEventType {
-  AGAIN,
-  HARD,
-  GOOD,
-  EASY
+  AGAIN = "AGAIN", 
+  HARD = "HARD",   // Rating.Hard
+  GOOD = "GOOD",   // Rating.Good
+  EASY = "EASY"    // Rating.Easy
 }
 
 export interface LearningEvent {
