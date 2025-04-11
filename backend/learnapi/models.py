@@ -6,18 +6,17 @@ from django.contrib.auth.models import User
 from shared.models import Video, Snippet, Word
 
 
-
 class VideoProgress(models.Model):
-    user_profile = models.ForeignKey(User, on_delete=models.CASCADE, related_name="video_progress")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="video_progress")
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name="progresses")
     # Update last_watched whenever the video is viewed.
     last_watched = models.DateTimeField(default=datetime.datetime.now)
 
     class Meta:
-        unique_together = ('user_profile', 'video')
+        unique_together = ('user', 'video')
 
     def __str__(self):
-        return f"{self.user_profile} - {self.video} last watched on {self.last_watched}"
+        return f"{self.user} - {self.video} last watched on {self.last_watched}"
 
 class VocabPractice(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="vocab_practices")
@@ -45,23 +44,15 @@ class VocabPractice(models.Model):
 
 
 class SnippetPractice(models.Model):
-    user_profile = models.ForeignKey(User, on_delete=models.CASCADE, related_name="snippet_practices")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="snippet_practices")
     snippet = models.ForeignKey(Snippet, on_delete=models.CASCADE, related_name="snippet_practices")
     
-    # FSRS attributes
-    card_id = models.BigIntegerField(null=True, blank=True)
-    state = models.CharField(max_length=20, default="Learning")  # Store state name
-    step = models.IntegerField(null=True, blank=True)
-    stability = models.FloatField(null=True, blank=True)
-    difficulty = models.FloatField(null=True, blank=True)
-    due = models.DateTimeField(null=True, blank=True)
-    last_review = models.DateTimeField(null=True, blank=True)
-
+    perceived_difficulty = models.IntegerField(null=True, blank=True)
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ('user_profile', 'snippet')
+        unique_together = ('user', 'snippet')
 
     def __str__(self):
-        return f"{self.user_profile} - Snippet {self.snippet.index} ({self.snippet.video.youtube_id})"
+        return f"{self.user} - Snippet {self.snippet.index} ({self.snippet.video.youtube_id})"
 
