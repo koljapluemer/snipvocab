@@ -4,19 +4,43 @@
 <div class="container mx-auto px-4 py-8">
     <h1 class="mb-8 text-3xl font-bold">All Videos</h1>
     
-    <!-- Status Filter -->
+    <!-- Filters -->
     <div class="mb-6">
-        <div class="flex flex-wrap gap-2">
-            <a href="{% url 'list_all_videos' %}" 
-               class="px-3 py-1 text-sm rounded {% if not status_filter %}bg-blue-500 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
-                All
-            </a>
-            {% for status_value, status_label in status_choices %}
-                <a href="{% url 'list_all_videos' %}?status={{ status_value }}" 
-                   class="px-3 py-1 text-sm rounded {% if status_filter == status_value %}bg-blue-500 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
-                    {{ status_label }}
+        <div class="flex flex-wrap gap-4">
+            <!-- Status Filter -->
+            <div class="flex flex-wrap gap-2">
+                <a href="{% url 'list_all_videos' %}{% if comment_filter %}?comment={{ comment_filter }}{% endif %}" 
+                   class="px-3 py-1 text-sm rounded {% if not status_filter %}bg-blue-500 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                    All
                 </a>
-            {% endfor %}
+                {% for status_value, status_label in status_choices %}
+                    <a href="{% url 'list_all_videos' %}?status={{ status_value }}{% if comment_filter %}&comment={{ comment_filter }}{% endif %}" 
+                       class="px-3 py-1 text-sm rounded {% if status_filter == status_value %}bg-blue-500 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                        {{ status_label }}
+                    </a>
+                {% endfor %}
+            </div>
+            
+            <!-- Comment Filter -->
+            <form method="get" class="flex items-center gap-2">
+                <input type="text" 
+                       name="comment" 
+                       value="{{ comment_filter }}" 
+                       placeholder="Filter by comment..."
+                       class="px-3 py-1 text-sm border rounded">
+                {% if status_filter %}
+                    <input type="hidden" name="status" value="{{ status_filter }}">
+                {% endif %}
+                <button type="submit" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
+                    Filter
+                </button>
+                {% if comment_filter %}
+                    <a href="{% url 'list_all_videos' %}{% if status_filter %}?status={{ status_filter }}{% endif %}" 
+                       class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
+                        Clear
+                    </a>
+                {% endif %}
+            </form>
         </div>
     </div>
     
@@ -27,6 +51,7 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">YouTube ID</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Comment</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
@@ -43,6 +68,9 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 {% include "includes/video_status.html" %}
                             </td>
+                            <td class="px-6 py-4 text-sm text-gray-500">
+                                {{ video.comment|truncatechars:50 }}
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 <a href="{% url 'video_details' video.youtube_id %}" class="text-blue-600 hover:text-blue-900">View Details</a>
                             </td>
@@ -56,7 +84,7 @@
             <div class="mt-8 flex justify-center">
                 <div class="flex space-x-2">
                     {% if page_obj.has_previous %}
-                        <a href="?page={{ page_obj.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}" 
+                        <a href="?page={{ page_obj.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if comment_filter %}&comment={{ comment_filter }}{% endif %}" 
                            class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
                             Previous
                         </a>
@@ -67,7 +95,7 @@
                     </span>
                     
                     {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}" 
+                        <a href="?page={{ page_obj.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if comment_filter %}&comment={{ comment_filter }}{% endif %}" 
                            class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
                             Next
                         </a>
