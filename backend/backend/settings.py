@@ -102,7 +102,6 @@ CORS_ALLOW_HEADERS = [
 
 # Add these additional CORS settings
 CORS_ALLOW_PRIVATE_NETWORK = True
-CORS_REPLACE_HTTPS_REFERER = True
 CORS_URLS_REGEX = r'^/api/.*$'  # Only allow CORS for API endpoints
 
 ROOT_URLCONF = 'backend.urls'
@@ -158,7 +157,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# Create static directory if it doesn't exist
+os.makedirs(os.path.join(BASE_DIR, 'static'), exist_ok=True)
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # WhiteNoise configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
