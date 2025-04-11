@@ -677,7 +677,11 @@ def generate_translations_for_all_snippets(request):
 
 def actions(request):
     """View for the actions page"""
-    unchecked_count = Video.objects.filter(checked_for_arabic_subtitles=False).count()
+    unchecked_count = Video.objects.filter(
+        checked_for_arabic_subtitles=False
+    ).exclude(
+        status=VideoStatus.NOT_RELEVANT
+    ).count()
     context = {
         'unchecked_count': unchecked_count
     }
@@ -687,8 +691,12 @@ def actions(request):
 def bulk_check_subtitles(request):
     """View to check subtitles for all videos that haven't been checked yet"""
     try:
-        # Get all videos that haven't been checked for Arabic subtitles
-        videos = Video.objects.filter(checked_for_arabic_subtitles=False)
+        # Get all videos that haven't been checked for Arabic subtitles and aren't marked as not relevant
+        videos = Video.objects.filter(
+            checked_for_arabic_subtitles=False
+        ).exclude(
+            status=VideoStatus.NOT_RELEVANT
+        )
         processed_count = 0
         error_count = 0
         error_videos = []
