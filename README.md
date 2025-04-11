@@ -46,12 +46,16 @@
 
 ##### Create Fixture
 
+*because you can't call the youtube api from Heroku, thanks Google*
+
 ```
 python manage.py dumpdata shared --indent 2 > fixture.json
 ```
 
 ...and on heroku
 
+```
+heroku run python manage.py loaddata fixture.json
 ```
 
 ##### Rest of Deploy
