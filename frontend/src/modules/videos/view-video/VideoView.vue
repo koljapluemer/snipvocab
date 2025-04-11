@@ -32,22 +32,29 @@
               </button>
             </div>
             
-            <!-- Snippet List -->
-            <div v-if="snippets.length > 0" class="mt-4">
-              <h3 class="text-lg font-semibold mb-2">Snippets</h3>
-              <div class="space-y-2">
+            <!-- Snippet Timeline -->
+            <div v-if="snippets.length > 0" class="mt-8">
+              <h3 class="text-lg font-semibold mb-4">Snippets Timeline</h3>
+              <div class="relative w-full h-12 bg-base-200 rounded-lg overflow-hidden">
                 <div 
                   v-for="(snippet, index) in snippets" 
                   :key="index"
-                  class="p-2 border rounded hover:bg-base-200 cursor-pointer"
-                >
-                  <div class="flex justify-between">
-                    <span>Snippet {{ index + 1 }}</span>
-                    <span class="text-sm text-gray-500">
-                      {{ formatTime(snippet.startTime) }} - {{ formatTime(snippet.endTime) }}
-                    </span>
-                  </div>
-                </div>
+                  class="absolute h-full cursor-pointer transition-all duration-200 hover:bg-primary/20"
+                  :class="[
+                    index % 2 === 0 ? 'bg-base-300' : 'bg-base-200',
+                    currentSnippetIndex === index ? 'ring-2 ring-primary' : ''
+                  ]"
+                  :style="{
+                    left: `${(snippet.startTime / totalDuration) * 100}%`,
+                    width: `${((snippet.endTime - snippet.startTime) / totalDuration) * 100}%`
+                  }"
+                  :title="`Snippet ${index + 1}: ${formatTime(snippet.startTime)} - ${formatTime(snippet.endTime)}`"
+                  @click="jumpToSnippet(index)"
+                />
+              </div>
+              <div class="flex justify-between mt-2 text-sm text-gray-500">
+                <span>0:00</span>
+                <span>{{ formatTime(totalDuration) }}</span>
               </div>
             </div>
           </div>
@@ -66,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import type { Snippet } from '@/shared/types/domainTypes';
 import { getVideoSnippets } from '@/modules/backend-communication/api';
@@ -78,6 +85,12 @@ const snippets = ref<Snippet[]>([]);
 const currentSnippetIndex = ref<number | null>(null);
 const isLoading = ref(true);
 const error = ref<string | null>(null);
+
+// Compute total duration from the last snippet's end time
+const totalDuration = computed(() => {
+  if (snippets.value.length === 0) return 0;
+  return snippets.value[snippets.value.length - 1].endTime;
+});
 
 const formatTime = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
@@ -95,6 +108,10 @@ const handleNextSnippet = () => {
   if (currentSnippetIndex.value !== null && currentSnippetIndex.value < snippets.value.length - 1) {
     currentSnippetIndex.value++;
   }
+};
+
+const jumpToSnippet = (index: number) => {
+  currentSnippetIndex.value = index;
 };
 
 onMounted(async () => {
