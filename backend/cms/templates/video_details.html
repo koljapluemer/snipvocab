@@ -20,7 +20,7 @@
         </div>
 
         <!-- Video Player -->
-        <div class="mb-8">
+        <div class="mb-8 {% if video.status == 'blacklisted' %}opacity-50{% endif %}">
             <div class="relative pb-[56.25%]">
                 <iframe 
                     class="absolute top-0 left-0 w-full h-full"
@@ -89,6 +89,34 @@
                             {% csrf_token %}
                             <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                                 Reset Snippets
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    {% if video.status != 'blacklisted' %}
+                        <form action="{% url 'blacklist_video' video.youtube_id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded">
+                                Blacklist Video
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    {% if video.status == 'blacklisted' %}
+                        <form action="{% url 'update_video_statuses' %}" method="post" class="flex items-center gap-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="status_{{ video.youtube_id }}" value="needs_review">
+                            <select name="status_{{ video.youtube_id }}" class="border rounded px-3 py-2">
+                                <option value="needs_review">Needs Review</option>
+                                <option value="shortlisted">Shortlisted</option>
+                                <option value="longlisted">Longlisted</option>
+                                <option value="not_relevant">Not Relevant</option>
+                                <option value="snippets_generated">Snippets Generated</option>
+                                <option value="snippets_and_translations_generated">Snippets and Translations Generated</option>
+                                <option value="live">Live</option>
+                            </select>
+                            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                Change Status
                             </button>
                         </form>
                     {% endif %}
