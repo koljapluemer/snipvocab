@@ -184,7 +184,18 @@ def update_video_statuses(request):
         # Get all POST data
         post_data = request.POST
         
-        # Process each video's status and comment
+        # Check for bulk status update
+        bulk_status = post_data.get('bulk_status')
+        if bulk_status:
+            # Get all videos in the current review queue
+            videos = Video.objects.filter(status=VideoStatus.NEEDS_REVIEW).order_by('youtube_id')[:50]
+            for video in videos:
+                video.status = bulk_status
+                video.save()
+            messages.success(request, f"Successfully updated status for all videos to {bulk_status}.")
+            return redirect('review_videos')
+        
+        # Process individual video statuses
         for key, value in post_data.items():
             if key.startswith('status_'):
                 youtube_id = key.replace('status_', '')
