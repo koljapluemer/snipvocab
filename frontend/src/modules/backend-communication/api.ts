@@ -19,6 +19,11 @@ export interface RegisterResponse {
   }
 }
 
+export interface SnippetPracticeResponse {
+  perceived_difficulty: number | null;
+  updated: string;
+}
+
 // Create axios instance with base configuration
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -112,5 +117,39 @@ export const sendLearningEvents = async (events: LearningEvent[]): Promise<Learn
   } catch (error) {
     console.error('Error sending learning events:', error)
     throw new Error('Failed to save learning progress. Please try again later.')
+  }
+}
+
+export const getSnippetPractice = async (youtubeId: string, index: number): Promise<SnippetPracticeResponse> => {
+  try {
+    return await handleApiResponse(api.get(`/learn/videos/${youtubeId}/snippets/${index}/practice/`))
+  } catch (error) {
+    console.error('Error fetching snippet practice:', error)
+    throw new Error('Failed to fetch snippet practice data. Please try again later.')
+  }
+}
+
+export const updateSnippetPractice = async (
+  youtubeId: string, 
+  index: number, 
+  perceivedDifficulty: number
+): Promise<SnippetPracticeResponse> => {
+  try {
+    return await handleApiResponse(api.post(
+      `/learn/videos/${youtubeId}/snippets/${index}/practice/`,
+      { perceived_difficulty: perceivedDifficulty }
+    ))
+  } catch (error) {
+    console.error('Error updating snippet practice:', error)
+    throw new Error('Failed to update snippet practice data. Please try again later.')
+  }
+}
+
+export const getVideoEnrichedSnippets = async (youtubeId: string): Promise<SnippetDetails[]> => {
+  try {
+    return await handleApiResponse(api.get(`/learn/videos/${youtubeId}/enriched-snippets/`))
+  } catch (error) {
+    console.error('Error fetching enriched snippets:', error)
+    throw new Error('Failed to fetch enriched snippets. Please try again later.')
   }
 }
