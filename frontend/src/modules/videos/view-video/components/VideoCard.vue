@@ -21,8 +21,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { getNumberOfSnippetsOfVideo } from '@/modules/videos/videoApi';
-
+import { getVideoSnippets } from '@/modules/backend-communication/api';
 const props = defineProps<{
   videoId: string;
 }>();
@@ -31,7 +30,7 @@ const snippetCount = ref<number>(0);
 
 onMounted(async () => {
   try {
-    snippetCount.value = await getNumberOfSnippetsOfVideo(props.videoId);
+    snippetCount.value = (await getVideoSnippets(props.videoId)).length;
   } catch (error) {
     console.error('Error fetching snippet count:', error);
   }

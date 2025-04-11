@@ -28,7 +28,6 @@ const login = async (email: string, password: string) => {
   
   localStorage.setItem('access_token', response.access)
   localStorage.setItem('refresh_token', response.refresh)
-  localStorage.setItem('user_id', response.user_id.toString())
   isAuthenticated.value = true
   userEmail.value = email
 }
