@@ -4,6 +4,7 @@ import type { FlashCardStack, LearningEvent, Snippet, WordFlashCard } from '@/sh
 import { LearningEventType } from '@/shared/types/domainTypes'
 import { getSnippetDueWords, sendLearningEvents } from '@/modules/backend-communication/api'
 import { shuffleArray } from '@/shared/utils/listUtils';
+import { useToast } from '@/shared/composables/useToast';
 
 const props = defineProps<{
   snippet: Snippet
@@ -12,6 +13,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'practice-completed'): void
 }>()
+
+const toast = useToast();
 
 const cardStack = ref<FlashCardStack>([])
 const isLoading = ref(true)
@@ -32,6 +35,9 @@ const fetchDueWords = async () => {
     cardStack.value = shuffleArray(cardStack.value)
     if (cardStack.value.length > 0) {
       currentCard.value = cardStack.value[0]
+    } else {
+      toast.info('No words to practice right now')
+      emit('practice-completed')
     }
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Failed to fetch due words'
@@ -79,10 +85,6 @@ onMounted(() => {
 
     <div v-else-if="error" class="alert alert-error">
       {{ error }}
-    </div>
-
-    <div v-else-if="cardStack.length === 0" class="alert alert-info">
-      No words to practice in this snippet.
     </div>
 
     <div v-else-if="currentCard" class="card bg-base-100 shadow-xl">

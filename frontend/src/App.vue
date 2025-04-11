@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import ShowUserWidget from '@/modules/auth/show-user/ShowUserWidget.vue'
+import { useToast } from '@/shared/composables/useToast'
+
+const toast = useToast()
 </script>
 
 <template>
@@ -13,5 +16,11 @@ import ShowUserWidget from '@/modules/auth/show-user/ShowUserWidget.vue'
   </header>
   <main class="container mx-auto px-4 py-8">
     <router-view></router-view>
+    <!-- Toast -->
+    <div class="toast toast-top toast-end">
+      <div v-if="toast.show" :class="['alert', `alert-${toast.type}`]">
+        <span>{{ toast.message }}</span>
+      </div>
+    </div>
   </main>
 </template>
