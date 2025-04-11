@@ -121,7 +121,7 @@ def import_channel_videos(request):
                         # Only create if it doesn't exist
                         Video.objects.get_or_create(
                             youtube_id=video_id,
-                            defaults={'status': VideoStatus.NEEDS_REVIEW}
+                            defaults={'status': VideoStatus.NEEDS_REVIEW, 'comment': f'Imported from channel {username}'}
                         )
                         total_videos += 1
                     
@@ -508,3 +508,26 @@ def bulk_import_videos(request):
         return render(request, 'bulk_import_videos.html')
     
     return render(request, 'bulk_import_videos.html')
+
+@require_http_methods(["POST"])
+def mark_videos_without_arabic_subtitles(request):
+    """View to mark videos without Arabic subtitles as not relevant"""
+    try:
+        # Get all videos
+        videos = Video.objects.all()
+        marked_count = 0
+        
+        for video in videos:
+            # Check if video has Arabic subtitles
+            has_arabic = any(lang.startswith('ar') for lang in video.available_subtitle_languages)
+            
+            if not has_arabic:
+                video.status = VideoStatus.NOT_RELEVANT
+                video.save()
+                marked_count += 1
+        
+        messages.success(request, f"Successfully marked {marked_count} videos without Arabic subtitles as not relevant.")
+    except Exception as e:
+        messages.error(request, f"Error marking videos: {str(e)}")
+    
+    return redirect('list_all_videos')

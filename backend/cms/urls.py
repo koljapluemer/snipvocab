@@ -13,4 +13,5 @@ urlpatterns = [
     path('videos/<str:youtube_id>/generate-translations/', views.generate_translations, name='generate_translations'),
     path('videos/<str:youtube_id>/publish/', views.publish_video, name='publish_video'),
     path('videos/<str:youtube_id>/reset-snippets/', views.reset_snippets, name='reset_snippets'),
+    path('mark-videos-without-arabic/', views.mark_videos_without_arabic_subtitles, name='mark_videos_without_arabic'),
 ]
