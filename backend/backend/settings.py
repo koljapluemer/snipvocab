@@ -73,7 +73,8 @@ if not DEBUG:
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vue dev server
-    "https://snipvocab-backend-4991c989741a.herokuapp.com",  # Production
+    "https://snipvocab-backend-4991c989741a.herokuapp.com",  # Production backend
+    "https://snipvocab-ar.netlify.app",  # Production frontend
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -98,6 +99,11 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+# Add these additional CORS settings
+CORS_ALLOW_PRIVATE_NETWORK = True
+CORS_REPLACE_HTTPS_REFERER = True
+CORS_URLS_REGEX = r'^/api/.*$'  # Only allow CORS for API endpoints
 
 ROOT_URLCONF = 'backend.urls'
 
