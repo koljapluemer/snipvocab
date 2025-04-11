@@ -1,4 +1,4 @@
-import type { Snippet, Word, SnippetDetails, WordFlashCard, LearningEvent } from '@/shared/types/domainTypes'
+import type { Snippet, Word, SnippetDetails, WordFlashCard, LearningEvent, EnrichedSnippetDetails } from '@/shared/types/domainTypes'
 import axios from 'axios'
 import type { AxiosResponse } from 'axios'
 
@@ -145,7 +145,7 @@ export const updateSnippetPractice = async (
   }
 }
 
-export const getVideoEnrichedSnippets = async (youtubeId: string): Promise<SnippetDetails[]> => {
+export const getVideoEnrichedSnippets = async (youtubeId: string): Promise<EnrichedSnippetDetails[]> => {
   try {
     return await handleApiResponse(api.get(`/learn/videos/${youtubeId}/enriched-snippets/`))
   } catch (error) {

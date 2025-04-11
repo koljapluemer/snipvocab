@@ -109,7 +109,7 @@ onMounted(() => {
             <button v-if="!isRevealed" @click="reveal" class="btn btn-primary">
               Reveal
             </button>
-            <div v-else>
+            <div v-else class="flex gap-2">
               <button @click="scoreCurrentCard(LearningEventType.AGAIN)" class="btn btn-error">Again</button>
               <button @click="scoreCurrentCard(LearningEventType.HARD)" class="btn btn-warning">Hard</button>
               <button @click="scoreCurrentCard(LearningEventType.GOOD)" class="btn btn-success">Good</button>

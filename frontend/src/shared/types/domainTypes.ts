@@ -34,8 +34,8 @@ export interface SnippetDetails {
 }
 
 export interface EnrichedSnippetDetails extends SnippetDetails {
-  perceivedDifficulty: number;
-  lastUpdated: Date;
+  perceivedDifficulty?: number;
+  lastUpdated?: Date;
 }
 
 export enum LearningEventType {
