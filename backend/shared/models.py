@@ -11,9 +11,14 @@ class VideoStatus(models.TextChoices):
     LIVE = 'live', 'Live'
     BLACKLISTED = 'blacklisted', 'Blacklisted'
 
+class Frontend(models.TextChoices):
+    GERMAN = 'de', '🇩🇪'
+    ARABIC = 'ar', '🇪🇬'
+
 class Video(models.Model):
+    frontend = models.CharField(max_length=10, choices=Frontend.choices, default=Frontend.ARABIC)
     available_subtitle_languages = models.JSONField(default=list, blank=True, null=True)
-    checked_for_arabic_subtitles = models.BooleanField(default=False)
+    checked_for_relevant_subtitles = models.BooleanField(default=False)
     youtube_id = models.CharField(max_length=20, unique=True)
     
     status = models.CharField(max_length=100, choices=VideoStatus.choices, default=VideoStatus.NEEDS_REVIEW)

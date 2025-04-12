@@ -212,19 +212,19 @@ def review_videos(request):
     # Process each video to get available languages
     for video in videos:
         # Skip if already checked
-        if video.checked_for_arabic_subtitles:
+        if video.checked_for_relevant_subtitles:
             continue
             
         try:
             # Get available languages using youtube_transcript_api
             available_languages = YouTubeTranscriptApi.list_transcripts(video.youtube_id)
             video.available_subtitle_languages = [lang.language_code for lang in available_languages]
-            video.checked_for_arabic_subtitles = True
+            video.checked_for_relevant_subtitles = True
             video.save()
         except Exception as e:
             # If no transcripts available, set empty list
             video.available_subtitle_languages = []
-            video.checked_for_arabic_subtitles = True  # Mark as checked even if there was an error
+            video.checked_for_relevant_subtitles = True  # Mark as checked even if there was an error
             video.save()
     
     context = {
@@ -756,7 +756,7 @@ def generate_translations_for_all_snippets(request):
 def actions(request):
     """View for the actions page"""
     unchecked_count = Video.objects.filter(
-        checked_for_arabic_subtitles=False
+        checked_for_relevant_subtitles=False
     ).exclude(
         status=VideoStatus.NOT_RELEVANT
     ).count()
@@ -771,7 +771,7 @@ def bulk_check_subtitles(request):
     try:
         # Get all videos that haven't been checked for Arabic subtitles and aren't marked as not relevant
         videos = Video.objects.filter(
-            checked_for_arabic_subtitles=False
+            checked_for_relevant_subtitles=False
         ).exclude(
             status=VideoStatus.NOT_RELEVANT
         )
@@ -784,14 +784,14 @@ def bulk_check_subtitles(request):
                 # Get available languages
                 available_languages = YouTubeTranscriptApi.list_transcripts(video.youtube_id)
                 video.available_subtitle_languages = [lang.language_code for lang in available_languages]
-                video.checked_for_arabic_subtitles = True
+                video.checked_for_relevant_subtitles = True
                 video.save()
                 processed_count += 1
             except Exception as e:
                 error_count += 1
                 error_videos.append(f"{video.youtube_id} (Error: {str(e)})")
                 # Mark as checked even if there was an error to avoid retrying
-                video.checked_for_arabic_subtitles = True
+                video.checked_for_relevant_subtitles = True
                 video.save()
         
         if processed_count > 0:
