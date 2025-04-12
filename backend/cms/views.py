@@ -22,14 +22,24 @@ class WordEntry(BaseModel):
 class WordEntryResponse(BaseModel):
     words: list[WordEntry]
 
-def get_words_with_translations(text: str) -> list:
-    prompt = (
-        "You are an expert in Arabic. "
-        "Extract language learning vocab from the following text, ignoring proper nouns like restaurant names, "
-        "exclamations such as 'oh', and other non-translatable words. For each extracted word, provide an English translation suitable to learn the word on its own."
-        "Retain correct capitalization and spelling. If a word appears in a declined, conjugated, or plural form, "
-        "add both the occurring and base form as separate entries (e.g. for 'trees' and 'tree', or 'She ran' and 'running'), both including the translation. Return your answer as a structured list of vocab."
-    )
+def get_words_with_translations(text: str, frontend: str) -> list:
+    """Get words and translations for a given text based on the frontend language"""
+    if frontend == Frontend.ARABIC:
+        prompt = (
+            "You are an expert in Spoken, Egyptian Arabic. "
+            "Extract language learning vocabulary from the following natural language transcript, ignoring proper nouns like restaurant names, "
+            "exclamations such as 'oh', and other non-translatable words. For each extracted word, provide an English translation suitable to learn the word on its own."
+            "Retain correct capitalization and spelling. If a word appears in a declined, conjugated, or plural form, "
+            "add both the occurring and base form as separate entries (e.g. for 'أشجار' and 'شجرة', or 'بناكل' and 'كل'), both including the translation. Return your answer as a structured list of vocab."
+        )
+    else:  # German
+        prompt = (
+            "You are an expert in German. "
+            "Extract language learning vocabulary from the following text, ignoring proper nouns like restaurant names, "
+            "exclamations such as 'oh', and other non-translatable words. For each extracted word, provide an English translation suitable to learn the word on its own."
+            "Retain correct capitalization and spelling. If a word appears in a declined, conjugated, or plural form, "
+            "add both the occurring and base form as separate entries (e.g. for 'Bäume' and 'Baum', or 'Sie lief' and 'laufen'), both including the translation. Return your answer as a structured list of vocab."
+        )
     try:
         response = client.beta.chat.completions.parse(
             model="gpt-4o-mini",
@@ -367,6 +377,7 @@ def generate_snippets(request, youtube_id):
     """View to generate snippets for a video using YouTube transcript API"""
     try:
         video = Video.objects.get(youtube_id=youtube_id)
+        frontend = video.frontend
         print(f"Processing video: {youtube_id}")
         
         # Get available languages if not already set
@@ -384,8 +395,8 @@ def generate_snippets(request, youtube_id):
                 messages.error(request, f"Error fetching available languages: {str(e)}")
                 return redirect('video_details', youtube_id=youtube_id)
         
-        # Try to get the transcript in Arabic (prefer manual over auto-generated)
-        arabic_transcripts = []
+        # Try to get the transcript in the target language (prefer manual over auto-generated)
+        target_transcripts = []
         if video.available_subtitle_languages:
             try:
                 print("Fetching transcript list...")
@@ -393,18 +404,21 @@ def generate_snippets(request, youtube_id):
                 print(f"Found transcripts in languages: {[t.language_code for t in transcript_list]}")
                 
                 for transcript in transcript_list:
-                    if transcript.language_code.startswith('ar'):
-                        arabic_transcripts.append(transcript)
+                    if frontend == Frontend.ARABIC and transcript.language_code.startswith('ar'):
+                        target_transcripts.append(transcript)
                         print(f"Found Arabic transcript: {transcript.language_code} (manual: {not transcript.is_generated})")
+                    elif frontend == Frontend.GERMAN and transcript.language_code.startswith('de'):
+                        target_transcripts.append(transcript)
+                        print(f"Found German transcript: {transcript.language_code} (manual: {not transcript.is_generated})")
                 
-                if not arabic_transcripts:
-                    print("No Arabic transcripts found")
-                    messages.error(request, "No Arabic subtitles available for this video.")
+                if not target_transcripts:
+                    print(f"No {frontend} transcripts found")
+                    messages.error(request, f"No {frontend} subtitles available for this video.")
                     return redirect('video_details', youtube_id=youtube_id)
                 
                 # Prefer manual transcripts over auto-generated ones
-                manual_transcript = next((t for t in arabic_transcripts if not t.is_generated), None)
-                transcript = manual_transcript or arabic_transcripts[0]
+                manual_transcript = next((t for t in target_transcripts if not t.is_generated), None)
+                transcript = manual_transcript or target_transcripts[0]
                 print(f"Selected transcript: {transcript.language_code} (manual: {not transcript.is_generated})")
                 
                 print("Fetching transcript data...")
@@ -464,7 +478,7 @@ def generate_translations(request, youtube_id):
         # Process each snippet
         for snippet in video.snippets.all():
             # Get words and translations for this snippet
-            words_with_translations = get_words_with_translations(snippet.content)
+            words_with_translations = get_words_with_translations(snippet.content, video.frontend)
             
             # Process each word
             for word_entry in words_with_translations:
@@ -631,12 +645,13 @@ def mark_videos_without_arabic_subtitles(request):
 @require_http_methods(["POST"])
 def generate_snippets_for_all_shortlisted(request):
     """View to generate snippets for all shortlisted videos"""
+    frontend = get_current_frontend(request)
     try:
-        # Get all shortlisted videos
-        videos = Video.objects.filter(status=VideoStatus.SHORTLISTED)
+        # Get all shortlisted videos for the current frontend
+        videos = Video.objects.filter(frontend=frontend, status=VideoStatus.SHORTLISTED)
         processed_count = 0
         error_count = 0
-        no_arabic_count = 0
+        no_subtitles_count = 0
         error_videos = []
         
         for video in videos:
@@ -651,20 +666,22 @@ def generate_snippets_for_all_shortlisted(request):
                         video.available_subtitle_languages = []
                         video.save()
                 
-                # Try to get the transcript in Arabic
-                arabic_transcripts = []
+                # Try to get the transcript in the target language
+                target_transcripts = []
                 if video.available_subtitle_languages:
                     try:
                         transcript_list = YouTubeTranscriptApi.list_transcripts(video.youtube_id)
                         
                         for transcript in transcript_list:
-                            if transcript.language_code.startswith('ar'):
-                                arabic_transcripts.append(transcript)
+                            if frontend == Frontend.ARABIC and transcript.language_code.startswith('ar'):
+                                target_transcripts.append(transcript)
+                            elif frontend == Frontend.GERMAN and transcript.language_code.startswith('de'):
+                                target_transcripts.append(transcript)
                         
-                        if arabic_transcripts:
+                        if target_transcripts:
                             # Prefer manual transcripts over auto-generated ones
-                            manual_transcript = next((t for t in arabic_transcripts if not t.is_generated), None)
-                            transcript = manual_transcript or arabic_transcripts[0]
+                            manual_transcript = next((t for t in target_transcripts if not t.is_generated), None)
+                            transcript = manual_transcript or target_transcripts[0]
                             
                             transcript_data = transcript.fetch()
                             
@@ -686,13 +703,13 @@ def generate_snippets_for_all_shortlisted(request):
                             video.save()
                             processed_count += 1
                         else:
-                            no_arabic_count += 1
-                            error_videos.append(f"{video.youtube_id} (No Arabic subtitles)")
+                            no_subtitles_count += 1
+                            error_videos.append(f"{video.youtube_id} (No {frontend} subtitles)")
                     except Exception as e:
                         error_count += 1
                         error_videos.append(f"{video.youtube_id} (Error: {str(e)})")
                 else:
-                    no_arabic_count += 1
+                    no_subtitles_count += 1
                     error_videos.append(f"{video.youtube_id} (No subtitles available)")
             except Exception as e:
                 error_count += 1
@@ -700,8 +717,8 @@ def generate_snippets_for_all_shortlisted(request):
         
         if processed_count > 0:
             messages.success(request, f"Successfully generated snippets for {processed_count} videos.")
-        if no_arabic_count > 0:
-            messages.warning(request, f"{no_arabic_count} videos had no Arabic subtitles available.")
+        if no_subtitles_count > 0:
+            messages.warning(request, f"{no_subtitles_count} videos had no {frontend} subtitles available.")
         if error_count > 0:
             messages.error(request, f"Failed to process {error_count} videos: {', '.join(error_videos)}")
             
@@ -713,9 +730,10 @@ def generate_snippets_for_all_shortlisted(request):
 @require_http_methods(["POST"])
 def generate_translations_for_all_snippets(request):
     """View to generate translations for all videos with snippets"""
+    frontend = get_current_frontend(request)
     try:
-        # Get all videos with snippets generated
-        videos = Video.objects.filter(status=VideoStatus.SNIPPETS_GENERATED)
+        # Get all videos with snippets generated for the current frontend
+        videos = Video.objects.filter(frontend=frontend, status=VideoStatus.SNIPPETS_GENERATED)
         processed_count = 0
         error_count = 0
         no_snippets_count = 0
@@ -735,7 +753,7 @@ def generate_translations_for_all_snippets(request):
                 total_words = 0
                 for snippet in video.snippets.all():
                     # Get words and translations for this snippet
-                    words_with_translations = get_words_with_translations(snippet.content)
+                    words_with_translations = get_words_with_translations(snippet.content, frontend)
                     total_words += len(words_with_translations)
                     
                     # Process each word
