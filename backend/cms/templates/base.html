@@ -9,49 +9,72 @@
   <body class="bg-gray-50">
     <nav class="bg-white shadow-sm">
       <div class="container mx-auto px-4">
-        <div class="flex justify-center gap-3 h-16">
-          <a
-            href="{% url 'cms_home' %}"
-            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-          >
-            Home
-          </a>
-          <a
-            href="{% url 'import_channel_videos' %}"
-            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-          >
-            Import Channel
-          </a>
-          <a
-            href="{% url 'import_playlist_videos' %}"
-            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-          >
-            Import Playlist
-          </a>
-          <a
-            href="{% url 'bulk_import_videos' %}"
-            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-          >
-            Bulk Import
-          </a>
-          <a
-            href="{% url 'review_videos' %}"
-            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-          >
-            Review Videos
-          </a>
-          <a
-            href="{% url 'list_all_videos' %}"
-            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-          >
-            All Videos
-          </a>
-          <a
-            href="{% url 'actions' %}"
-            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-          >
-            Actions
-          </a>
+        <div class="flex justify-between items-center h-16">
+          <div class="flex gap-3">
+            <a
+              href="{% url 'cms_home' %}"
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Home
+            </a>
+            <a
+              href="{% url 'import_channel_videos' %}"
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Import Channel
+            </a>
+            <a
+              href="{% url 'import_playlist_videos' %}"
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Import Playlist
+            </a>
+            <a
+              href="{% url 'bulk_import_videos' %}"
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Bulk Import
+            </a>
+            <a
+              href="{% url 'review_videos' %}"
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Review Videos
+            </a>
+            <a
+              href="{% url 'list_all_videos' %}"
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              All Videos
+            </a>
+            <a
+              href="{% url 'actions' %}"
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Actions
+            </a>
+          </div>
+          
+          <!-- Frontend Toggle -->
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-gray-600">Frontend:</span>
+            <form method="post" action="{% url 'set_frontend' %}" class="flex items-center gap-2">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.path }}">
+              <button type="submit" 
+                      name="frontend" 
+                      value="ar"
+                      class="px-3 py-1 text-sm rounded {% if request.session.frontend == 'ar' %}bg-blue-500 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                Arabic
+              </button>
+              <button type="submit" 
+                      name="frontend" 
+                      value="de"
+                      class="px-3 py-1 text-sm rounded {% if request.session.frontend == 'de' %}bg-blue-500 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                German
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </nav>

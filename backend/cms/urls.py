@@ -20,4 +20,5 @@ urlpatterns = [
     path('generate-translations-all/', views.generate_translations_for_all_snippets, name='generate_translations_all'),
     path('bulk-check-subtitles/', views.bulk_check_subtitles, name='bulk_check_subtitles'),
     path('video/<str:youtube_id>/blacklist/', views.blacklist_video, name='blacklist_video'),
+    path('set-frontend/', views.set_frontend, name='set_frontend'),
 ]

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
 from googleapiclient.discovery import build
-from shared.models import Video, VideoStatus, Snippet, Word, Meaning
+from shared.models import Video, VideoStatus, Snippet, Word, Meaning, Frontend
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.core.paginator import Paginator
@@ -44,18 +44,31 @@ def get_words_with_translations(text: str) -> list:
         print(f"Error processing text snippet: {e}")
         return []
 
+@require_http_methods(["POST"])
+def set_frontend(request):
+    """Set the frontend in the session"""
+    frontend = request.POST.get('frontend')
+    if frontend in [f[0] for f in Frontend.choices]:
+        request.session['frontend'] = frontend
+    return redirect(request.POST.get('next', 'cms_home'))
+
+def get_current_frontend(request):
+    """Get the current frontend from session or default to Arabic"""
+    return request.session.get('frontend', Frontend.ARABIC)
+
 def cms_home(request):
     """Home view for the CMS"""
+    frontend = get_current_frontend(request)
     # Get video statistics
-    total_videos = Video.objects.count()
-    needs_review = Video.objects.filter(status=VideoStatus.NEEDS_REVIEW).count()
-    shortlisted = Video.objects.filter(status=VideoStatus.SHORTLISTED).count()
-    longlisted = Video.objects.filter(status=VideoStatus.LONGLISTED).count()
-    not_relevant = Video.objects.filter(status=VideoStatus.NOT_RELEVANT).count()
-    snippets_generated = Video.objects.filter(status=VideoStatus.SNIPPETS_GENERATED).count()
-    snippets_and_translations_generated = Video.objects.filter(status=VideoStatus.SNIPPETS_AND_TRANSLATIONS_GENERATED).count()
-    live = Video.objects.filter(status=VideoStatus.LIVE).count()
-    blacklisted = Video.objects.filter(status=VideoStatus.BLACKLISTED).count()
+    total_videos = Video.objects.filter(frontend=frontend).count()
+    needs_review = Video.objects.filter(frontend=frontend, status=VideoStatus.NEEDS_REVIEW).count()
+    shortlisted = Video.objects.filter(frontend=frontend, status=VideoStatus.SHORTLISTED).count()
+    longlisted = Video.objects.filter(frontend=frontend, status=VideoStatus.LONGLISTED).count()
+    not_relevant = Video.objects.filter(frontend=frontend, status=VideoStatus.NOT_RELEVANT).count()
+    snippets_generated = Video.objects.filter(frontend=frontend, status=VideoStatus.SNIPPETS_GENERATED).count()
+    snippets_and_translations_generated = Video.objects.filter(frontend=frontend, status=VideoStatus.SNIPPETS_AND_TRANSLATIONS_GENERATED).count()
+    live = Video.objects.filter(frontend=frontend, status=VideoStatus.LIVE).count()
+    blacklisted = Video.objects.filter(frontend=frontend, status=VideoStatus.BLACKLISTED).count()
     
     context = {
         'total_videos': total_videos,
@@ -66,13 +79,15 @@ def cms_home(request):
         'snippets_generated': snippets_generated,
         'snippets_and_translations_generated': snippets_and_translations_generated,
         'live': live,
-        'blacklisted': blacklisted
+        'blacklisted': blacklisted,
+        'frontend': frontend
     }
     
     return render(request, 'cms_home.html', context)
 
 def import_channel_videos(request):
     """View to import videos from a YouTube channel"""
+    frontend = get_current_frontend(request)
     if request.method == 'POST':
         username = request.POST.get('channel_id')
         import_all = request.POST.get('import_all') == 'true'
@@ -122,10 +137,11 @@ def import_channel_videos(request):
                 total_videos = playlist_response['items'][0]['contentDetails']['itemCount']
                 
                 # Get existing video IDs from our database
-                existing_video_ids = set(Video.objects.values_list('youtube_id', flat=True))
+                existing_video_ids = set(Video.objects.filter(frontend=frontend).values_list('youtube_id', flat=True))
                 
                 # Get the most recent video ID we've processed for this channel
                 last_processed_video = Video.objects.filter(
+                    frontend=frontend,
                     comment__startswith=f'Imported from channel {username}'
                 ).order_by('-youtube_id').first()
                 
@@ -160,6 +176,7 @@ def import_channel_videos(request):
                         if video_id not in existing_video_ids:
                             Video.objects.get_or_create(
                                 youtube_id=video_id,
+                                frontend=frontend,
                                 defaults={
                                     'status': VideoStatus.NEEDS_REVIEW,
                                     'comment': f'Imported from channel {username}',
@@ -206,8 +223,9 @@ def import_channel_videos(request):
 
 def review_videos(request):
     """View to review videos that need review"""
+    frontend = get_current_frontend(request)
     # Get first 50 videos that need review, ordered by youtube_id
-    videos = Video.objects.filter(status=VideoStatus.NEEDS_REVIEW).order_by('youtube_id')[:50]
+    videos = Video.objects.filter(frontend=frontend, status=VideoStatus.NEEDS_REVIEW).order_by('youtube_id')[:50]
     
     # Process each video to get available languages
     for video in videos:
@@ -228,7 +246,8 @@ def review_videos(request):
             video.save()
     
     context = {
-        'videos': videos
+        'videos': videos,
+        'frontend': frontend
     }
     
     return render(request, 'review_videos.html', context)
@@ -276,13 +295,14 @@ def update_video_statuses(request):
 
 def list_all_videos(request):
     """View to list all videos with their status"""
+    frontend = get_current_frontend(request)
     # Get page number and status filter from request
     page_number = request.GET.get('page', 1)
     status_filter = request.GET.get('status', '')
     comment_filter = request.GET.get('comment', '')
     
     # Get all videos ordered by status and youtube_id
-    videos = Video.objects.all()
+    videos = Video.objects.filter(frontend=frontend)
     
     # Apply status filter if provided
     if status_filter:
@@ -303,15 +323,17 @@ def list_all_videos(request):
         'page_obj': page_obj,
         'status_filter': status_filter,
         'comment_filter': comment_filter,
-        'status_choices': VideoStatus.choices
+        'status_choices': VideoStatus.choices,
+        'frontend': frontend
     }
     
     return render(request, 'list_all_videos.html', context)
 
 def video_details(request, youtube_id):
     """View to show details of a specific video"""
+    frontend = get_current_frontend(request)
     try:
-        video = Video.objects.get(youtube_id=youtube_id)
+        video = Video.objects.get(youtube_id=youtube_id, frontend=frontend)
         
         # Get available languages if not already set
         if not video.available_subtitle_languages:
@@ -333,6 +355,7 @@ def video_details(request, youtube_id):
             'video': video,
             'snippet_count': snippet_count,
             'words': words,
+            'frontend': frontend
         }
         
         return render(request, 'video_details.html', context)
@@ -541,6 +564,7 @@ def extract_youtube_id(url):
 
 def bulk_import_videos(request):
     """View for bulk importing YouTube videos."""
+    frontend = get_current_frontend(request)
     if request.method == 'POST':
         youtube_links = request.POST.get('youtube_links', '').strip()
         if not youtube_links:
@@ -564,6 +588,7 @@ def bulk_import_videos(request):
             try:
                 Video.objects.get_or_create(
                     youtube_id=video_id,
+                    frontend=frontend,
                     defaults={'status': VideoStatus.NEEDS_REVIEW, 'comment': 'bulk imported'}
                 )
                 successful_imports += 1
@@ -755,13 +780,16 @@ def generate_translations_for_all_snippets(request):
 
 def actions(request):
     """View for the actions page"""
+    frontend = get_current_frontend(request)
     unchecked_count = Video.objects.filter(
+        frontend=frontend,
         checked_for_relevant_subtitles=False
     ).exclude(
         status=VideoStatus.NOT_RELEVANT
     ).count()
     context = {
-        'unchecked_count': unchecked_count
+        'unchecked_count': unchecked_count,
+        'frontend': frontend
     }
     return render(request, 'actions.html', context)
 
@@ -821,6 +849,7 @@ def blacklist_video(request, youtube_id):
 
 def import_playlist_videos(request):
     """View to import videos from a YouTube playlist"""
+    frontend = get_current_frontend(request)
     if request.method == 'POST':
         playlist_url = request.POST.get('playlist_url')
         import_all = request.POST.get('import_all') == 'true'
@@ -863,10 +892,11 @@ def import_playlist_videos(request):
                 total_videos = playlist_items_response['pageInfo']['totalResults']
                 
                 # Get existing video IDs from our database
-                existing_video_ids = set(Video.objects.values_list('youtube_id', flat=True))
+                existing_video_ids = set(Video.objects.filter(frontend=frontend).values_list('youtube_id', flat=True))
                 
                 # Get the most recent video ID we've processed for this playlist
                 last_processed_video = Video.objects.filter(
+                    frontend=frontend,
                     comment__startswith=f'Imported from playlist {playlist_id}'
                 ).order_by('-youtube_id').first()
                 
@@ -901,6 +931,7 @@ def import_playlist_videos(request):
                         if video_id not in existing_video_ids:
                             Video.objects.get_or_create(
                                 youtube_id=video_id,
+                                frontend=frontend,
                                 defaults={
                                     'status': VideoStatus.NEEDS_REVIEW,
                                     'comment': f'Imported from playlist {playlist_id}: {playlist_title}',
