@@ -59,11 +59,18 @@ class Word(models.Model):
         return self.original_word
 
 
+class MeaningStatus(models.TextChoices):
+    NEEDS_REVIEW = 'needs_review', 'Needs Review'
+    LIVE = 'live', 'Live'
+    BLACKLISTED = 'blacklisted', 'Blacklisted'
+    
+
 class Meaning(models.Model):
     word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name="meanings")
     en = models.TextField()
     snippet_context = models.ForeignKey(Snippet, on_delete=models.CASCADE, related_name="meanings", null=True, blank=True)
     creation_method = models.CharField(max_length=50)
+    status = models.CharField(max_length=100, choices=MeaningStatus.choices, default=MeaningStatus.LIVE)
 
     def __str__(self):
         return f"{self.word.original_word} - {self.meaning}"
