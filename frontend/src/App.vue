@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import ShowUserWidget from '@/modules/auth/show-user/ShowUserWidget.vue'
-import { useToast } from '@/shared/composables/useToast'
-
-const toast = useToast()
+import ToastContainer from '@/shared/elements/toast/ToastContainer.vue'
 </script>
 
 <template>
@@ -14,13 +12,26 @@ const toast = useToast()
       <ShowUserWidget />
     </nav>
   </header>
+  
   <main class="container mx-auto px-4 py-8">
     <router-view></router-view>
-    <!-- Toast -->
-    <div class="toast toast-top toast-end">
-      <div v-if="toast.show" :class="['alert', `alert-${toast.type}`]">
-        <span>{{ toast.message }}</span>
-      </div>
-    </div>
+    <ToastContainer />
   </main>
 </template>
+
+<style>
+.toast > * {
+  animation: toast-pop 0.25s ease-out;
+}
+
+@keyframes toast-pop {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+</style>

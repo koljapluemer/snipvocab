@@ -3,6 +3,8 @@ import HomeView from '@/modules/misc-pages/home/HomeView.vue'
 import Register from '@/modules/auth/register/Register.vue'
 import Login from '@/modules/auth/login/Login.vue'
 import VideoView from '@/modules/videos/view-video/VideoView.vue'
+import { useAuthState } from '@/modules/auth/useAuthState'
+import { useToast } from '@/shared/elements/toast/useToast'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,9 +27,28 @@ const router = createRouter({
     {
       path: '/video/:videoId',
       name: 'video',
-      component: VideoView
+      component: VideoView,
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
+})
+
+// Navigation guard
+router.beforeEach((to, from, next) => {
+  const { isAuthenticated } = useAuthState()
+  const toast = useToast()
+
+  if (to.meta.requiresAuth && !isAuthenticated.value) {
+    toast.warning('Please login to access this page')
+    next({ 
+      name: 'login', 
+      query: { redirect: to.fullPath }
+    })
+    return
+  }
+  next()
 })
 
 export default router 

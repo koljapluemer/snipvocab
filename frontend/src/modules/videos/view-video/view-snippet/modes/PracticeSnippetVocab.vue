@@ -4,7 +4,7 @@ import type { FlashCardStack, LearningEvent, Snippet, WordFlashCard } from '@/sh
 import { LearningEventType } from '@/shared/types/domainTypes'
 import { getSnippetDueWords, getSnippetAllWords, sendLearningEvents } from '@/modules/backend-communication/api'
 import { shuffleArray } from '@/shared/utils/listUtils';
-import { useToast } from '@/shared/composables/useToast';
+import { useToast } from '@/shared/elements/toast/useToast';
 import { addFlashcardToEndOfStack, shuffleFlashcardIntoStack } from '@/modules/learning-and-spaced-repetition/cardStackUtils';
 
 const props = defineProps<{
