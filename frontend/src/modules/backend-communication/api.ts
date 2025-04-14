@@ -171,9 +171,13 @@ export const getVideoEnrichedSnippets = async (youtubeId: string): Promise<Enric
   }
 }
 
-export const getVideoProgress = async (youtubeId: string): Promise<VideoProgressResponse> => {
+export const getVideoProgress = async (videoId: string): Promise<{
+  lastPracticed: string | null;
+  perceivedDifficulty: number | null;
+  snippetPercentageWatched: number | null;
+}> => {
   try {
-    return await handleApiResponse(api.get(`/learn/videos/${youtubeId}/progress/`))
+    return await handleApiResponse(api.get(`/learn/videos/${videoId}/progress/`))
   } catch (error) {
     console.error('Error fetching video progress:', error)
     throw new Error('Failed to fetch video progress. Please try again later.')
