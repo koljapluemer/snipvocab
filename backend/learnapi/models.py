@@ -10,7 +10,7 @@ class VideoProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="video_progress")
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name="progresses")
     # Update last_watched whenever the video is viewed.
-    last_watched = models.DateTimeField(default=datetime.datetime.now)
+    last_watched = models.DateTimeField(default=timezone.now)
 
     class Meta:
         unique_together = ('user', 'video')
@@ -42,7 +42,7 @@ class VocabPractice(models.Model):
     
     @property
     def is_due(self):
-        return self.due and self.due <= datetime.now(timezone.utc)
+        return self.due and self.due <= timezone.now()
 
 
 class SnippetPractice(models.Model):

@@ -104,6 +104,15 @@ export const getSnippetDueWords = async (youtubeId: string, index: number): Prom
   }
 }
 
+export const getSnippetAllWords = async (youtubeId: string, index: number): Promise<WordFlashCard[]> => {
+  try {
+    return await handleApiResponse(api.get(`/learn/videos/${youtubeId}/snippets/${index}/all-words/`))
+  } catch (error) {
+    console.error('Error fetching all words:', error)
+    throw new Error('Failed to fetch words. Please try again later.')
+  }
+}
+
 export interface LearningEventResponse {
   originalWord: string
   success: boolean

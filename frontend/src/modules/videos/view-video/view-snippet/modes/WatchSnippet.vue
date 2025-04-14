@@ -58,13 +58,23 @@
 
         <!-- Next Snippet Button -->
         <transition name="fade">
-          <button 
+          <div 
             v-if="state === 'completed'" 
-            @click="onNextSnippet" 
-            class="btn btn-success"
+            class="flex gap-2"
           >
-            Next Snippet
-          </button>
+            <button 
+              @click="onNextSnippet" 
+              class="btn btn-success"
+            >
+              Next Snippet
+            </button>
+            <button 
+              @click="() => emit('practice-all-words')" 
+              class="btn btn-primary"
+            >
+              Practice Vocabulary Again
+            </button>
+          </div>
         </transition>
       </div>
     </div>
@@ -127,6 +137,7 @@ const submitDifficulty = async () => {
 const emit = defineEmits<{
   (e: 'study-again'): void
   (e: 'next-snippet'): void
+  (e: 'practice-all-words'): void
 }>()
 
 const onStudyAgain = () => {

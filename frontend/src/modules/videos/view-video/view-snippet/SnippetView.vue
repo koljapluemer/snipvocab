@@ -14,10 +14,12 @@ const props = defineProps<{
 }>()
 
 const status = ref<SnippetStatus>(SnippetStatus.LEARNING_VOCAB)
+const loadAllWords = ref(false)
 
 // Reset to LEARNING_VOCAB mode whenever snippet changes
 watch(() => props.snippet, () => {
   status.value = SnippetStatus.LEARNING_VOCAB
+  loadAllWords.value = false
 })
 
 const emit = defineEmits<{
@@ -32,6 +34,11 @@ const onPracticeCompleted = () => {
 const onNextSnippet = () => {
   emit('next-snippet')
 }
+
+const onPracticeAllWords = () => {
+  loadAllWords.value = true
+  status.value = SnippetStatus.LEARNING_VOCAB
+}
 </script>
 
 <template>
@@ -43,12 +50,14 @@ const onNextSnippet = () => {
     <PracticeSnippetVocab 
       v-if="status === SnippetStatus.LEARNING_VOCAB" 
       :snippet="snippet" 
+      :load-all-words="loadAllWords"
       @practice-completed="onPracticeCompleted" 
     />
     <WatchSnippet 
       v-if="status === SnippetStatus.WATCHING_SNIPPET" 
       :snippet="snippet"
       @study-again="status = SnippetStatus.LEARNING_VOCAB"
+      @practice-all-words="onPracticeAllWords"
       @next-snippet="onNextSnippet"
     />
   </div>

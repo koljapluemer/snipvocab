@@ -2,13 +2,14 @@
 import { ref, onMounted } from 'vue'
 import type { FlashCardStack, LearningEvent, Snippet, WordFlashCard } from '@/shared/types/domainTypes'
 import { LearningEventType } from '@/shared/types/domainTypes'
-import { getSnippetDueWords, sendLearningEvents } from '@/modules/backend-communication/api'
+import { getSnippetDueWords, getSnippetAllWords, sendLearningEvents } from '@/modules/backend-communication/api'
 import { shuffleArray } from '@/shared/utils/listUtils';
 import { useToast } from '@/shared/composables/useToast';
 import { addFlashcardToEndOfStack, shuffleFlashcardIntoStack } from '@/modules/learning-and-spaced-repetition/cardStackUtils';
 
 const props = defineProps<{
   snippet: Snippet
+  loadAllWords?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -30,7 +31,9 @@ const fetchDueWords = async () => {
   try {
     isLoading.value = true
     error.value = null
-    cardStack.value = await getSnippetDueWords(props.snippet.videoId, props.snippet.index)
+    cardStack.value = props.loadAllWords 
+      ? await getSnippetAllWords(props.snippet.videoId, props.snippet.index)
+      : await getSnippetDueWords(props.snippet.videoId, props.snippet.index)
     console.log('dueWords', cardStack.value)
     // Shuffle the words
     cardStack.value = shuffleArray(cardStack.value)

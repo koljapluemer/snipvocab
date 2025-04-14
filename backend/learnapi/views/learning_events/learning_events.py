@@ -3,8 +3,9 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
+from django.utils import timezone
 from fsrs import Scheduler, Card, Rating, State
-from datetime import datetime, timezone
+from datetime import datetime
 import logging
 from rest_framework.permissions import IsAuthenticated
 import traceback
@@ -73,7 +74,9 @@ class LearningEventsView(generics.CreateAPIView):
                     word=word,
                     defaults={
                         'state': 'Learning',
-                        'last_review': datetime.fromtimestamp(event.get('timestamp', 0) / 1000, timezone.utc)
+                        'last_review': timezone.make_aware(
+                            datetime.fromtimestamp(event.get('timestamp', 0) / 1000)
+                        )
                     }
                 )
                 
@@ -121,9 +124,7 @@ class LearningEventsView(generics.CreateAPIView):
                 vocab_practice.stability = card.stability
                 vocab_practice.difficulty = card.difficulty
                 vocab_practice.due = card.due
-                # Immediately re-practice wrong answers
-                if rating == Rating.Again:
-                    vocab_practice.due = datetime.now(timezone.utc)
+
                 if review_log:
                     vocab_practice.last_review = review_log.review_datetime
                 vocab_practice.save()
