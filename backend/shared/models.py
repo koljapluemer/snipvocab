@@ -1,6 +1,27 @@
 from django.db import models
 import math
 
+
+class TagType(models.TextChoices):
+    FROM_YOUTUBE = 'from_youtube', 'From YouTube'
+    FROM_SEARCH = 'from_search', 'From Search'
+    MANUAL = 'manual', 'Manual'
+    UNKNOWN = 'unknown', 'Unknown'
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=100)
+    type = models.CharField(max_length=100, choices=TagType.choices, default=TagType.UNKNOWN)
+
+    unique_together = ('name', 'type')
+
+    def __str__(self):
+        return self.name
+
+class Frontend(models.TextChoices):
+    GERMAN = 'de', '🇩🇪'
+    ARABIC = 'ar', '🇪🇬'
+
 class VideoStatus(models.TextChoices):
     NEEDS_REVIEW = 'needs_review', 'Needs Review'
     SHORTLISTED = 'shortlisted', 'Shortlisted'
@@ -11,15 +32,8 @@ class VideoStatus(models.TextChoices):
     LIVE = 'live', 'Live'
     BLACKLISTED = 'blacklisted', 'Blacklisted'
 
-class Frontend(models.TextChoices):
-    GERMAN = 'de', '🇩🇪'
-    ARABIC = 'ar', '🇪🇬'
 
-class Tag(models.Model):
-    name = models.CharField(max_length=100, unique=True)
 
-    def __str__(self):
-        return self.name
 
 class Video(models.Model):
     frontend = models.CharField(max_length=10, choices=Frontend.choices, default=Frontend.ARABIC)

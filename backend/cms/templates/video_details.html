@@ -22,6 +22,16 @@
             </div>
         </div>
 
+        <!-- YouTube Title -->
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold mb-2">YouTube Title</h2>
+            {% if video.youtube_title %}
+                <p class="text-gray-800">{{ video.youtube_title }}</p>
+            {% else %}
+                <p class="text-gray-600">No title available</p>
+            {% endif %}
+        </div>
+
         <!-- Tags -->
         <div class="mb-6">
             <h2 class="text-xl font-semibold mb-2">Tags</h2>

@@ -24,4 +24,5 @@ urlpatterns = [
     path('set-frontend/', views.set_frontend, name='set_frontend'),
     path('update-priorities/', views.update_video_priorities, name='update_video_priorities'),
     path('search/', views.search_videos, name='search_videos'),
+    path('enrich-metadata/', views.enrich_video_metadata, name='enrich_video_metadata'),
 ]
