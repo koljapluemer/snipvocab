@@ -14,6 +14,8 @@ from typing import List
 import re
 import csv
 from django.contrib.admin.views.decorators import staff_member_required
+from django.db import models
+from django.urls import reverse
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
@@ -240,8 +242,8 @@ def import_channel_videos(request):
 def review_videos(request):
     """View to review videos that need review"""
     frontend = get_current_frontend(request)
-    # Get first 50 videos that need review, ordered by youtube_id
-    videos = Video.objects.filter(frontend=frontend, status=VideoStatus.NEEDS_REVIEW).order_by('youtube_id')[:50]
+    # Get first 50 videos that need review, ordered by priority (descending) and youtube_id
+    videos = Video.objects.filter(frontend=frontend, status=VideoStatus.NEEDS_REVIEW).order_by('-priority', 'youtube_id')[:50]
     
     # Process each video to get available languages
     for video in videos:
@@ -1051,3 +1053,44 @@ def export_snippets_csv(request, youtube_id):
     except Exception as e:
         messages.error(request, f"Error exporting snippets: {str(e)}")
         return redirect('video_details', youtube_id=youtube_id)
+
+@staff_member_required
+@require_http_methods(["POST"])
+def update_video_priorities(request):
+    """View to update priorities for all videos in the current filter"""
+    try:
+        # Get the current filter parameters
+        status_filter = request.POST.get('status_filter', '')
+        comment_filter = request.POST.get('comment_filter', '')
+        frontend = get_current_frontend(request)
+        
+        # Get all videos matching the current filter
+        videos = Video.objects.filter(frontend=frontend)
+        
+        if status_filter:
+            videos = videos.filter(status=status_filter)
+        if comment_filter:
+            videos = videos.filter(comment__icontains=comment_filter)
+        
+        # Get the action (increase or decrease)
+        action = request.POST.get('action')
+        
+        # Update priorities
+        if action == 'increase':
+            videos.update(priority=models.F('priority') + 1)
+            messages.success(request, "Successfully increased priority for all videos in the current filter.")
+        elif action == 'decrease':
+            videos.update(priority=models.F('priority') - 1)
+            messages.success(request, "Successfully decreased priority for all videos in the current filter.")
+        
+    except Exception as e:
+        messages.error(request, f"Error updating priorities: {str(e)}")
+    
+    # Redirect back to the list view with the same filters
+    redirect_url = reverse('list_all_videos')
+    if status_filter:
+        redirect_url += f"?status={status_filter}"
+    if comment_filter:
+        redirect_url += f"{'&' if status_filter else '?'}comment={comment_filter}"
+    
+    return redirect(redirect_url)

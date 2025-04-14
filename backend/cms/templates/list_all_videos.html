@@ -44,6 +44,25 @@
         </div>
     </div>
     
+    <!-- Priority Update Buttons -->
+    <div class="mb-6">
+        <form method="post" action="{% url 'update_video_priorities' %}" class="flex gap-4">
+            {% csrf_token %}
+            {% if status_filter %}
+                <input type="hidden" name="status_filter" value="{{ status_filter }}">
+            {% endif %}
+            {% if comment_filter %}
+                <input type="hidden" name="comment_filter" value="{{ comment_filter }}">
+            {% endif %}
+            <button type="submit" name="action" value="increase" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                Increase Priority for All
+            </button>
+            <button type="submit" name="action" value="decrease" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+                Decrease Priority for All
+            </button>
+        </form>
+    </div>
+    
     {% if videos %}
         <div class="bg-white shadow-sm rounded-lg overflow-hidden">
             <table class="min-w-full divide-y divide-gray-200">
