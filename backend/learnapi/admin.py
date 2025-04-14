@@ -3,15 +3,15 @@ from .models import VideoProgress, VocabPractice, SnippetPractice
 
 @admin.register(VideoProgress)
 class VideoProgressAdmin(admin.ModelAdmin):
-    list_display = ('user', 'video', 'last_watched')
-    list_filter = ('last_watched',)
+    list_display = ('user', 'video', 'last_practiced')
+    list_filter = ('last_practiced',)
     search_fields = ('user__username', 'video__youtube_id')
-    ordering = ('-last_watched',)
+    ordering = ('-last_practiced',)
 
 @admin.register(VocabPractice)
 class VocabPracticeAdmin(admin.ModelAdmin):
-    list_display = ('user', 'word', 'state', 'is_blacklisted', 'is_favorite', 'last_review', 'due')
-    list_filter = ('state', 'is_blacklisted', 'is_favorite')
+    list_display = ('user', 'word', 'state', 'due', 'is_favorite', 'is_blacklisted')
+    list_filter = ('state', 'due', 'is_favorite', 'is_blacklisted')
     search_fields = ('user__username', 'word__original_word')
     ordering = ('-updated',)
 

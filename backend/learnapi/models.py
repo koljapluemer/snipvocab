@@ -9,8 +9,8 @@ from shared.models import Video, Snippet, Word
 class VideoProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="video_progress")
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name="progresses")
-    # Update last_watched whenever the video is viewed.
-    last_watched = models.DateTimeField(default=timezone.now)
+    # Update last_practiced whenever the video is viewed.
+    last_practiced = models.DateTimeField(default=timezone.now)
     perceived_difficulty = models.IntegerField(null=True, blank=True)
     snippet_percentage_watched = models.FloatField(null=True, blank=True)
 
@@ -18,7 +18,7 @@ class VideoProgress(models.Model):
         unique_together = ('user', 'video')
 
     def __str__(self):
-        return f"{self.user} - {self.video} last watched on {self.last_watched}"
+        return f"{self.user} - {self.video} last practiced on {self.last_practiced}"
 
 class VocabPractice(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="vocab_practices")

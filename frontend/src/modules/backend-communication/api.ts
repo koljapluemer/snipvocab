@@ -25,7 +25,7 @@ export interface SnippetPracticeResponse {
 }
 
 export interface VideoProgressResponse {
-  lastWatched: string | null;
+  lastPracticed: string | null;
   perceivedDifficulty: number | null;
   snippetPercentageWatched: number | null;
 }

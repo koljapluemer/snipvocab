@@ -25,14 +25,14 @@ class VideoProgressView(generics.GenericAPIView):
             try:
                 progress = VideoProgress.objects.get(user=request.user, video=video)
                 return Response({
-                    'lastWatched': progress.last_watched.isoformat(),
+                    'lastPracticed': progress.last_practiced.isoformat() if progress.last_practiced else None,
                     'perceivedDifficulty': progress.perceived_difficulty,
                     'snippetPercentageWatched': progress.snippet_percentage_watched
                 })
             except VideoProgress.DoesNotExist:
                 # Return null values if no progress exists
                 return Response({
-                    'lastWatched': None,
+                    'lastPracticed': None,
                     'perceivedDifficulty': None,
                     'snippetPercentageWatched': None
                 })
@@ -66,7 +66,7 @@ class VideoProgressView(generics.GenericAPIView):
                 defaults={
                     'perceived_difficulty': perceived_difficulty,
                     'snippet_percentage_watched': snippet_percentage_watched,
-                    'last_watched': timezone.now()
+                    'last_practiced': timezone.now()
                 }
             )
             
@@ -76,15 +76,18 @@ class VideoProgressView(generics.GenericAPIView):
                     progress.perceived_difficulty = perceived_difficulty
                 if snippet_percentage_watched is not None:
                     progress.snippet_percentage_watched = snippet_percentage_watched
-                progress.last_watched = timezone.now()
+                progress.last_practiced = timezone.now()
                 progress.save()
             
             return Response({
-                'lastWatched': progress.last_watched.isoformat(),
+                'lastPracticed': progress.last_practiced.isoformat() if progress.last_practiced else None,
                 'perceivedDifficulty': progress.perceived_difficulty,
                 'snippetPercentageWatched': progress.snippet_percentage_watched
             })
             
         except Video.DoesNotExist:
             logger.warning(f"Video {youtube_id} not found or not live")
-            raise NotFound(f"Video with YouTube ID {youtube_id} not found or not live") 
+            raise NotFound(f"Video with YouTube ID {youtube_id} not found or not live")
+        except ValueError as e:
+            logger.error(f"Invalid date format for lastPracticed: {str(e)}")
+            return Response({'error': 'Invalid date format for lastPracticed'}, status=400) 
