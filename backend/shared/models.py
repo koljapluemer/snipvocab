@@ -15,11 +15,20 @@ class Frontend(models.TextChoices):
     GERMAN = 'de', '🇩🇪'
     ARABIC = 'ar', '🇪🇬'
 
+class Tag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
 class Video(models.Model):
     frontend = models.CharField(max_length=10, choices=Frontend.choices, default=Frontend.ARABIC)
+    title = models.CharField(max_length=500, blank=True, null=True)
     available_subtitle_languages = models.JSONField(default=list, blank=True, null=True)
     checked_for_relevant_subtitles = models.BooleanField(default=False)
     youtube_id = models.CharField(max_length=20, unique=True)
+    tags = models.ManyToManyField(Tag, related_name="videos", blank=True)
+    priority = models.IntegerField(default=0)
     
     status = models.CharField(max_length=100, choices=VideoStatus.choices, default=VideoStatus.NEEDS_REVIEW)
     comment = models.TextField(blank=True)
