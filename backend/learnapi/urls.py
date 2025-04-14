@@ -9,6 +9,7 @@ from learnapi.views.snippet_interaction.snippet_practice import SnippetPracticeV
 from learnapi.views.utils.meanings import VideoListView
 from learnapi.views.video_view.video_enriched_snippets import VideoEnrichedSnippetsView
 from learnapi.views.video_view.video_snippets import VideoSnippetsView
+from learnapi.views.video_view.video_progress import VideoProgressView
 
 urlpatterns = [
     path('videos/', VideoListView.as_view(), name='video-list'),
@@ -18,5 +19,6 @@ urlpatterns = [
     path('videos/<str:youtube_id>/snippets/<int:index>/all-words/', SnippetAllWordsView.as_view(), name='snippet-all-words'),
     path('videos/<str:youtube_id>/snippets/<int:index>/practice/', SnippetPracticeView.as_view(), name='snippet-practice'),
     path('videos/<str:youtube_id>/enriched-snippets/', VideoEnrichedSnippetsView.as_view(), name='video-enriched-snippets'),
+    path('videos/<str:youtube_id>/progress/', VideoProgressView.as_view(), name='video-progress'),
     path('learning-events/', LearningEventsView.as_view(), name='learning-events'),
 ]
