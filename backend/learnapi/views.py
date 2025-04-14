@@ -161,7 +161,7 @@ class SnippetDueWordsView(generics.ListAPIView):
                     try:
                         vocab_practice = VocabPractice.objects.get(user=request.user, word=word)
                         # If practice exists and is due, add to response
-                        if vocab_practice.due and vocab_practice.due <= datetime.now(timezone.utc):
+                        if vocab_practice.is_due:
                             transformed_words.append({
                                 'originalWord': word.original_word,
                                 'meanings': [{'en': meaning} for meaning in unique_meanings],

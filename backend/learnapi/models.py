@@ -39,6 +39,10 @@ class VocabPractice(models.Model):
     
     def __str__(self):
         return f"{self.user} - {self.word} practice"
+    
+    @property
+    def is_due(self):
+        return self.due and self.due <= datetime.now(timezone.utc)
 
 
 class SnippetPractice(models.Model):
