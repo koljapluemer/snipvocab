@@ -11,6 +11,8 @@ class VideoProgress(models.Model):
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name="progresses")
     # Update last_watched whenever the video is viewed.
     last_watched = models.DateTimeField(default=timezone.now)
+    perceived_difficulty = models.IntegerField(null=True, blank=True)
+    snippet_percentage_watched = models.FloatField(null=True, blank=True)
 
     class Meta:
         unique_together = ('user', 'video')
