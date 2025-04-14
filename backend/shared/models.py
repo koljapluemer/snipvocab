@@ -47,6 +47,9 @@ class Video(models.Model):
     status = models.CharField(max_length=100, choices=VideoStatus.choices, default=VideoStatus.NEEDS_REVIEW)
     comment = models.TextField(blank=True)
     youtube_title = models.CharField(max_length=500, blank=True, null=True)
+    channel_name = models.CharField(max_length=500, blank=True, null=True)
+    video_views = models.IntegerField(default=0)
+    video_likes = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.youtube_id}"

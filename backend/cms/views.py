@@ -1222,9 +1222,17 @@ def enrich_video_metadata(request):
                 statistics = video_data.get('statistics', {})
                 topic_details = video_data.get('topicDetails', {})
                 
-                # Update video title
+                # Update video title and channel name
                 video.youtube_title = snippet['title']
+                video.channel_name = snippet['channelTitle']
                 print(f"Updated title for {video.youtube_id}: {snippet['title']}")  # Debug log
+                print(f"Updated channel name for {video.youtube_id}: {snippet['channelTitle']}")  # Debug log
+                
+                # Update view and like counts
+                if 'statistics' in video_data:
+                    video.video_views = int(video_data['statistics'].get('viewCount', 0))
+                    video.video_likes = int(video_data['statistics'].get('likeCount', 0))
+                    print(f"Updated stats for {video.youtube_id}: {video.video_views} views, {video.video_likes} likes")  # Debug log
                 
                 # Clear existing tags before adding new ones
                 video.tags.clear()
