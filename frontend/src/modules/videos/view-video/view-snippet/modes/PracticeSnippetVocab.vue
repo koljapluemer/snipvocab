@@ -5,6 +5,7 @@ import { LearningEventType } from '@/shared/types/domainTypes'
 import { getSnippetDueWords, sendLearningEvents } from '@/modules/backend-communication/api'
 import { shuffleArray } from '@/shared/utils/listUtils';
 import { useToast } from '@/shared/composables/useToast';
+import { addFlashcardToEndOfStack, shuffleFlashcardIntoStack } from '@/modules/learning-and-spaced-repetition/cardStackUtils';
 
 const props = defineProps<{
   snippet: Snippet
@@ -52,7 +53,9 @@ const reveal = () => {
 
 const nextCard = () => {
   // remove first card from the array:  
+  console.log('nextCard(): stack before', cardStack.value)
   cardStack.value.shift()
+  console.log('nextCard(): stack after', cardStack.value)
   if (cardStack.value.length > 0) {
     currentCard.value = cardStack.value[0]
     isRevealed.value = false
@@ -70,6 +73,23 @@ const scoreCurrentCard = (eventType: LearningEventType) => {
     timestamp: Date.now(),
     originalWord: currentCard.value!.originalWord
   })
+
+  if (currentCard.value!.isNew) {
+    currentCard.value!.isNew = false
+    if (eventType === LearningEventType.HARD) {
+      cardStack.value = shuffleFlashcardIntoStack(cardStack.value, currentCard.value!)
+    }
+    else if (eventType === LearningEventType.GOOD) {
+      cardStack.value = addFlashcardToEndOfStack(cardStack.value, currentCard.value!)
+    }
+  } else {
+    if (eventType === LearningEventType.AGAIN) {
+      cardStack.value = shuffleFlashcardIntoStack(cardStack.value, currentCard.value!)
+    } else if (eventType === LearningEventType.HARD) {
+      cardStack.value = addFlashcardToEndOfStack(cardStack.value, currentCard.value!)
+    }
+  }
+
   nextCard()
 }
 

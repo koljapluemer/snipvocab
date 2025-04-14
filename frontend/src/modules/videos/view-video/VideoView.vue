@@ -38,15 +38,11 @@
                     width: `${((snippet.endTime - snippet.startTime) / totalDuration) * 100}%`,
                     backgroundColor: getDifficultyColor(enrichedSnippets[index]?.perceivedDifficulty ?? null, index)
                   }" :title="`Snippet ${index + 1}: ${formatTime(snippet.startTime)} - ${formatTime(snippet.endTime)}
-Difficulty: ${enrichedSnippets[index]?.perceivedDifficulty ?? 'Not rated'}`" @click="jumpToSnippet(index)" />
+Understanding: ${enrichedSnippets[index]?.perceivedDifficulty ?? 'Not rated'} %`" @click="jumpToSnippet(index)" />
               </div>
               <div class="flex justify-between mt-2 text-sm text-gray-500">
                 <span>0:00</span>
                 <span>{{ formatTime(totalDuration) }}</span>
-              </div>
-              <div class="flex justify-between mt-2 text-xs text-gray-500">
-                <span>Hard (0)</span>
-                <span>Easy (100)</span>
               </div>
             </div>
           </div>
