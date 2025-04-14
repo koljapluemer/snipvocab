@@ -93,6 +93,13 @@
                         </form>
                     {% endif %}
 
+                    {% if video.snippets.exists %}
+                        <a href="{% url 'export_snippets_csv' video.youtube_id %}" 
+                           class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                            Export Snippets CSV
+                        </a>
+                    {% endif %}
+
                     {% if video.status != 'blacklisted' %}
                         <form action="{% url 'blacklist_video' video.youtube_id %}" method="post">
                             {% csrf_token %}

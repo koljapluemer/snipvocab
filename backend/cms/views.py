@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 from googleapiclient.discovery import build
 from shared.models import Video, VideoStatus, Snippet, Word, Meaning, Frontend
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.core.paginator import Paginator
 from youtube_transcript_api import YouTubeTranscriptApi
@@ -12,6 +12,7 @@ from openai import OpenAI, beta
 from pydantic import BaseModel
 from typing import List
 import re
+import csv
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
@@ -994,3 +995,38 @@ def import_playlist_videos(request):
         return render(request, 'import_playlist_videos.html', context)
     
     return render(request, 'import_playlist_videos.html')
+
+@require_http_methods(["GET"])
+def export_snippets_csv(request, youtube_id):
+    """View to export snippets as CSV"""
+    try:
+        video = Video.objects.get(youtube_id=youtube_id)
+        snippets = video.snippets.all().order_by('index')
+        
+        # Create the HttpResponse object with the appropriate CSV header
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="{video.youtube_id}_snippets.csv"'
+        
+        # Create the CSV writer
+        writer = csv.writer(response)
+        
+        # Write the header
+        writer.writerow(['Index', 'Start Time', 'Duration', 'Content'])
+        
+        # Write the data
+        for snippet in snippets:
+            writer.writerow([
+                snippet.index,
+                snippet.start,
+                snippet.duration,
+                snippet.content
+            ])
+        
+        return response
+        
+    except Video.DoesNotExist:
+        messages.error(request, "Video not found.")
+        return redirect('video_details', youtube_id=youtube_id)
+    except Exception as e:
+        messages.error(request, f"Error exporting snippets: {str(e)}")
+        return redirect('video_details', youtube_id=youtube_id)
