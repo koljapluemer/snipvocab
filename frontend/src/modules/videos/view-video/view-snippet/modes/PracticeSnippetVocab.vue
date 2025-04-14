@@ -51,9 +51,10 @@ const reveal = () => {
 }
 
 const nextCard = () => {
-  const currentIndex = cardStack.value.indexOf(currentCard.value!)
-  if (currentIndex < cardStack.value.length - 1) {
-    currentCard.value = cardStack.value[currentIndex + 1]
+  // remove first card from the array:  
+  cardStack.value.shift()
+  if (cardStack.value.length > 0) {
+    currentCard.value = cardStack.value[0]
     isRevealed.value = false
   } else {
     // We've gone through all cards
