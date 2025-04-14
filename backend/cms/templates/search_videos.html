@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="mb-8 text-3xl font-bold">Search Videos</h1>
+    
+    <form method="get" class="mb-8">
+        <div class="flex items-center gap-4">
+            <input type="text" 
+                   name="q" 
+                   value="{{ search_query }}" 
+                   placeholder="Enter search query..."
+                   class="flex-1 px-4 py-2 border rounded"
+                   required>
+            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                Search & Import
+            </button>
+        </div>
+    </form>
+
+    {% if error %}
+        <div class="p-4 mb-4 bg-red-100 text-red-700 rounded">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    {% if search_query %}
+        {% if imported_count > 0 %}
+            <div class="p-4 mb-4 bg-green-100 text-green-700 rounded">
+                <p>Successfully imported {{ imported_count }} new videos from search "{{ search_query }}".</p>
+                <p class="mt-2 text-sm">The next time you search for "{{ search_query }}", different videos will be imported.</p>
+            </div>
+        {% else %}
+            <div class="p-4 mb-4 bg-yellow-100 text-yellow-700 rounded">
+                <p>No new videos found for "{{ search_query }}".</p>
+                <p class="mt-2 text-sm">Try a different search query or wait for new videos to be available.</p>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %} 
