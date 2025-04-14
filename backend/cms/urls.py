@@ -23,6 +23,7 @@ urlpatterns = [
     path('video/<str:youtube_id>/blacklist/', views.blacklist_video, name='blacklist_video'),
     path('set-frontend/', views.set_frontend, name='set_frontend'),
     path('update-priorities/', views.update_video_priorities, name='update_video_priorities'),
+    path('reduce-review-priorities/', views.reduce_review_priorities, name='reduce_review_priorities'),
     path('search/', views.search_videos, name='search_videos'),
     path('enrich-metadata/', views.enrich_video_metadata, name='enrich_video_metadata'),
 ]

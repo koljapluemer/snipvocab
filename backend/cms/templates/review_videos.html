@@ -2,7 +2,24 @@
 
 {% block content %}
 <div class="container mx-auto px-4 py-8">
-    <h1 class="mb-8 text-3xl font-bold">Review Videos</h1>
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Review Videos</h1>
+        <div class="flex gap-4">
+            <form method="post" action="{% url 'reduce_review_priorities' %}" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2">
+                    <i class="fas fa-arrow-down mr-2"></i>Reduce Priorities
+                </button>
+            </form>
+            <form method="post" action="{% url 'update_video_statuses' %}" class="inline">
+                {% csrf_token %}
+                <button type="submit" 
+                        class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Save All Changes
+                </button>
+            </form>
+        </div>
+    </div>
     
     <!-- Bulk Status Update -->
     {% if videos %}
