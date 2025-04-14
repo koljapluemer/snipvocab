@@ -2,16 +2,16 @@
   <div class="mt-8">
     <h3 class="text-lg font-semibold mb-4">Snippets Timeline</h3>
     <div class="relative w-full h-12 bg-base-200 rounded-lg overflow-hidden">
-      <div v-for="(snippet, index) in snippets" :key="index"
+      <div v-for="(snippet, index) in enrichedSnippets" :key="index"
         class="absolute h-full cursor-pointer transition-all duration-200" :class="[
           currentSnippetIndex === index ? 'ring-2 ring-primary' : '',
           'hover:brightness-110 hover:scale-[1.02]'
         ]" :style="{
           left: `${(snippet.startTime / totalDuration) * 100}%`,
           width: `${((snippet.endTime - snippet.startTime) / totalDuration) * 100}%`,
-          backgroundColor: getDifficultyColor(enrichedSnippets[index]?.perceivedDifficulty ?? null, index)
+          backgroundColor: getDifficultyColor(snippet.perceivedDifficulty, index)
         }" :title="`Snippet ${index + 1}: ${formatTime(snippet.startTime)} - ${formatTime(snippet.endTime)}
-Understanding: ${enrichedSnippets[index]?.perceivedDifficulty ?? 'Not rated'} %`" @click="$emit('jump-to-snippet', index)" />
+Understanding: ${snippet.perceivedDifficulty ?? 'Not rated'} %`" @click="$emit('jump-to-snippet', index)" />
     </div>
     <div class="flex justify-between mt-2 text-sm text-gray-500">
       <span>0:00</span>
@@ -22,10 +22,9 @@ Understanding: ${enrichedSnippets[index]?.perceivedDifficulty ?? 'Not rated'} %`
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { Snippet, EnrichedSnippetDetails } from '@/shared/types/domainTypes';
+import type { EnrichedSnippetDetails } from '@/shared/types/domainTypes';
 
 interface Props {
-  snippets: Snippet[];
   enrichedSnippets: EnrichedSnippetDetails[];
   currentSnippetIndex: number | null;
 }
@@ -37,8 +36,8 @@ defineEmits<{
 
 // Compute total duration from the last snippet's end time
 const totalDuration = computed(() => {
-  if (props.snippets.length === 0) return 0;
-  return props.snippets[props.snippets.length - 1].endTime;
+  if (props.enrichedSnippets.length === 0) return 0;
+  return props.enrichedSnippets[props.enrichedSnippets.length - 1].endTime;
 });
 
 // Compute color based on difficulty (0-100)
