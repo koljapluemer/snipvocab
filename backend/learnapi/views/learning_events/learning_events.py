@@ -64,6 +64,10 @@ class LearningEventsView(generics.CreateAPIView):
                     continue
                     
                 # Get or create the vocab practice
+                # TODO: make this properly, using fsrs
+                # also make sure this handles multiple learning events for the same worod
+                # ...correctly, and in the correct order
+                # frontend first
                 vocab_practice, created = VocabPractice.objects.get_or_create(
                     user=request.user,
                     word=word,
