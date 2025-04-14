@@ -23,6 +23,7 @@
 ![screenshots cms](/doc/img/cms.png)
 
 - Admin-only (maybe later for translators) "CMS" to decide which videos to translate when and how
+- requires a `superuser` to exist, and needs auth as such
 
 ### Django REST backend
 

@@ -13,6 +13,7 @@ from pydantic import BaseModel
 from typing import List
 import re
 import csv
+from django.contrib.admin.views.decorators import staff_member_required
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
@@ -55,6 +56,7 @@ def get_words_with_translations(text: str, frontend: str) -> list:
         print(f"Error processing text snippet: {e}")
         return []
 
+@staff_member_required
 @require_http_methods(["POST"])
 def set_frontend(request):
     """Set the frontend in the session"""
@@ -67,6 +69,7 @@ def get_current_frontend(request):
     """Get the current frontend from session or default to Arabic"""
     return request.session.get('frontend', Frontend.ARABIC)
 
+@staff_member_required
 def cms_home(request):
     """Home view for the CMS"""
     frontend = get_current_frontend(request)
@@ -96,6 +99,7 @@ def cms_home(request):
     
     return render(request, 'cms_home.html', context)
 
+@staff_member_required
 def import_channel_videos(request):
     """View to import videos from a YouTube channel"""
     frontend = get_current_frontend(request)
@@ -232,6 +236,7 @@ def import_channel_videos(request):
     
     return render(request, 'import_channel_videos.html')
 
+@staff_member_required
 def review_videos(request):
     """View to review videos that need review"""
     frontend = get_current_frontend(request)
@@ -263,6 +268,7 @@ def review_videos(request):
     
     return render(request, 'review_videos.html', context)
 
+@staff_member_required
 @require_http_methods(["POST"])
 def update_video_statuses(request):
     """API endpoint to update multiple video statuses"""
@@ -304,6 +310,7 @@ def update_video_statuses(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+@staff_member_required
 def list_all_videos(request):
     """View to list all videos with their status"""
     frontend = get_current_frontend(request)
@@ -340,6 +347,7 @@ def list_all_videos(request):
     
     return render(request, 'list_all_videos.html', context)
 
+@staff_member_required
 def video_details(request, youtube_id):
     """View to show details of a specific video"""
     frontend = get_current_frontend(request)
@@ -373,6 +381,7 @@ def video_details(request, youtube_id):
     except Video.DoesNotExist:
         return render(request, '404.html', {'message': 'Video not found'}, status=404)
 
+@staff_member_required
 @require_http_methods(["POST"])
 def generate_snippets(request, youtube_id):
     """View to generate snippets for a video using YouTube transcript API"""
@@ -463,6 +472,7 @@ def generate_snippets(request, youtube_id):
     
     return redirect('video_details', youtube_id=youtube_id)
 
+@staff_member_required
 @require_http_methods(["POST"])
 def generate_translations(request, youtube_id):
     """View to generate translations for all snippets in a video"""
@@ -513,6 +523,7 @@ def generate_translations(request, youtube_id):
     
     return redirect('video_details', youtube_id=youtube_id)
 
+@staff_member_required
 @require_http_methods(["POST"])
 def publish_video(request, youtube_id):
     """View to publish a video"""
@@ -535,6 +546,7 @@ def publish_video(request, youtube_id):
     
     return redirect('video_details', youtube_id=youtube_id)
 
+@staff_member_required
 @require_http_methods(["POST"])
 def reset_snippets(request, youtube_id):
     """View to reset snippets and translations for a video"""
@@ -577,6 +589,7 @@ def extract_youtube_id(url):
             return match.group(1)
     return None
 
+@staff_member_required
 def bulk_import_videos(request):
     """View for bulk importing YouTube videos."""
     frontend = get_current_frontend(request)
@@ -620,6 +633,7 @@ def bulk_import_videos(request):
     
     return render(request, 'bulk_import_videos.html')
 
+@staff_member_required
 @require_http_methods(["POST"])
 def mark_videos_without_arabic_subtitles(request):
     """View to mark videos without Arabic subtitles as not relevant"""
@@ -643,6 +657,7 @@ def mark_videos_without_arabic_subtitles(request):
     
     return redirect('list_all_videos')
 
+@staff_member_required
 @require_http_methods(["POST"])
 def generate_snippets_for_all_shortlisted(request):
     """View to generate snippets for all shortlisted videos"""
@@ -728,6 +743,7 @@ def generate_snippets_for_all_shortlisted(request):
     
     return redirect('list_all_videos')
 
+@staff_member_required
 @require_http_methods(["POST"])
 def generate_translations_for_all_snippets(request):
     """View to generate translations for all videos with snippets"""
@@ -797,6 +813,7 @@ def generate_translations_for_all_snippets(request):
     
     return redirect('list_all_videos')
 
+@staff_member_required
 def actions(request):
     """View for the actions page"""
     frontend = get_current_frontend(request)
@@ -812,6 +829,7 @@ def actions(request):
     }
     return render(request, 'actions.html', context)
 
+@staff_member_required
 @require_http_methods(["POST"])
 def bulk_check_subtitles(request):
     """View to check subtitles for all videos that haven't been checked yet"""
@@ -851,6 +869,7 @@ def bulk_check_subtitles(request):
     
     return redirect('actions')
 
+@staff_member_required
 @require_http_methods(["POST"])
 def blacklist_video(request, youtube_id):
     """View to blacklist a video"""
@@ -866,6 +885,7 @@ def blacklist_video(request, youtube_id):
     
     return redirect('video_details', youtube_id=youtube_id)
 
+@staff_member_required
 def import_playlist_videos(request):
     """View to import videos from a YouTube playlist"""
     frontend = get_current_frontend(request)
@@ -996,6 +1016,7 @@ def import_playlist_videos(request):
     
     return render(request, 'import_playlist_videos.html')
 
+@staff_member_required
 @require_http_methods(["GET"])
 def export_snippets_csv(request, youtube_id):
     """View to export snippets as CSV"""
