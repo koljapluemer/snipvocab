@@ -56,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'backend.middleware.APIKeyMiddleware',  # Add API key middleware
 ]
 
 # Security settings
@@ -73,18 +74,20 @@ if not DEBUG:
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vue dev server
-    "https://snipvocab-backend-4991c989741a.herokuapp.com",  # Production backend
     "https://snipvocab-ar.netlify.app",  # Production frontend
+    "https://snipvocab-backend-4991c989741a.herokuapp.com",  # Production backend
 ]
 
 if DEBUG:
     CORS_ALLOWED_ORIGINS.extend([
         "http://127.0.0.1:5173",  # Additional dev server
+        "http://localhost:3000",   # In case you use other local ports
     ])
+    # In development, you might want to allow all origins
+    CORS_ALLOW_ALL_ORIGINS = True
+    CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_CREDENTIALS = True
-
-# Allow all headers and methods
+# CORS Headers configuration
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
@@ -95,6 +98,7 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+    'x-api-key',
 ]
 
 CORS_ALLOW_METHODS = [
@@ -106,9 +110,14 @@ CORS_ALLOW_METHODS = [
     'PUT',
 ]
 
-# Add these additional CORS settings
+# Remove the URL regex restriction as it's causing issues
+# CORS_URLS_REGEX = r'^/api/.*$'  # Comment this out
+
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_PRIVATE_NETWORK = True
-CORS_URLS_REGEX = r'^/api/.*$'  # Only allow CORS for API endpoints
+
+# Add CORS_EXPOSE_HEADERS if you need to access any custom headers in frontend
+CORS_EXPOSE_HEADERS = ['Content-Type', 'X-API-Key']
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -260,3 +269,21 @@ if not YOUTUBE_API_KEY:
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 if not OPENAI_API_KEY:
     raise ValueError("OPENAI_API_KEY environment variable is not set")
+
+# API Key settings
+API_KEY_HEADER = 'X-API-Key'
+API_KEY = os.getenv('FRONTEND_API_KEY')
+if not API_KEY:
+    raise ValueError("FRONTEND_API_KEY environment variable is not set")
+
+# Define which URL patterns require API key authentication
+API_KEY_REQUIRED_PATHS = [
+    r'^/learn/',  # All learnapi endpoints
+    r'^/auth/',   # All authapi endpoints
+]
+
+# Define which paths should bypass API key check
+API_KEY_EXEMPT_PATHS = [
+    r'^/admin/',  # Django admin
+    r'^/cms/',    # CMS endpoints
+]

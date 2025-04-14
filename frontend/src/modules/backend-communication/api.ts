@@ -28,8 +28,10 @@ export interface SnippetPracticeResponse {
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+    'X-API-Key': import.meta.env.VITE_FRONTEND_API_KEY
+  },
+  withCredentials: true
 })
 
 // Add auth token to requests if it exists
