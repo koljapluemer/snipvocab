@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
 from googleapiclient.discovery import build
-from shared.models import Video, VideoStatus, Snippet, Word, Meaning, Frontend
+from shared.models import Video, VideoStatus, Snippet, Word, Meaning, Frontend, Tag
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.core.paginator import Paginator
@@ -1138,17 +1138,22 @@ def search_videos(request):
                 # If no more pages, reset to start from beginning
                 request.session[f'last_page_token_{search_query}'] = ''
             
+            # Get or create tag for this search query
+            tag, _ = Tag.objects.get_or_create(name=search_query.lower())
+            
             imported_count = 0
             for item in search_response.get('items', []):
                 video_id = item['id']['videoId']
                 if video_id not in existing_video_ids:
-                    Video.objects.create(
+                    video = Video.objects.create(
                         youtube_id=video_id,
                         frontend=frontend,
                         status=VideoStatus.NEEDS_REVIEW,
                         comment=f'Imported from search: {search_query}',
                         youtube_title=item['snippet']['title']
                     )
+                    # Add the tag to the video
+                    video.tags.add(tag)
                     imported_count += 1
             
             context = {

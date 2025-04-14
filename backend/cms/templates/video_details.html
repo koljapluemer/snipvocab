@@ -22,6 +22,22 @@
             </div>
         </div>
 
+        <!-- Tags -->
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold mb-2">Tags</h2>
+            {% if video.tags.all %}
+                <div class="flex flex-wrap gap-2">
+                    {% for tag in video.tags.all %}
+                        <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                            {{ tag.name }}
+                        </span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-600">No tags assigned</p>
+            {% endif %}
+        </div>
+
         <!-- Video Player -->
         <div class="mb-8 {% if video.status == 'blacklisted' %}opacity-50{% endif %}">
             <div class="relative pb-[56.25%]">
