@@ -1,6 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import VideoListView, VideoSnippetsView, SnippetDetailsView, SnippetDueWordsView, LearningEventsView, SnippetPracticeView, VideoEnrichedSnippetsView
+
+from learnapi.views.learning_events.learning_events import LearningEventsView
+from learnapi.views.snippet_interaction.snippet_details import SnippetDetailsView
+from learnapi.views.snippet_interaction.snippet_due_words import SnippetDueWordsView
+from learnapi.views.snippet_interaction.snippet_practice import SnippetPracticeView
+from learnapi.views.utils.meanings import VideoListView
+from learnapi.views.video_view.video_enriched_snippets import VideoEnrichedSnippetsView
+from learnapi.views.video_view.video_snippets import VideoSnippetsView
 
 urlpatterns = [
     path('videos/', VideoListView.as_view(), name='video-list'),
@@ -10,6 +17,4 @@ urlpatterns = [
     path('videos/<str:youtube_id>/snippets/<int:index>/practice/', SnippetPracticeView.as_view(), name='snippet-practice'),
     path('videos/<str:youtube_id>/enriched-snippets/', VideoEnrichedSnippetsView.as_view(), name='video-enriched-snippets'),
     path('learning-events/', LearningEventsView.as_view(), name='learning-events'),
-    # admin
-    path('admin/', admin.site.urls),
 ]
