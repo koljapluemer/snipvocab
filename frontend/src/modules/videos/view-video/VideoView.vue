@@ -26,25 +26,13 @@
             </div>
 
             <!-- Snippet Timeline -->
-            <div v-if="snippets.length > 0 && enrichedSnippets.length === snippets.length" class="mt-8">
-              <h3 class="text-lg font-semibold mb-4">Snippets Timeline</h3>
-              <div class="relative w-full h-12 bg-base-200 rounded-lg overflow-hidden">
-                <div v-for="(snippet, index) in snippets" :key="index"
-                  class="absolute h-full cursor-pointer transition-all duration-200" :class="[
-                    currentSnippetIndex === index ? 'ring-2 ring-primary' : '',
-                    'hover:brightness-110 hover:scale-[1.02]'
-                  ]" :style="{
-                    left: `${(snippet.startTime / totalDuration) * 100}%`,
-                    width: `${((snippet.endTime - snippet.startTime) / totalDuration) * 100}%`,
-                    backgroundColor: getDifficultyColor(enrichedSnippets[index]?.perceivedDifficulty ?? null, index)
-                  }" :title="`Snippet ${index + 1}: ${formatTime(snippet.startTime)} - ${formatTime(snippet.endTime)}
-Understanding: ${enrichedSnippets[index]?.perceivedDifficulty ?? 'Not rated'} %`" @click="jumpToSnippet(index)" />
-              </div>
-              <div class="flex justify-between mt-2 text-sm text-gray-500">
-                <span>0:00</span>
-                <span>{{ formatTime(totalDuration) }}</span>
-              </div>
-            </div>
+            <SnippetTimeline
+              v-if="snippets.length > 0 && enrichedSnippets.length === snippets.length"
+              :snippets="snippets"
+              :enriched-snippets="enrichedSnippets"
+              :current-snippet-index="currentSnippetIndex"
+              @jump-to-snippet="jumpToSnippet"
+            />
           </div>
         </div>
       </div>
@@ -65,6 +53,7 @@ import { useRoute } from 'vue-router';
 import type { Snippet, EnrichedSnippetDetails } from '@/shared/types/domainTypes';
 import { getVideoSnippets, getVideoEnrichedSnippets } from '@/modules/backend-communication/api';
 import SnippetView from './view-snippet/SnippetView.vue';
+import SnippetTimeline from './components/SnippetTimeline.vue';
 
 const route = useRoute();
 const videoId = route.params.videoId as string;
