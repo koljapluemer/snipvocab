@@ -24,6 +24,12 @@ export interface SnippetPracticeResponse {
   updated: string;
 }
 
+export interface VideoProgressResponse {
+  lastWatched: string | null;
+  perceivedDifficulty: number | null;
+  snippetPercentageWatched: number | null;
+}
+
 // Create axios instance with base configuration
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -162,5 +168,29 @@ export const getVideoEnrichedSnippets = async (youtubeId: string): Promise<Enric
   } catch (error) {
     console.error('Error fetching enriched snippets:', error)
     throw new Error('Failed to fetch enriched snippets. Please try again later.')
+  }
+}
+
+export const getVideoProgress = async (youtubeId: string): Promise<VideoProgressResponse> => {
+  try {
+    return await handleApiResponse(api.get(`/learn/videos/${youtubeId}/progress/`))
+  } catch (error) {
+    console.error('Error fetching video progress:', error)
+    throw new Error('Failed to fetch video progress. Please try again later.')
+  }
+}
+
+export const updateVideoProgress = async (
+  youtubeId: string,
+  data: {
+    perceivedDifficulty?: number;
+    snippetPercentageWatched?: number;
+  }
+): Promise<VideoProgressResponse> => {
+  try {
+    return await handleApiResponse(api.post(`/learn/videos/${youtubeId}/progress/`, data))
+  } catch (error) {
+    console.error('Error updating video progress:', error)
+    throw new Error('Failed to update video progress. Please try again later.')
   }
 }
