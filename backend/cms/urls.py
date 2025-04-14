@@ -26,4 +26,5 @@ urlpatterns = [
     path('reduce-review-priorities/', views.reduce_review_priorities, name='reduce_review_priorities'),
     path('search/', views.search_videos, name='search_videos'),
     path('enrich-metadata/', views.enrich_video_metadata, name='enrich_video_metadata'),
+    path('publish-many-snippets/', views.publish_videos_with_many_snippets, name='publish_videos_with_many_snippets'),
 ]

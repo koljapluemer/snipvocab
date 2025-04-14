@@ -75,6 +75,21 @@
                 </button>
             </form>
         </div>
+
+        <!-- Publish Videos with Many Snippets -->
+        <div class="bg-white p-6 rounded-lg shadow-sm">
+            <h2 class="text-xl font-semibold mb-4">Publish Videos with Many Snippets</h2>
+            <p class="text-gray-600 mb-4">
+                Automatically publish all videos that have more than 5 snippets and are ready for publishing.
+                This will set their status to LIVE.
+            </p>
+            <form method="post" action="{% url 'publish_videos_with_many_snippets' %}">
+                {% csrf_token %}
+                <button type="submit" class="w-full px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600">
+                    Publish Videos with Many Snippets
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %} 
