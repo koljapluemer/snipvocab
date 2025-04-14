@@ -26,7 +26,7 @@ export interface SnippetPracticeResponse {
 
 export interface VideoProgressResponse {
   lastPracticed: string | null;
-  perceivedDifficulty: number | null;
+  perceivedDifficulty?: number | null;
   snippetPercentageWatched: number | null;
 }
 
@@ -171,11 +171,7 @@ export const getVideoEnrichedSnippets = async (youtubeId: string): Promise<Enric
   }
 }
 
-export const getVideoProgress = async (videoId: string): Promise<{
-  lastPracticed: string | null;
-  perceivedDifficulty: number | null;
-  snippetPercentageWatched: number | null;
-}> => {
+export const getVideoProgress = async (videoId: string): Promise<VideoProgressResponse> => {
   try {
     return await handleApiResponse(api.get(`/learn/videos/${videoId}/progress/`))
   } catch (error) {

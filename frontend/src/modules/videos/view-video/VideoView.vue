@@ -53,7 +53,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import type { EnrichedSnippetDetails } from '@/shared/types/domainTypes';
-import { getVideoSnippets, getVideoEnrichedSnippets } from '@/modules/backend-communication/api';
+import { getVideoSnippets, getVideoEnrichedSnippets, updateVideoProgress } from '@/modules/backend-communication/api';
 import SnippetView from './view-snippet/SnippetView.vue';
 import SnippetTimeline from './components/SnippetTimeline.vue';
 
@@ -63,6 +63,15 @@ const enrichedSnippets = ref<EnrichedSnippetDetails[]>([]);
 const currentSnippetIndex = ref<number | null>(null);
 const isLoading = ref(true);
 const error = ref<string | null>(null);
+
+// Calculate progress based on rated snippets
+const progressPercentage = computed(() => {
+  if (enrichedSnippets.value.length === 0) return 0;
+  const ratedSnippets = enrichedSnippets.value.filter(snippet => 
+    snippet.perceivedDifficulty !== null
+  ).length;
+  return (ratedSnippets / enrichedSnippets.value.length) * 100;
+});
 
 // Find the first unrated snippet index
 const firstUnratedSnippetIndex = computed(() => {
@@ -86,9 +95,17 @@ const startPractice = () => {
   }
 };
 
-const handleNextSnippet = () => {
+const handleNextSnippet = async () => {
   if (currentSnippetIndex.value !== null && currentSnippetIndex.value < enrichedSnippets.value.length - 1) {
     currentSnippetIndex.value++;
+    // Update video progress after moving to next snippet
+    try {
+      await updateVideoProgress(videoId, {
+        snippetPercentageWatched: progressPercentage.value
+      });
+    } catch (err) {
+      console.error('Error updating video progress:', err);
+    }
   }
 };
 

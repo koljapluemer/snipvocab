@@ -24,16 +24,18 @@ class VideoProgressView(generics.GenericAPIView):
             # Try to get the video progress
             try:
                 progress = VideoProgress.objects.get(user=request.user, video=video)
-                return Response({
+                response_data = {
                     'lastPracticed': progress.last_practiced.isoformat() if progress.last_practiced else None,
-                    'perceivedDifficulty': progress.perceived_difficulty,
                     'snippetPercentageWatched': progress.snippet_percentage_watched
-                })
+                }
+                # Only include perceivedDifficulty if it exists
+                if progress.perceived_difficulty is not None:
+                    response_data['perceivedDifficulty'] = progress.perceived_difficulty
+                return Response(response_data)
             except VideoProgress.DoesNotExist:
                 # Return null values if no progress exists
                 return Response({
                     'lastPracticed': None,
-                    'perceivedDifficulty': None,
                     'snippetPercentageWatched': None
                 })
             
@@ -64,7 +66,6 @@ class VideoProgressView(generics.GenericAPIView):
                 user=request.user,
                 video=video,
                 defaults={
-                    'perceived_difficulty': perceived_difficulty,
                     'snippet_percentage_watched': snippet_percentage_watched,
                     'last_practiced': timezone.now()
                 }
@@ -72,18 +73,25 @@ class VideoProgressView(generics.GenericAPIView):
             
             # Update if it already exists
             if not created:
-                if perceived_difficulty is not None:
-                    progress.perceived_difficulty = perceived_difficulty
                 if snippet_percentage_watched is not None:
                     progress.snippet_percentage_watched = snippet_percentage_watched
                 progress.last_practiced = timezone.now()
                 progress.save()
             
-            return Response({
+            # Only update perceived_difficulty if it was provided
+            if perceived_difficulty is not None:
+                progress.perceived_difficulty = perceived_difficulty
+                progress.save()
+            
+            response_data = {
                 'lastPracticed': progress.last_practiced.isoformat() if progress.last_practiced else None,
-                'perceivedDifficulty': progress.perceived_difficulty,
                 'snippetPercentageWatched': progress.snippet_percentage_watched
-            })
+            }
+            # Only include perceivedDifficulty if it exists
+            if progress.perceived_difficulty is not None:
+                response_data['perceivedDifficulty'] = progress.perceived_difficulty
+            
+            return Response(response_data)
             
         except Video.DoesNotExist:
             logger.warning(f"Video {youtube_id} not found or not live")
