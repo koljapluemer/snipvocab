@@ -7,11 +7,11 @@
           currentSnippetIndex === index ? 'ring-2 ring-primary' : '',
           'hover:brightness-110 hover:scale-[1.02]'
         ]" :style="{
-          left: `${(snippet.startTime / totalDuration) * 100}%`,
-          width: `${((snippet.endTime - snippet.startTime) / totalDuration) * 100}%`,
-          backgroundColor: getDifficultyColor(snippet.perceivedDifficulty, index)
+          left: `${getLeftPosition(index)}%`,
+          width: `${getWidth(index)}%`,
+          backgroundColor: getDifficultyColor(snippet.perceivedDifficulty ?? null, index)
         }" :title="`Snippet ${index + 1}: ${formatTime(snippet.startTime)} - ${formatTime(snippet.endTime)}
-Understanding: ${snippet.perceivedDifficulty ?? 'Not rated'} %`" @click="$emit('jump-to-snippet', index)" />
+Understanding: ${snippet.perceivedDifficulty ?? 'Not rated'}`" @click="$emit('jump-to-snippet', index)" />
     </div>
     <div class="flex justify-between mt-2 text-sm text-gray-500">
       <span>0:00</span>
@@ -39,6 +39,20 @@ const totalDuration = computed(() => {
   if (props.enrichedSnippets.length === 0) return 0;
   return props.enrichedSnippets[props.enrichedSnippets.length - 1].endTime;
 });
+
+// Get the left position for a snippet
+const getLeftPosition = (index: number): number => {
+  if (index === 0) return 0;
+  const previousSnippet = props.enrichedSnippets[index - 1];
+  return (previousSnippet.endTime / totalDuration.value) * 100;
+};
+
+// Get the width for a snippet
+const getWidth = (index: number): number => {
+  const snippet = props.enrichedSnippets[index];
+  const startTime = index === 0 ? 0 : props.enrichedSnippets[index - 1].endTime;
+  return ((snippet.endTime - startTime) / totalDuration.value) * 100;
+};
 
 // Compute color based on difficulty (0-100)
 const getDifficultyColor = (difficulty: number | null, index: number) => {
