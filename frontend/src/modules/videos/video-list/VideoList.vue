@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { getVideos, type VideoInfo, type PaginatedResponse } from '@/modules/backend-communication/api'
 import VideoTile from './VideoTile.vue'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
@@ -64,8 +64,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-6">Select a video to practice:</h1>
+  <div class="container mx-auto py-8">
+    <h2 class="text-2xl font-bold mb-6 ml-14">All Videos</h2>
     
     <div v-if="loading && !slides.length" class="flex justify-center">
       <span class="loading loading-spinner loading-lg"></span>
