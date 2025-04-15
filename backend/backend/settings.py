@@ -76,15 +76,14 @@ if not DEBUG:
 
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Vue dev server
     "https://snipvocab-ar.netlify.app",  # Production frontend
+    "http://www.arabicwithvideos.com/",
     "https://snipvocab-backend-4991c989741a.herokuapp.com",  # Production backend
 ]
 
 if DEBUG:
     CORS_ALLOWED_ORIGINS.extend([
         "http://127.0.0.1:5173",  # Additional dev server
-        "http://localhost:3000",   # In case you use other local ports
     ])
     # In development, you might want to allow all origins
     CORS_ALLOW_ALL_ORIGINS = True
