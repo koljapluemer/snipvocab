@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from learnapi.views.video_view.video_list import VideoListView
+from learnapi.views.video_list.video_list import VideoListView
 from learnapi.views.learning_events.learning_events import LearningEventsView
 from learnapi.views.snippet_interaction.snippet_details import SnippetDetailsView
 from learnapi.views.snippet_interaction.snippet_due_words import SnippetDueWordsView
