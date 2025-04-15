@@ -36,6 +36,8 @@
 1. go to `backend/` and activate venv with `source .venv/bin/activate`
 2. go to `backend/backend/` and run `python manage.py runserver`
 
+- if you want to do Stripe things, run `stripe listen --forward-to http://localhost:8000/api/payment/webhook/` and make sure the secret is correctly reflected in the local `backend/.env`s
+
 ### Frontend
 
 1. go to `frontend/`

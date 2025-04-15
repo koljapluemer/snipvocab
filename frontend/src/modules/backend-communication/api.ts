@@ -49,6 +49,14 @@ export interface PaginatedResponse<T> {
   results: T[];
 }
 
+export interface UserInfoResponse {
+  email: string;
+  id: number;
+  subscription: {
+    status: string | null;
+  };
+}
+
 // Create axios instance with base configuration
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -257,5 +265,23 @@ export const createCheckoutSession = async (): Promise<{ checkoutUrl: string }> 
   } catch (error) {
     console.error('Error creating checkout session:', error)
     throw new Error('Failed to create checkout session. Please try again later.')
+  }
+}
+
+export const getUserInfo = async (): Promise<UserInfoResponse> => {
+  try {
+    return await handleApiResponse(api.get('/auth/user/'))
+  } catch (error) {
+    console.error('Error fetching user info:', error)
+    throw new Error('Failed to fetch user information. Please try again later.')
+  }
+}
+
+export const cancelSubscription = async (): Promise<{ message: string }> => {
+  try {
+    return await handleApiResponse(api.post('/payment/cancel-subscription/'))
+  } catch (error) {
+    console.error('Error canceling subscription:', error)
+    throw new Error('Failed to cancel subscription. Please try again later.')
   }
 }

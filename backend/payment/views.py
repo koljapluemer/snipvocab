@@ -10,6 +10,8 @@ import stripe
 import json
 import logging
 
+from payment.models import Subscription
+
 logger = logging.getLogger(__name__)
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
