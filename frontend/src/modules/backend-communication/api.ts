@@ -104,6 +104,42 @@ export const getVideos = async (page: number = 1, pageSize: number = 10): Promis
   }
 }
 
+export const getVideosByTag = async (tagName: string, page: number = 1, pageSize: number = 10): Promise<PaginatedResponse<VideoInfo>> => {
+  try {
+    return await handleApiResponse(api.get(`/learn/videos/tag/${tagName}/?page=${page}&page_size=${pageSize}`))
+  } catch (error) {
+    console.error('Error fetching videos by tag:', error)
+    throw new Error('Failed to fetch videos by tag. Please try again later.')
+  }
+}
+
+export const getNewestVideos = async (page: number = 1, pageSize: number = 10): Promise<PaginatedResponse<VideoInfo>> => {
+  try {
+    return await handleApiResponse(api.get(`/learn/videos/new/?page=${page}&page_size=${pageSize}`))
+  } catch (error) {
+    console.error('Error fetching newest videos:', error)
+    throw new Error('Failed to fetch newest videos. Please try again later.')
+  }
+}
+
+export const getPopularVideos = async (page: number = 1, pageSize: number = 10): Promise<PaginatedResponse<VideoInfo>> => {
+  try {
+    return await handleApiResponse(api.get(`/learn/videos/popular/?page=${page}&page_size=${pageSize}`))
+  } catch (error) {
+    console.error('Error fetching popular videos:', error)
+    throw new Error('Failed to fetch popular videos. Please try again later.')
+  }
+}
+
+export const getRandomCommonTag = async (): Promise<string> => {
+  try {
+    return await handleApiResponse(api.get('/learn/tags/random/'))
+  } catch (error) {
+    console.error('Error fetching random tag:', error)
+    throw new Error('Failed to fetch random tag. Please try again later.')
+  }
+}
+
 export const getVideoSnippets = async (youtubeId: string): Promise<Snippet[]> => {
   try {
     return await handleApiResponse(api.get(`/learn/videos/${youtubeId}/snippets/`))
