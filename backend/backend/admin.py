@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from shared.models import Snippet, Video
-from .models import VideoProgress, VocabPractice, SnippetPractice
+from shared.models import Snippet, Video, Tag
+from learnapi.models import VideoProgress, VocabPractice, SnippetPractice
 
 @admin.register(VideoProgress)
 class VideoProgressAdmin(admin.ModelAdmin):
@@ -27,3 +27,4 @@ class SnippetPracticeAdmin(admin.ModelAdmin):
 
 admin.site.register(Video)
 admin.site.register(Snippet)
+admin.site.register(Tag)

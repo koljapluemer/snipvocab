@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'authapi',
     'learnapi',
     'cms',
+    'backend', # just for admin (and settings are here)
 ]
 
 MIDDLEWARE = [
