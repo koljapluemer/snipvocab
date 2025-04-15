@@ -36,7 +36,7 @@ def create_checkout_session(request):
             }
         )
         logger.info(f"Successfully created checkout session {checkout_session.id}")
-        return Response({'sessionId': checkout_session.id})
+        return Response({'checkoutUrl': checkout_session.url})
     except Exception as e:
         logger.error(f"Error creating checkout session: {str(e)}", exc_info=True)
         return Response({'error': str(e)}, status=500)

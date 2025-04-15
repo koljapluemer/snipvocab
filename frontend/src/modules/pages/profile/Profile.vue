@@ -10,10 +10,8 @@ const handleSubscribe = async () => {
     isLoading.value = true
     error.value = null
     
-    const { sessionId } = await createCheckoutSession()
-    
-    // Redirect to Stripe Checkout
-    window.location.href = `https://checkout.stripe.com/pay/${sessionId}`
+    const { checkoutUrl } = await createCheckoutSession()
+    window.location.href = checkoutUrl
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Failed to create checkout session. Please try again.'
     console.error('Subscription error:', err)

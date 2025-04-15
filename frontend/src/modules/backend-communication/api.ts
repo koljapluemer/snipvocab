@@ -251,7 +251,7 @@ export const updateVideoProgress = async (
 }
 
 // Payment API functions
-export const createCheckoutSession = async (): Promise<{ sessionId: string }> => {
+export const createCheckoutSession = async (): Promise<{ checkoutUrl: string }> => {
   try {
     return await handleApiResponse(api.post('/payment/create-checkout-session/'))
   } catch (error) {
