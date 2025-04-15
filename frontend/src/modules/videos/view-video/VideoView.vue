@@ -16,6 +16,13 @@
           </div>
           <div v-else>
             <h2 class="card-title text-2xl mb-4">{{ videoTitle }}</h2>
+            <div class="mb-4">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-medium">Progress</span>
+                <span class="text-sm font-medium">{{ Math.round(progressPercentage) }}%</span>
+              </div>
+              <progress class="progress progress-primary w-full" :value="progressPercentage" max="100"></progress>
+            </div>
             <div class="flex justify-between items-center">
               <button 
                 v-if="enrichedSnippets.length > 0"

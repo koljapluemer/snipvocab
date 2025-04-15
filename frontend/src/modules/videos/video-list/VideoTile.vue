@@ -9,6 +9,7 @@ const props = defineProps<{
 
 const router = useRouter()
 const lastPracticed = ref<string | null>(null)
+const progressPercentage = ref<number>(0)
 const loading = ref(true)
 
 const handleViewVideo = () => {
@@ -37,6 +38,9 @@ onMounted(async () => {
     } else {
       console.log('No lastPracticed date found')
     }
+    if (progress.snippetPercentageWatched !== null) {
+      progressPercentage.value = progress.snippetPercentageWatched
+    }
   } catch (error) {
     console.error('Error fetching video progress:', error)
   } finally {
@@ -61,6 +65,12 @@ onMounted(async () => {
       >
         Last practiced {{ lastPracticed }}
       </div>
+      <progress 
+        v-if="progressPercentage > 0"
+        class="progress progress-primary w-full absolute bottom-0 left-0" 
+        :value="progressPercentage" 
+        max="100"
+      ></progress>
     </div>
   </div>
 </template>
