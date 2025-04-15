@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 from learnapi.views.video_list.video_list import VideoListView
+from learnapi.views.video_list.video_list_for_tag import VideoListForTagView
 from learnapi.views.learning_events.learning_events import LearningEventsView
 from learnapi.views.snippet_interaction.snippet_details import SnippetDetailsView
 from learnapi.views.snippet_interaction.snippet_due_words import SnippetDueWordsView
@@ -13,6 +14,7 @@ from learnapi.views.video_view.video_progress import VideoProgressView
 
 urlpatterns = [
     path('videos/', VideoListView.as_view(), name='video-list'),
+    path('videos/tag/<str:tag_name>/', VideoListForTagView.as_view(), name='video-list-for-tag'),
     path('videos/<str:youtube_id>/snippets/', VideoSnippetsView.as_view(), name='video-snippets'),
     path('videos/<str:youtube_id>/snippets/<int:index>/', SnippetDetailsView.as_view(), name='snippet-details'),
     path('videos/<str:youtube_id>/snippets/<int:index>/due-words/', SnippetDueWordsView.as_view(), name='snippet-due-words'),
