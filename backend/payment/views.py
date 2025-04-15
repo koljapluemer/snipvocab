@@ -8,7 +8,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 import stripe
 import json
+import logging
 
+logger = logging.getLogger(__name__)
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 # Create your views here.
@@ -17,6 +19,8 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 @permission_classes([IsAuthenticated])
 def create_checkout_session(request):
     try:
+        logger.info(f"Creating checkout session for user {request.user.id}")
+        
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=[{
@@ -31,8 +35,10 @@ def create_checkout_session(request):
                 'user_id': request.user.id
             }
         )
+        logger.info(f"Successfully created checkout session {checkout_session.id}")
         return Response({'sessionId': checkout_session.id})
     except Exception as e:
+        logger.error(f"Error creating checkout session: {str(e)}", exc_info=True)
         return Response({'error': str(e)}, status=500)
 
 @csrf_exempt

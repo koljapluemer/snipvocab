@@ -4,7 +4,8 @@ import Login from '@/modules/auth/login/Login.vue'
 import VideoView from '@/modules/videos/view-video/VideoView.vue'
 import { useAuthState } from '@/modules/auth/useAuthState'
 import { useToast } from '@/shared/elements/toast/useToast'
-import Dashboard from './modules/pages/Dashboard.vue'
+import Dashboard from '@/modules/pages/dashboard/Dashboard.vue'
+import Profile from '@/modules/pages/profile/Profile.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,6 +32,12 @@ const router = createRouter({
       meta: {
         requiresAuth: true
       }
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: Profile,
+      meta: { requiresAuth: true }
     }
   ]
 })

@@ -8,7 +8,9 @@ const auth = useAuthState()
 <template>
   <div class="flex items-center gap-4">
     <div v-if="auth.isAuthenticated.value" class="flex items-center gap-2">
-      <span class="text-sm">{{ auth.userEmail.value }}</span>
+      <router-link :to="{ name: 'profile' }" class="btn btn-ghost btn-sm">
+        <span class="text-sm">{{ auth.userEmail.value }}</span>
+      </router-link>
       <LogoutButton />
     </div>
 

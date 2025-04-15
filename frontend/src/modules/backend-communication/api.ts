@@ -249,3 +249,13 @@ export const updateVideoProgress = async (
     throw new Error('Failed to update video progress. Please try again later.')
   }
 }
+
+// Payment API functions
+export const createCheckoutSession = async (): Promise<{ sessionId: string }> => {
+  try {
+    return await handleApiResponse(api.post('/payment/create-checkout-session/'))
+  } catch (error) {
+    console.error('Error creating checkout session:', error)
+    throw new Error('Failed to create checkout session. Please try again later.')
+  }
+}

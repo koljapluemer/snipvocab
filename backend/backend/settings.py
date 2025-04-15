@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'authapi',
     'learnapi',
     'cms',
+    'payment',
     'backend', # just for admin (and settings are here)
 ]
 
