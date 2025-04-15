@@ -1,4 +1,6 @@
 from django.contrib import admin
+
+from shared.models import Snippet, Video
 from .models import VideoProgress, VocabPractice, SnippetPractice
 
 @admin.register(VideoProgress)
@@ -21,3 +23,7 @@ class SnippetPracticeAdmin(admin.ModelAdmin):
     list_filter = ('perceived_difficulty',)
     search_fields = ('user__username', 'snippet__video__youtube_id')
     ordering = ('-updated',)
+
+
+admin.site.register(Video)
+admin.site.register(Snippet)

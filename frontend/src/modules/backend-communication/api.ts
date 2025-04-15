@@ -30,6 +30,13 @@ export interface VideoProgressResponse {
   snippetPercentageWatched: number | null;
 }
 
+export interface EnrichedSnippetsResponse {
+  snippets: EnrichedSnippetDetails[];
+  title: string;
+  snippetPercentageWatched: number | null;
+  perceivedDifficulty: number | null;
+}
+
 // Create axios instance with base configuration
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -162,7 +169,7 @@ export const updateSnippetPractice = async (
   }
 }
 
-export const getVideoEnrichedSnippets = async (youtubeId: string): Promise<EnrichedSnippetDetails[]> => {
+export const getVideoEnrichedSnippets = async (youtubeId: string): Promise<EnrichedSnippetsResponse> => {
   try {
     return await handleApiResponse(api.get(`/learn/videos/${youtubeId}/enriched-snippets/`))
   } catch (error) {

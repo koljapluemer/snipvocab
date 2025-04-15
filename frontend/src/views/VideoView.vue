@@ -7,7 +7,7 @@
       <span>{{ error }}</span>
     </div>
     <div v-else>
-      <h1 class="text-3xl font-bold mb-6">Video Snippets</h1>
+      <h1 class="text-3xl font-bold mb-6">{{ title }}</h1>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="aspect-w-16 aspect-h-9">
           <iframe
@@ -28,10 +28,15 @@
               class="card bg-base-100 shadow-xl"
             >
               <div class="card-body">
-                <div class="card-actions justify-end">
-                  <span class="text-sm text-gray-500">
-                    {{ formatTime(snippet.startTime) }} - {{ formatTime(snippet.endTime) }}
-                  </span>
+                <div class="flex justify-between items-center">
+                  <div>
+                    <span class="text-sm text-gray-500">
+                      {{ formatTime(snippet.startTime) }} - {{ formatTime(snippet.endTime) }}
+                    </span>
+                    <div v-if="snippet.perceivedDifficulty !== null" class="mt-2">
+                      <span class="text-sm">Difficulty: {{ snippet.perceivedDifficulty }}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -45,15 +50,16 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import type { Snippet } from '@/shared/types/domainTypes'
-import { getVideoSnippets } from '@/modules/backend-communication/api'
+import type { EnrichedSnippetDetails } from '@/shared/types/domainTypes'
+import { getVideoEnrichedSnippets, type EnrichedSnippetsResponse } from '@/modules/backend-communication/api'
 
 const route = useRoute()
 const videoId = route.params.videoId as string
 
 const loading = ref(true)
 const error = ref<string | null>(null)
-const snippets = ref<Snippet[]>([])
+const snippets = ref<EnrichedSnippetDetails[]>([])
+const title = ref('')
 
 const formatTime = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60)
@@ -63,7 +69,9 @@ const formatTime = (seconds: number): string => {
 
 onMounted(async () => {
   try {
-    snippets.value = await getVideoSnippets(videoId)
+    const response = await getVideoEnrichedSnippets(videoId)
+    snippets.value = response.snippets
+    title.value = response.title
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'An error occurred'
   } finally {

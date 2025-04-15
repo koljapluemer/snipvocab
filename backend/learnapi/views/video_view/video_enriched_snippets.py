@@ -3,7 +3,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.exceptions import NotFound
-from learnapi.models import SnippetPractice
+from learnapi.models import SnippetPractice, VideoProgress
 from learnapi.views.utils.meanings import deduplicate_meanings
 from shared.models import Video, Snippet, Word, VideoStatus
 import logging
@@ -22,6 +22,17 @@ class VideoEnrichedSnippetsView(generics.GenericAPIView):
         try:
             # Get the video
             video = Video.objects.get(youtube_id=youtube_id, status=VideoStatus.LIVE)
+            
+            # Get video progress if it exists
+            try:
+                video_progress = VideoProgress.objects.get(user=request.user, video=video)
+                last_practiced = video_progress.last_practiced.isoformat() if video_progress.last_practiced else None
+                snippet_percentage_watched = video_progress.snippet_percentage_watched
+                perceived_difficulty = video_progress.perceived_difficulty
+            except VideoProgress.DoesNotExist:
+                last_practiced = None
+                snippet_percentage_watched = None
+                perceived_difficulty = None
             
             # Get all snippets for this video
             snippets = Snippet.objects.filter(video=video).order_by('index')
@@ -48,10 +59,10 @@ class VideoEnrichedSnippetsView(generics.GenericAPIView):
                 # Get practice data if it exists
                 try:
                     practice = SnippetPractice.objects.get(user=request.user, snippet=snippet)
-                    perceived_difficulty = practice.perceived_difficulty
+                    snippet_perceived_difficulty = practice.perceived_difficulty
                     last_updated = practice.updated
                 except SnippetPractice.DoesNotExist:
-                    perceived_difficulty = None
+                    snippet_perceived_difficulty = None
                     last_updated = None
                 
                 # Create enriched snippet details
@@ -61,13 +72,19 @@ class VideoEnrichedSnippetsView(generics.GenericAPIView):
                     'videoId': video.youtube_id,
                     'index': snippet.index,
                     'words': transformed_words,
-                    'perceivedDifficulty': perceived_difficulty,
+                    'perceivedDifficulty': snippet_perceived_difficulty,
                     'lastUpdated': last_updated.isoformat() if last_updated else None
                 }
                 
                 enriched_snippets.append(enriched_snippet)
             
-            return Response(enriched_snippets)
+            return Response({
+                'snippets': enriched_snippets,
+                'lastPracticed': last_practiced,
+                'snippetPercentageWatched': snippet_percentage_watched,
+                'perceivedDifficulty': perceived_difficulty,
+                'title': video.youtube_title
+            })
             
         except Video.DoesNotExist:
             raise NotFound(f"Video with YouTube ID {youtube_id} not found or not live")

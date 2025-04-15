@@ -15,6 +15,7 @@
             {{ error }}
           </div>
           <div v-else>
+            <h2 class="card-title text-2xl mb-4">{{ videoTitle }}</h2>
             <div class="flex justify-between items-center">
               <button 
                 v-if="enrichedSnippets.length > 0"
@@ -63,6 +64,7 @@ const enrichedSnippets = ref<EnrichedSnippetDetails[]>([]);
 const currentSnippetIndex = ref<number | null>(null);
 const isLoading = ref(true);
 const error = ref<string | null>(null);
+const videoTitle = ref<string>('');
 
 // Calculate progress based on rated snippets
 const progressPercentage = computed(() => {
@@ -111,7 +113,16 @@ const handleNextSnippet = async () => {
 
 const refreshEnrichedSnippets = async () => {
   try {
-    enrichedSnippets.value = await getVideoEnrichedSnippets(videoId);
+    const response = await getVideoEnrichedSnippets(videoId);
+    enrichedSnippets.value = response.snippets;
+    videoTitle.value = response.title;
+    // If we have progress data, update the video progress
+    if (response.snippetPercentageWatched !== null) {
+      await updateVideoProgress(videoId, {
+        snippetPercentageWatched: response.snippetPercentageWatched,
+        perceivedDifficulty: response.perceivedDifficulty ?? undefined
+      });
+    }
   } catch (err: unknown) {
     console.error('Error refreshing enriched snippets:', err);
   }
