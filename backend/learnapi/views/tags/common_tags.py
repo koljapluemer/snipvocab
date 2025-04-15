@@ -12,7 +12,7 @@ class RandomCommonTagView(APIView):
     renderer_classes = [JSONRenderer]
     
     def get(self, request, *args, **kwargs):
-        logger.info("Fetching random tag from top 20 most used tags")
+        logger.info("Fetching random tag from top n most used tags")
         
         # Get top 20 tags by number of associated live videos
         top_tags = Tag.objects.annotate(
@@ -20,7 +20,7 @@ class RandomCommonTagView(APIView):
                 'videos',
                 filter=models.Q(videos__status=VideoStatus.LIVE)
             )
-        ).order_by('-video_count')[:20]
+        ).order_by('-video_count')[:50]
         
         if not top_tags:
             logger.warning("No tags found")
