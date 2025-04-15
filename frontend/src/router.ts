@@ -6,6 +6,7 @@ import { useAuthState } from '@/modules/auth/useAuthState'
 import { useToast } from '@/shared/elements/toast/useToast'
 import Dashboard from '@/modules/pages/dashboard/Dashboard.vue'
 import Profile from '@/modules/pages/profile/Profile.vue'
+import SubscriptionSuccess from './modules/payment/SubscriptionSuccess.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,6 +38,12 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: Profile,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/subscription/success',
+      name: 'subscription-success',
+      component: SubscriptionSuccess,
       meta: { requiresAuth: true }
     }
   ]

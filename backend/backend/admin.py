@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from shared.models import Snippet, Video, Tag
 from learnapi.models import VideoProgress, VocabPractice, SnippetPractice
-
+from payment.models import Subscription
 @admin.register(VideoProgress)
 class VideoProgressAdmin(admin.ModelAdmin):
     list_display = ('user', 'video', 'last_practiced')
@@ -28,3 +28,5 @@ class SnippetPracticeAdmin(admin.ModelAdmin):
 admin.site.register(Video)
 admin.site.register(Snippet)
 admin.site.register(Tag)
+
+admin.site.register(Subscription)
