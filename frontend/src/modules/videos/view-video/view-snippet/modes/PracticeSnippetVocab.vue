@@ -34,7 +34,6 @@ const fetchDueWords = async () => {
     cardStack.value = props.loadAllWords 
       ? await getSnippetAllWords(props.snippet.videoId, props.snippet.index)
       : await getSnippetDueWords(props.snippet.videoId, props.snippet.index)
-    console.log('dueWords', cardStack.value)
     // Shuffle the words
     cardStack.value = shuffleArray(cardStack.value)
     if (cardStack.value.length > 0) {
@@ -56,15 +55,12 @@ const reveal = () => {
 
 const nextCard = () => {
   // remove first card from the array:  
-  console.log('nextCard(): stack before', cardStack.value)
   cardStack.value.shift()
-  console.log('nextCard(): stack after', cardStack.value)
   if (cardStack.value.length > 0) {
     currentCard.value = cardStack.value[0]
     isRevealed.value = false
   } else {
     // We've gone through all cards
-    console.log('sending learning events', learningEvents.value)
     sendLearningEvents(learningEvents.value)
     emit('practice-completed')
   }

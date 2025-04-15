@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/modules/misc-pages/home/HomeView.vue'
 import Register from '@/modules/auth/register/Register.vue'
 import Login from '@/modules/auth/login/Login.vue'
 import VideoView from '@/modules/videos/view-video/VideoView.vue'
 import { useAuthState } from '@/modules/auth/useAuthState'
 import { useToast } from '@/shared/elements/toast/useToast'
+import VideoList from '@/modules/videos/video-list/VideoList.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,7 +12,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: VideoList
     },
     {
       path: '/register',

@@ -1,7 +1,6 @@
 import type { FlashCardStack, WordFlashCard } from "src/shared/types/domainTypes";
 
 export const shuffleFlashcardIntoStack = (stack: FlashCardStack, flashcard: WordFlashCard): FlashCardStack => {
-    console.log('shuffleFlashcardIntoStack(): stack at beginning', stack, '\nflashcard:', flashcard)
     if (stack.length === 0) {
         return stack;
     }
@@ -11,7 +10,6 @@ export const shuffleFlashcardIntoStack = (stack: FlashCardStack, flashcard: Word
     
     // Insert the flashcard at the chosen index
     const newStack = [...stack.slice(0, insertIndex), flashcard, ...stack.slice(insertIndex)];
-    console.log('shuffleFlashcardIntoStack(): newStack', newStack)
     return newStack;
 };
 

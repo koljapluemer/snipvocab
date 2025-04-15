@@ -37,6 +37,11 @@ export interface EnrichedSnippetsResponse {
   perceivedDifficulty: number | null;
 }
 
+export interface VideoInfo {
+  youtube_id: string;
+  youtube_title: string | null;
+}
+
 // Create axios instance with base configuration
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -83,7 +88,7 @@ export const handleApiResponse = async <T>(promise: Promise<AxiosResponse<T>>): 
 }
 
 // Video API functions
-export const getVideos = async (): Promise<string[]> => {
+export const getVideos = async (): Promise<VideoInfo[]> => {
   try {
     return await handleApiResponse(api.get('/learn/videos/'))
   } catch (error) {

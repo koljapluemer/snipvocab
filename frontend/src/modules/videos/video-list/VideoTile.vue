@@ -5,6 +5,7 @@ import { getVideoProgress } from '@/modules/backend-communication/api'
 
 const props = defineProps<{
   videoId: string
+  title: string | null
 }>()
 
 const router = useRouter()
@@ -25,18 +26,13 @@ const formatDate = (dateString: string) => {
 }
 
 onMounted(async () => {
-  console.log('VideoTile mounted for videoId:', props.videoId)
   try {
-    console.log('Fetching progress for video:', props.videoId)
     const progress = await getVideoProgress(props.videoId)
-    console.log('Received progress:', progress)
     
     if (progress.lastPracticed) {
       const formattedDate = formatDate(progress.lastPracticed)
-      console.log('Formatted date:', formattedDate)
       lastPracticed.value = formattedDate
     } else {
-      console.log('No lastPracticed date found')
     }
     if (progress.snippetPercentageWatched !== null) {
       progressPercentage.value = progress.snippetPercentageWatched
@@ -45,18 +41,17 @@ onMounted(async () => {
     console.error('Error fetching video progress:', error)
   } finally {
     loading.value = false
-    console.log('Loading complete, lastPracticed:', lastPracticed.value)
   }
 })
 </script>
 
 <template>
-  <div class="group relative cursor-pointer" @click="handleViewVideo">
-    <div class="relative overflow-hidden rounded-lg">
+  <div class="group cursor-pointer" @click="handleViewVideo">
+    <div class="relative overflow-hidden rounded-lg aspect-video">
       <img 
         :src="`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`" 
         :alt="`Video thumbnail for ${videoId}`"
-        class="w-full transition-transform duration-300 group-hover:scale-105"
+        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
       />
       <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300" />
       <div 
@@ -71,6 +66,11 @@ onMounted(async () => {
         :value="progressPercentage" 
         max="100"
       ></progress>
+    </div>
+    <div class="mt-2">
+      <h3 class="text-sm font-medium line-clamp-2" :title="title || ''">
+        {{ title || 'Untitled Video' }}
+      </h3>
     </div>
   </div>
 </template>

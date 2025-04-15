@@ -1,12 +1,12 @@
 from django.contrib import admin
 from django.urls import path, include
 
+from learnapi.views.video_view.video_list import VideoListView
 from learnapi.views.learning_events.learning_events import LearningEventsView
 from learnapi.views.snippet_interaction.snippet_details import SnippetDetailsView
 from learnapi.views.snippet_interaction.snippet_due_words import SnippetDueWordsView
 from learnapi.views.snippet_interaction.snippet_all_words import SnippetAllWordsView
 from learnapi.views.snippet_interaction.snippet_practice import SnippetPracticeView
-from learnapi.views.utils.meanings import VideoListView
 from learnapi.views.video_view.video_enriched_snippets import VideoEnrichedSnippetsView
 from learnapi.views.video_view.video_snippets import VideoSnippetsView
 from learnapi.views.video_view.video_progress import VideoProgressView
