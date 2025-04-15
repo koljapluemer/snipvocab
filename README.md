@@ -89,3 +89,9 @@ heroku run python manage.py migrate
 ```
 heroku logs --tail --app snipvocab-backend
 ```
+
+##### Take Care:
+
+1. first, add all .env vars from both frontend and backend
+2. kind of need domain first
+3. ...because we need to create a webhook in stripe where hardcode the domain 
