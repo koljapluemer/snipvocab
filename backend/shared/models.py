@@ -51,6 +51,8 @@ class Video(models.Model):
     video_views = models.IntegerField(default=0)
     video_likes = models.IntegerField(default=0)
 
+    added_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return f"{self.youtube_id}"
     
