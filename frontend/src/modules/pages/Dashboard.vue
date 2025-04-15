@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import VideoList from './VideoList.vue'
+import VideoList from '@/modules/videos/video-list/VideoList.vue'
 </script>
 
 <template>

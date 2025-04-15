@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { getVideos, type VideoInfo, type PaginatedResponse } from '@/modules/backend-communication/api'
-import VideoTile from './VideoTile.vue'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import VideoTile from '@/modules/videos/video-list/VideoTile.vue'
 
 // Each page from the backend corresponds to exactly one slide
 const slides = ref<VideoInfo[][]>([])
@@ -93,6 +93,7 @@ onMounted(() => {
             class="w-full"
           >
             <VideoTile
+
               :video-id="video.youtube_id"
               :title="video.youtube_title"
             />

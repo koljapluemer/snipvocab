@@ -4,7 +4,7 @@ import Login from '@/modules/auth/login/Login.vue'
 import VideoView from '@/modules/videos/view-video/VideoView.vue'
 import { useAuthState } from '@/modules/auth/useAuthState'
 import { useToast } from '@/shared/elements/toast/useToast'
-import VideoListView from '@/modules/videos/video-list/VideoListView.vue'
+import Dashboard from './modules/pages/Dashboard.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,7 +12,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: VideoListView
+      component: Dashboard
     },
     {
       path: '/register',
