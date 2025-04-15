@@ -42,6 +42,13 @@ export interface VideoInfo {
   youtube_title: string | null;
 }
 
+export interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
 // Create axios instance with base configuration
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -88,9 +95,9 @@ export const handleApiResponse = async <T>(promise: Promise<AxiosResponse<T>>): 
 }
 
 // Video API functions
-export const getVideos = async (): Promise<VideoInfo[]> => {
+export const getVideos = async (page: number = 1, pageSize: number = 10): Promise<PaginatedResponse<VideoInfo>> => {
   try {
-    return await handleApiResponse(api.get('/learn/videos/'))
+    return await handleApiResponse(api.get(`/learn/videos/?page=${page}&page_size=${pageSize}`))
   } catch (error) {
     console.error('Error fetching videos:', error)
     throw new Error('Failed to fetch videos. Please try again later.')
