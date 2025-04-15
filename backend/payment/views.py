@@ -80,3 +80,30 @@ def stripe_webhook(request):
             return HttpResponse(status=400)
 
     return HttpResponse(status=200)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def cancel_subscription(request):
+    try:
+        logger.info(f"Canceling subscription for user {request.user.id}")
+        
+        # Get the user's subscription
+        subscription = Subscription.objects.get(user=request.user)
+        
+        # Cancel the subscription in Stripe
+        stripe.Subscription.modify(
+            subscription.subscription_id,
+            cancel_at_period_end=True
+        )
+        
+        # Update our database
+        subscription.status = 'canceled'
+        subscription.save()
+        
+        logger.info(f"Successfully canceled subscription {subscription.subscription_id}")
+        return Response({'message': 'Subscription will be canceled at the end of the billing period'})
+    except Subscription.DoesNotExist:
+        return Response({'error': 'No active subscription found'}, status=400)
+    except Exception as e:
+        logger.error(f"Error canceling subscription: {str(e)}", exc_info=True)
+        return Response({'error': str(e)}, status=500)

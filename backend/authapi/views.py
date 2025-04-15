@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from .forms import CreateUserForm
+from payment.models import Subscription
 
 # Create your views here.
 
@@ -36,7 +37,16 @@ def logout_view(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_info(request):
+    subscription = None
+    try:
+        subscription = Subscription.objects.get(user=request.user)
+    except Subscription.DoesNotExist:
+        pass
+
     return Response({
         'email': request.user.email,
-        'id': request.user.id
+        'id': request.user.id,
+        'subscription': {
+            'status': subscription.status if subscription else None
+        }
     })
