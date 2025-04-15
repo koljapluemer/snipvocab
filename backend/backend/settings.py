@@ -203,6 +203,28 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
+# Stripe settings
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+if not STRIPE_SECRET_KEY:
+    raise ValueError("STRIPE_SECRET_KEY environment variable is not set")
+
+STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
+if not STRIPE_PUBLISHABLE_KEY:
+    raise ValueError("STRIPE_PUBLISHABLE_KEY environment variable is not set")
+
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
+if not STRIPE_WEBHOOK_SECRET:
+    raise ValueError("STRIPE_WEBHOOK_SECRET environment variable is not set")
+
+# Premium subscription price ID
+STRIPE_PREMIUM_PRICE_ID = os.getenv('STRIPE_PREMIUM_PRICE_ID')
+if not STRIPE_PREMIUM_PRICE_ID:
+    raise ValueError("STRIPE_PREMIUM_PRICE_ID environment variable is not set")
+
+# Frontend URLs for success/cancel
+STRIPE_SUCCESS_URL = os.getenv('STRIPE_SUCCESS_URL', 'http://localhost:5173/subscription/success')
+STRIPE_CANCEL_URL = os.getenv('STRIPE_CANCEL_URL', 'http://localhost:5173/subscription/cancel')
+
 # Logging configuration
 LOGGING = {
     'version': 1,
