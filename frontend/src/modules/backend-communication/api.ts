@@ -55,7 +55,11 @@ export interface UserInfoResponse {
   id: number;
   subscription: {
     status: string | null;
-  };
+    period_end?: number;
+    cancel_at?: number;
+    cancel_at_period_end?: boolean;
+    error?: string;
+  } | null;
 }
 
 // Auth state management
