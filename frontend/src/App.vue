@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ShowUserWidget from '@/modules/auth/show-user/ShowUserWidget.vue'
 import ToastContainer from '@/modules/elements/toast/ToastContainer.vue'
+import Footer from '@/components/Footer.vue'
 </script>
 
 <template>
@@ -18,6 +19,8 @@ import ToastContainer from '@/modules/elements/toast/ToastContainer.vue'
     <router-view></router-view>
     <ToastContainer />
   </main>
+
+  <Footer />
 </template>
 
 <style>

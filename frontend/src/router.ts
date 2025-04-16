@@ -9,6 +9,7 @@ import SubscriptionSuccess from '@/modules/payment/SubscriptionSuccess.vue'
 import Profile from '@/modules/pages/profile/Profile.vue'
 import { useAuthState } from '@/modules/backend-communication/api'
 import Landing from '@/modules/pages/landing/Landing.vue'
+import Terms from '@/modules/pages/terms/Terms.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -59,6 +60,11 @@ const router = createRouter({
       name: 'reset-password',
       component: ResetPassword,
       meta: { requiresGuest: true }
+    },
+    {
+      path: '/terms',
+      name: 'terms',
+      component: Terms
     }
   ]
 })
