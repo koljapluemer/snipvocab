@@ -27,4 +27,5 @@ urlpatterns = [
     path('search/', views.search_videos, name='search_videos'),
     path('enrich-metadata/', views.enrich_video_metadata, name='enrich_video_metadata'),
     path('publish-many-snippets/', views.publish_videos_with_many_snippets, name='publish_videos_with_many_snippets'),
+    path('user-statistics/', views.user_statistics, name='user_statistics'),
 ]
