@@ -294,6 +294,21 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 if not OPENAI_API_KEY:
     raise ValueError("OPENAI_API_KEY environment variable is not set")
 
+# Email configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
+    raise ValueError("EMAIL_HOST_USER and EMAIL_HOST_PASSWORD environment variables must be set")
+
+# Frontend password reset URL
+FRONTEND_PASSWORD_RESET_URL = os.getenv('FRONTEND_PASSWORD_RESET_URL', 'http://localhost:5173/reset-password')
+
 # API Key settings
 API_KEY_HEADER = 'X-API-Key'
 API_KEY = os.getenv('FRONTEND_API_KEY')
