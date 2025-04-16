@@ -1,7 +1,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthState } from '@/modules/backend-communication/api'
-import { useToast } from '@/shared/elements/toast/useToast'
+import { useToast } from '@/modules/elements/toast/useToast'
 
 export const useLogin = () => {
   const router = useRouter()

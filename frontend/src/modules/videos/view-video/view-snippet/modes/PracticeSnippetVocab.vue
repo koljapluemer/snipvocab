@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { FlashCardStack, LearningEvent, Snippet, WordFlashCard } from '@/shared/types/domainTypes'
-import { LearningEventType } from '@/shared/types/domainTypes'
+import type { FlashCardStack, LearningEvent, Snippet, WordFlashCard } from '@/shared/domainTypes'
+import { LearningEventType } from '@/shared/domainTypes'
 import { getSnippetDueWords, getSnippetAllWords, sendLearningEvents } from '@/modules/backend-communication/api'
-import { shuffleArray } from '@/shared/utils/listUtils';
-import { useToast } from '@/shared/elements/toast/useToast';
+import { shuffleArray } from '@/modules/list-utils/listUtils';
+import { useToast } from '@/modules/elements/toast/useToast';
 import { addFlashcardToEndOfStack, shuffleFlashcardIntoStack } from '@/modules/learning-and-spaced-repetition/cardStackUtils';
 
 const props = defineProps<{

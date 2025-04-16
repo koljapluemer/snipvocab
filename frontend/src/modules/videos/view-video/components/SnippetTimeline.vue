@@ -22,7 +22,7 @@ Understanding: ${snippet.perceivedDifficulty ?? 'Not rated'}`" @click="$emit('ju
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { EnrichedSnippetDetails } from '@/shared/types/domainTypes';
+import type { EnrichedSnippetDetails } from '@/shared/domainTypes';
 
 interface Props {
   enrichedSnippets: EnrichedSnippetDetails[];

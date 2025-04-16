@@ -1,5 +1,5 @@
 import { ref, readonly } from 'vue'
-import type { Snippet, Word, SnippetDetails, WordFlashCard, LearningEvent, EnrichedSnippetDetails } from '@/shared/types/domainTypes'
+import type { Snippet, Word, SnippetDetails, WordFlashCard, LearningEvent, EnrichedSnippetDetails } from '@/shared/domainTypes'
 import axios from 'axios'
 import type { AxiosResponse } from 'axios'
 

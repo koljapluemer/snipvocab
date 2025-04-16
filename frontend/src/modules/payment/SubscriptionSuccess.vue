@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useToast } from '@/shared/elements/toast/useToast'
+import { useToast } from '@/modules/elements/toast/useToast'
 
 const router = useRouter()
 const toast = useToast()

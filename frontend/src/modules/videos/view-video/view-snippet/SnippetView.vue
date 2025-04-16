@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Snippet } from '@/shared/types/domainTypes'
+import type { Snippet } from '@/shared/domainTypes'
 import { ref, watch } from 'vue'
 import PracticeSnippetVocab from './modes/PracticeSnippetVocab.vue'
 import WatchSnippet from './modes/WatchSnippet.vue';

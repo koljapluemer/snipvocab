@@ -83,7 +83,7 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
-import type { Snippet } from '@/shared/types/domainTypes'
+import type { Snippet } from '@/shared/domainTypes'
 import { updateSnippetPractice } from '@/modules/backend-communication/api'
 
 const props = defineProps<{

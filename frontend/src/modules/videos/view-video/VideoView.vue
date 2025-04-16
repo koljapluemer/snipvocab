@@ -77,7 +77,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import type { EnrichedSnippetDetails } from '@/shared/types/domainTypes';
+import type { EnrichedSnippetDetails } from '@/shared/domainTypes';
 import { getVideoSnippets, getVideoEnrichedSnippets, updateVideoProgress } from '@/modules/backend-communication/api';
 import SnippetView from './view-snippet/SnippetView.vue';
 import SnippetTimeline from './components/SnippetTimeline.vue';

@@ -1,4 +1,4 @@
-import type { FlashCardStack, WordFlashCard } from "src/shared/types/domainTypes";
+import type { FlashCardStack, WordFlashCard } from "@/shared/domainTypes";
 
 export const shuffleFlashcardIntoStack = (stack: FlashCardStack, flashcard: WordFlashCard): FlashCardStack => {
     if (stack.length === 0) {
