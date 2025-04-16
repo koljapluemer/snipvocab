@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthState } from '../useAuthState'
+import { useAuthState } from '@/modules/backend-communication/api'
 
 export const useRegister = () => {
   const router = useRouter()

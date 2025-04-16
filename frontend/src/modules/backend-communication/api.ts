@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import type { Snippet, Word, SnippetDetails, WordFlashCard, LearningEvent, EnrichedSnippetDetails } from '@/shared/types/domainTypes'
 import axios from 'axios'
 import type { AxiosResponse } from 'axios'
@@ -57,6 +58,10 @@ export interface UserInfoResponse {
   };
 }
 
+// Auth state management
+const userEmail = ref('')
+const isAuthenticated = ref(false)
+
 // Create axios instance with base configuration
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -84,10 +89,79 @@ api.interceptors.response.use(
       // Handle unauthorized access
       localStorage.removeItem('access_token')
       localStorage.removeItem('refresh_token')
+      isAuthenticated.value = false
+      userEmail.value = ''
     }
     return Promise.reject(error)
   }
 )
+
+// Auth state functions
+export const checkAuth = async () => {
+  try {
+    const response = await handleApiResponse<AuthUserResponse>(api.get('/auth/user/'))
+    isAuthenticated.value = true
+    userEmail.value = response.email
+  } catch (error) {
+    isAuthenticated.value = false
+    userEmail.value = ''
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
+    localStorage.removeItem('user_id')
+  }
+}
+
+export const login = async (email: string, password: string) => {
+  const response = await handleApiResponse<LoginResponse>(api.post('/auth/login/', {
+    username: email,
+    password
+  }))
+  
+  localStorage.setItem('access_token', response.access)
+  localStorage.setItem('refresh_token', response.refresh)
+  isAuthenticated.value = true
+  userEmail.value = email
+}
+
+export const logout = () => {
+  localStorage.removeItem('access_token')
+  localStorage.removeItem('refresh_token')
+  localStorage.removeItem('user_id')
+  isAuthenticated.value = false
+  userEmail.value = ''
+}
+
+export const register = async (email: string, password: string) => {
+  const response = await handleApiResponse<RegisterResponse>(api.post('/auth/register/', {
+    email,
+    password
+  }))
+  
+  localStorage.setItem('access_token', response.tokens.access)
+  localStorage.setItem('refresh_token', response.tokens.refresh)
+  isAuthenticated.value = true
+  userEmail.value = email
+}
+
+// Check initial auth status
+const token = localStorage.getItem('access_token')
+if (token) {
+  checkAuth()
+} else {
+  isAuthenticated.value = false
+  userEmail.value = ''
+}
+
+// Export auth state
+export const useAuthState = () => {
+  return {
+    userEmail,
+    isAuthenticated,
+    login,
+    logout,
+    register
+  }
+}
 
 // Helper function to handle API responses
 export const handleApiResponse = async <T>(promise: Promise<AxiosResponse<T>>): Promise<T> => {

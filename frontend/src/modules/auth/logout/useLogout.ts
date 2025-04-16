@@ -1,5 +1,5 @@
 import { useRouter } from 'vue-router'
-import { useAuthState } from '../useAuthState'
+import { useAuthState } from '@/modules/backend-communication/api'
 
 export const useLogout = () => {
   const router = useRouter()

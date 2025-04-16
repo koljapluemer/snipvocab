@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAuthState } from '../useAuthState'
+import { useAuthState } from '@/modules/backend-communication/api'
 import LogoutButton from '../logout/LogoutButton.vue'
 
 const auth = useAuthState()

@@ -2,11 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Register from '@/modules/auth/register/Register.vue'
 import Login from '@/modules/auth/login/Login.vue'
 import VideoView from '@/modules/videos/view-video/VideoView.vue'
-import { useAuthState } from '@/modules/auth/useAuthState'
 import { useToast } from '@/shared/elements/toast/useToast'
 import Dashboard from '@/modules/pages/dashboard/Dashboard.vue'
-import SubscriptionSuccess from './modules/payment/SubscriptionSuccess.vue'
-import Profile from './modules/pages/profile/Profile.vue'
+import SubscriptionSuccess from '@/modules/payment/SubscriptionSuccess.vue'
+import Profile from '@/modules/pages/profile/Profile.vue'
+import { useAuthState } from '@/modules/backend-communication/api'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
