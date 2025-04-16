@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, readonly } from 'vue'
 import type { Snippet, Word, SnippetDetails, WordFlashCard, LearningEvent, EnrichedSnippetDetails } from '@/shared/types/domainTypes'
 import axios from 'axios'
 import type { AxiosResponse } from 'axios'
@@ -59,8 +59,26 @@ export interface UserInfoResponse {
 }
 
 // Auth state management
-const userEmail = ref('')
-const isAuthenticated = ref(false)
+const authState = {
+  userEmail: ref(''),
+  isAuthenticated: ref(false),
+  isLoading: ref(true),
+  error: ref<string | null>(null),
+  isInitialized: ref(false)
+}
+
+// Helper function to handle API responses
+export const handleApiResponse = async <T>(promise: Promise<AxiosResponse<T>>): Promise<T> => {
+  try {
+    const response = await promise
+    return response.data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.detail || error.message)
+    }
+    throw error
+  }
+}
 
 // Create axios instance with base configuration
 export const api = axios.create({
@@ -87,92 +105,122 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Handle unauthorized access
-      localStorage.removeItem('access_token')
-      localStorage.removeItem('refresh_token')
-      isAuthenticated.value = false
-      userEmail.value = ''
+      clearAuthState()
     }
     return Promise.reject(error)
   }
 )
 
+// Helper function to clear auth state
+const clearAuthState = () => {
+  localStorage.removeItem('access_token')
+  localStorage.removeItem('refresh_token')
+  localStorage.removeItem('user_id')
+  authState.isAuthenticated.value = false
+  authState.userEmail.value = ''
+  authState.error.value = null
+}
+
 // Auth state functions
 export const checkAuth = async () => {
   try {
+    authState.isLoading.value = true
+    authState.error.value = null
+    
     const response = await handleApiResponse<AuthUserResponse>(api.get('/auth/user/'))
-    isAuthenticated.value = true
-    userEmail.value = response.email
+    authState.isAuthenticated.value = true
+    authState.userEmail.value = response.email
   } catch (error) {
-    isAuthenticated.value = false
-    userEmail.value = ''
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('refresh_token')
-    localStorage.removeItem('user_id')
+    clearAuthState()
+  } finally {
+    authState.isLoading.value = false
+    authState.isInitialized.value = true
   }
 }
 
 export const login = async (email: string, password: string) => {
-  const response = await handleApiResponse<LoginResponse>(api.post('/auth/login/', {
-    username: email,
-    password
-  }))
-  
-  localStorage.setItem('access_token', response.access)
-  localStorage.setItem('refresh_token', response.refresh)
-  isAuthenticated.value = true
-  userEmail.value = email
-}
-
-export const logout = () => {
-  localStorage.removeItem('access_token')
-  localStorage.removeItem('refresh_token')
-  localStorage.removeItem('user_id')
-  isAuthenticated.value = false
-  userEmail.value = ''
-}
-
-export const register = async (email: string, password: string) => {
-  const response = await handleApiResponse<RegisterResponse>(api.post('/auth/register/', {
-    email,
-    password
-  }))
-  
-  localStorage.setItem('access_token', response.tokens.access)
-  localStorage.setItem('refresh_token', response.tokens.refresh)
-  isAuthenticated.value = true
-  userEmail.value = email
-}
-
-// Check initial auth status
-const token = localStorage.getItem('access_token')
-if (token) {
-  checkAuth()
-} else {
-  isAuthenticated.value = false
-  userEmail.value = ''
-}
-
-// Export auth state
-export const useAuthState = () => {
-  return {
-    userEmail,
-    isAuthenticated,
-    login,
-    logout,
-    register
+  try {
+    authState.isLoading.value = true
+    authState.error.value = null
+    
+    const response = await handleApiResponse<LoginResponse>(api.post('/auth/login/', {
+      username: email,
+      password
+    }))
+    
+    localStorage.setItem('access_token', response.access)
+    localStorage.setItem('refresh_token', response.refresh)
+    authState.isAuthenticated.value = true
+    authState.userEmail.value = email
+  } catch (error) {
+    authState.error.value = error instanceof Error ? error.message : 'Login failed'
+    throw error
+  } finally {
+    authState.isLoading.value = false
   }
 }
 
-// Helper function to handle API responses
-export const handleApiResponse = async <T>(promise: Promise<AxiosResponse<T>>): Promise<T> => {
+export const logout = () => {
+  clearAuthState()
+}
+
+export const register = async (email: string, password: string) => {
   try {
-    const response = await promise
-    return response.data
+    authState.isLoading.value = true
+    authState.error.value = null
+    
+    const response = await handleApiResponse<RegisterResponse>(api.post('/auth/register/', {
+      email,
+      password
+    }))
+    
+    localStorage.setItem('access_token', response.tokens.access)
+    localStorage.setItem('refresh_token', response.tokens.refresh)
+    authState.isAuthenticated.value = true
+    authState.userEmail.value = email
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.detail || error.message)
-    }
+    authState.error.value = error instanceof Error ? error.message : 'Registration failed'
     throw error
+  } finally {
+    authState.isLoading.value = false
+  }
+}
+
+// Initialize auth state
+const initializeAuth = async () => {
+  const token = localStorage.getItem('access_token')
+  
+  if (!token) {
+    clearAuthState()
+    authState.isInitialized.value = true
+    authState.isLoading.value = false
+    return
+  }
+
+  try {
+    await checkAuth()
+  } catch (error) {
+    // If checkAuth fails, we've already cleared the state
+  }
+}
+
+// Start initialization
+initializeAuth()
+
+// Export auth state composable
+export const useAuthState = () => {
+  return {
+    // Readonly state to prevent direct mutations
+    userEmail: readonly(authState.userEmail),
+    isAuthenticated: readonly(authState.isAuthenticated),
+    isLoading: readonly(authState.isLoading),
+    isInitialized: readonly(authState.isInitialized),
+    error: readonly(authState.error),
+    // Actions
+    login,
+    logout,
+    register,
+    checkAuth
   }
 }
 
