@@ -13,9 +13,26 @@ from .forms import CreateUserForm
 from payment.models import Subscription
 from django.contrib.auth import get_user_model
 import logging
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.exceptions import AuthenticationFailed
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        
+        # Get the user from the request data
+        email = request.data.get('username')  # JWT uses username field for email
+        try:
+            user = User.objects.get(email=email)
+            if not user.is_active:
+                raise AuthenticationFailed('Please confirm your email before logging in.')
+        except User.DoesNotExist:
+            pass  # Let the parent class handle invalid credentials
+        
+        return response
 
 # Create your views here.
 
@@ -26,8 +43,27 @@ def register(request):
     if form.is_valid():
         user = form.save()
         refresh = RefreshToken.for_user(user)
+        
+        # Generate confirmation token and URL
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        confirm_url = f"{settings.FRONTEND_PASSWORD_RESET_URL}/confirm-email?uid={uid}&token={token}"
+        
+        # Send confirmation email
+        subject = 'Welcome to SnipVocab - Confirm your email'
+        message = f'Thanks for registering! Click this link to confirm your email: {confirm_url}'
+        from_email = settings.DEFAULT_FROM_EMAIL
+        
+        try:
+            logger.info(f"Sending welcome email to {user.email}")
+            send_mail(subject, message, from_email, [user.email])
+            logger.info("Welcome email sent successfully")
+        except Exception as e:
+            logger.error(f"Failed to send welcome email: {str(e)}", exc_info=True)
+            # Still create the user, but log the error
+        
         return Response({
-            'message': 'User registered successfully',
+            'message': 'Registration successful. A welcome email has been sent.',
             'user_id': user.id,
             'email': user.email,
             'tokens': {
@@ -36,6 +72,26 @@ def register(request):
             }
         }, status=status.HTTP_201_CREATED)
     return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def confirm_email(request):
+    uid = request.data.get('uid')
+    token = request.data.get('token')
+    
+    try:
+        uid = force_str(urlsafe_base64_decode(uid))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        return Response({'error': 'Invalid confirmation link'}, 
+                       status=status.HTTP_400_BAD_REQUEST)
+    
+    if not default_token_generator.check_token(user, token):
+        return Response({'error': 'Invalid confirmation link'}, 
+                       status=status.HTTP_400_BAD_REQUEST)
+    
+    return Response({'message': 'Email confirmed successfully'}, 
+                   status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
