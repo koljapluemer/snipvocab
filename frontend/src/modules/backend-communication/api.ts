@@ -407,3 +407,26 @@ export const cancelSubscription = async (): Promise<{ message: string }> => {
     throw new Error('Failed to cancel subscription. Please try again later.')
   }
 }
+
+// Password Reset API functions
+export const requestPasswordReset = async (email: string): Promise<{ message: string }> => {
+  try {
+    return await handleApiResponse(api.post('/auth/password-reset/', { email }))
+  } catch (error) {
+    console.error('Error requesting password reset:', error)
+    throw new Error('Failed to request password reset. Please try again later.')
+  }
+}
+
+export const confirmPasswordReset = async (uid: string, token: string, password: string): Promise<{ message: string }> => {
+  try {
+    return await handleApiResponse(api.post('/auth/password-reset/confirm/', {
+      uid,
+      token,
+      password
+    }))
+  } catch (error) {
+    console.error('Error confirming password reset:', error)
+    throw new Error('Failed to reset password. Please try again later.')
+  }
+}

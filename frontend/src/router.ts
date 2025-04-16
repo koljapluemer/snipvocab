@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Register from '@/modules/auth/register/Register.vue'
 import Login from '@/modules/auth/login/Login.vue'
+import ResetPassword from '@/modules/auth/reset-password/ResetPassword.vue'
 import VideoView from '@/modules/videos/view-video/VideoView.vue'
 import { useToast } from '@/modules/elements/toast/useToast'
 import Dashboard from '@/modules/pages/dashboard/Dashboard.vue'
@@ -46,6 +47,12 @@ const router = createRouter({
       name: 'subscription-success',
       component: SubscriptionSuccess,
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/reset-password',
+      name: 'reset-password',
+      component: ResetPassword,
+      meta: { requiresGuest: true }
     }
   ]
 })

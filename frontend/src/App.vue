@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ShowUserWidget from '@/modules/auth/show-user/ShowUserWidget.vue'
-import ToastContainer from '@/shared/elements/toast/ToastContainer.vue'
+import ToastContainer from '@/modules/elements/toast/ToastContainer.vue'
 </script>
 
 <template>

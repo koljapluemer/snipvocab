@@ -63,6 +63,9 @@ const {
             Don't have an account? 
             <router-link to="/register" class="link link-primary">Register here</router-link>
           </p>
+          <p class="text-sm mt-2">
+            <router-link to="/reset-password" class="link link-primary">Forgot your password?</router-link>
+          </p>
         </div>
       </div>
     </div>
