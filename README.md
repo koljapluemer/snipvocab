@@ -93,7 +93,7 @@
 │   │   │   │   └── toast
 │   │   │   ├── types
 │   │   │   └── utils
-```s
+```
 
 ### Vue Frontend
 
