@@ -1,6 +1,29 @@
 # SnipVocab
 
+
 *my latest, nth attempt to build vvv, this time django+vue*.
+
+- [SnipVocab](#snipvocab)
+  - [User Stories](#user-stories)
+  - [Architecture](#architecture)
+    - [Vue Frontend](#vue-frontend)
+    - [CMS](#cms)
+    - [Django REST backend](#django-rest-backend)
+  - [Running it](#running-it)
+    - [Backend](#backend)
+    - [Frontend](#frontend)
+  - [Common Things You May Want To Do](#common-things-you-may-want-to-do)
+    - [Adding Content](#adding-content)
+    - [Checking Something Regarding Types](#checking-something-regarding-types)
+    - [Deployment](#deployment)
+      - [Backend](#backend-1)
+        - [Create Fixture](#create-fixture)
+        - [Rest of Deploy](#rest-of-deploy)
+        - [Notes for Deployment](#notes-for-deployment)
+  - [Testing](#testing)
+    - [Backend](#backend-2)
+    - [Frontend](#frontend-1)
+
 
 ## User Stories
 
@@ -10,7 +33,7 @@
 |  ![User Story 2 illustration](doc/img/us2.png)   | 2  | As a learner, I want to learn to communicate in Arabic                            |
 | ![User Story 3 illustration](doc/img/us3.png)  | 3  | As a learner, I want to integrate the app into my long-term Arabic study routine  |
 
-## The Project
+## Architecture
 
 ### Vue Frontend
 
@@ -92,11 +115,26 @@ heroku run python manage.py migrate
 heroku logs --tail --app snipvocab-backend
 ```
 
-##### Take Care:
+##### Notes for Deployment
 
 1. first, add all .env vars from both frontend and backend
-2. kind of need domain first, because we need to create a webhook in stripe, then put the resulting secret in the env
+2. kind of need domain first
+3. ...because we need to create a webhook in stripe where hardcode the domain 
 
-## Documentation
+## Testing
 
-- make sure to check `.doc.md` on a per-folder base
+### Backend
+
+Running tests:
+```
+python manage.py test
+```
+To see how to add tests, check `backend/learnapi/views/learning_events/tests.py` as an example. Note the required `__init__.py` file in the folder.
+
+### Frontend
+
+```
+npm test
+```
+
+To see an example: `frontend/src/modules/videos/view-video/components/__tests__/VideoCard.test.ts`
