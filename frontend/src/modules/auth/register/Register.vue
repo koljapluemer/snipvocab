@@ -61,6 +61,10 @@ const {
             {{ error }}
           </div>
 
+          <div class="text-sm text-base-content/70">
+            By registering, you agree to our <router-link to="/terms" class="link link-primary">Terms of Service</router-link> and <router-link to="/privacy" class="link link-primary">Privacy Policy</router-link>.
+          </div>
+
           <div class="card-actions justify-end mt-6">
             <button 
               type="submit" 

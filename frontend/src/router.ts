@@ -10,6 +10,7 @@ import Profile from '@/modules/pages/profile/Profile.vue'
 import { useAuthState } from '@/modules/backend-communication/api'
 import Landing from '@/modules/pages/landing/Landing.vue'
 import Terms from '@/modules/pages/terms/Terms.vue'
+import Privacy from '@/modules/pages/privacy/Privacy.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -65,6 +66,11 @@ const router = createRouter({
       path: '/terms',
       name: 'terms',
       component: Terms
+    },
+    {
+      path: '/privacy',
+      name: 'privacy',
+      component: Privacy
     }
   ]
 })
