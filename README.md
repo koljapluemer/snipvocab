@@ -95,5 +95,8 @@ heroku logs --tail --app snipvocab-backend
 ##### Take Care:
 
 1. first, add all .env vars from both frontend and backend
-2. kind of need domain first
-3. ...because we need to create a webhook in stripe where hardcode the domain 
+2. kind of need domain first, because we need to create a webhook in stripe, then put the resulting secret in the env
+
+## Documentation
+
+- make sure to check `.doc.md` on a per-folder base
