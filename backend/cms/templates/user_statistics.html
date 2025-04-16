@@ -71,24 +71,39 @@
 
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Data for charts -->
+{{ date_range|json_script:"dateRange" }}
+{{ daily_logins|json_script:"dailyLogins" }}
+{{ daily_registrations|json_script:"dailyRegistrations" }}
+{{ daily_video_practices|json_script:"dailyVideoPractices" }}
+{{ daily_word_practices|json_script:"dailyWordPractices" }}
+
 <script>
+    // Get data from json_script tags
+    const dateRange = JSON.parse(document.getElementById('dateRange').textContent);
+    const dailyLogins = JSON.parse(document.getElementById('dailyLogins').textContent);
+    const dailyRegistrations = JSON.parse(document.getElementById('dailyRegistrations').textContent);
+    const dailyVideoPractices = JSON.parse(document.getElementById('dailyVideoPractices').textContent);
+    const dailyWordPractices = JSON.parse(document.getElementById('dailyWordPractices').textContent);
+
     // Daily Logins Chart
     const dailyLoginsCtx = document.getElementById('dailyLoginsChart').getContext('2d');
     new Chart(dailyLoginsCtx, {
         type: 'bar',
         data: {
-            labels: {{ date_range|safe }},
+            labels: dateRange,
             datasets: [
                 {
                     label: 'Daily Logins',
-                    data: {{ daily_logins|safe }},
+                    data: dailyLogins,
                     backgroundColor: 'rgba(59, 130, 246, 0.5)',
                     borderColor: 'rgb(59, 130, 246)',
                     borderWidth: 1
                 },
                 {
                     label: 'New Registrations',
-                    data: {{ daily_registrations|safe }},
+                    data: dailyRegistrations,
                     backgroundColor: 'rgba(168, 85, 247, 0.5)',
                     borderColor: 'rgb(168, 85, 247)',
                     borderWidth: 1
@@ -110,18 +125,18 @@
     new Chart(dailyPracticesCtx, {
         type: 'bar',
         data: {
-            labels: {{ date_range|safe }},
+            labels: dateRange,
             datasets: [
                 {
                     label: 'Video Practices',
-                    data: {{ daily_video_practices|safe }},
+                    data: dailyVideoPractices,
                     backgroundColor: 'rgba(234, 179, 8, 0.5)',
                     borderColor: 'rgb(234, 179, 8)',
                     borderWidth: 1
                 },
                 {
                     label: 'Word Practices',
-                    data: {{ daily_word_practices|safe }},
+                    data: dailyWordPractices,
                     backgroundColor: 'rgba(16, 185, 129, 0.5)',
                     borderColor: 'rgb(16, 185, 129)',
                     borderWidth: 1
