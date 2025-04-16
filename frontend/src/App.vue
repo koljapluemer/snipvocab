@@ -7,7 +7,8 @@ import ToastContainer from '@/modules/elements/toast/ToastContainer.vue'
   <header class="bg-base-100 shadow-sm">
     <nav class="container mx-auto px-4 py-2 flex justify-between items-center">
       <div class="flex gap-4">
-        <router-link :to="{ name: 'home' }" class="btn btn-ghost">Videos</router-link>
+        <router-link :to="{ name: 'landing' }" class="btn btn-ghost">AwV</router-link>
+        <router-link :to="{ name: 'home' }" class="btn btn-ghost">Dashboard</router-link>
       </div>
       <ShowUserWidget />
     </nav>
