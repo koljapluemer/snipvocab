@@ -3,6 +3,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import VideoCard from '../VideoCard.vue';
+// @ts-ignore
 import { getVideoSnippets } from '@/modules/backend-communication/api';
 
 // Mock the API call
