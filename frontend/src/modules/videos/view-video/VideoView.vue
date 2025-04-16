@@ -4,8 +4,18 @@
       <!-- Show video details when not practicing -->
       <div v-if="currentSnippetIndex === null" class="card bg-base-100 shadow-xl">
         <figure>
-          <img :src="`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`" :alt="`Thumbnail for video ${videoId}`"
-            class="w-full h-96 object-cover" />
+          <div v-if="isComplete" class="w-full aspect-video">
+            <iframe 
+              :src="`https://www.youtube.com/embed/${videoId}`"
+              class="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <img v-else :src="`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`" 
+            :alt="`Thumbnail for video ${videoId}`"
+            class="w-full h-96 object-cover" 
+          />
         </figure>
         <div class="card-body">
           <div v-if="isLoading" class="flex justify-center">
@@ -17,15 +27,22 @@
           <div v-else>
             <h2 class="card-title text-2xl mb-4">{{ videoTitle }}</h2>
             <div class="mb-4">
-              <div class="flex justify-between mb-1">
-                <span class="text-sm font-medium">Progress</span>
-                <span class="text-sm font-medium">{{ Math.round(progressPercentage) }}%</span>
+              <div v-if="isComplete" class="text-center py-4">
+                <div class="text-4xl mb-2">🏆</div>
+                <h3 class="text-xl font-bold text-primary">You are done!</h3>
+                <p class="text-gray-600">Congratulations on completing this video!</p>
               </div>
-              <progress class="progress progress-primary w-full" :value="progressPercentage" max="100"></progress>
+              <div v-else>
+                <div class="flex justify-between mb-1">
+                  <span class="text-sm font-medium">Progress</span>
+                  <span class="text-sm font-medium">{{ Math.round(progressPercentage) }}%</span>
+                </div>
+                <progress class="progress progress-primary w-full" :value="progressPercentage" max="100"></progress>
+              </div>
             </div>
             <div class="flex justify-between items-center">
               <button 
-                v-if="enrichedSnippets.length > 0"
+                v-if="enrichedSnippets.length > 0 && !isComplete"
                 @click="startPractice" 
                 class="btn btn-primary"
               >
@@ -96,6 +113,11 @@ const hasUnratedSnippets = computed(() => {
     return true;
   }
   return enrichedSnippets.value.some(snippet => snippet.perceivedDifficulty === null);
+});
+
+// Add isComplete computed property
+const isComplete = computed(() => {
+  return progressPercentage.value >= 100;
 });
 
 const startPractice = () => {
