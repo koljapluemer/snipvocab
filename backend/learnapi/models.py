@@ -60,3 +60,11 @@ class SnippetPractice(models.Model):
     def __str__(self):
         return f"{self.user} - Snippet {self.snippet.index} ({self.snippet.video.youtube_id})"
 
+
+class Feedback(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="feedback")
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.content[:30]}"
