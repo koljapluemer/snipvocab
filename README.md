@@ -35,6 +35,66 @@
 
 ## Architecture
 
+```
+./
+├── backend                                         # This is the actual Django backend, mostly utilizing the Django REST framework.
+│   ├── authapi                                     # A Django REST API responsible for basic auth functionality: login, logout, register.
+│   │   ├── migrations
+│   ├── backend                                     # The automatic sub-app Django always creates.
+│   ├── cms                                         # Content management system for me, the admin, to add and maintain youtube videos, words, meanings etc.
+│   │   ├── migrations
+│   │   ├── templates
+│   │   │   ├── includes
+│   ├── learnapi                                    # Handles everything to do with learning, videos, snippets, words — on the backend.
+│   │   ├── migrations
+│   │   ├── views
+│   │   │   ├── learning_events
+│   │   │   ├── snippet_interaction                 # Everything needed to interact with a singular snippet.
+│   │   │   ├── tags
+│   │   │   ├── utils
+│   │   │   ├── video_list
+│   │   │   ├── video_view                          # Everything regarding displaying one or more videos.
+│   ├── payment
+│   │   ├── migrations
+│   ├── shared                                      # holds the models such as `Video` and `Snippet`, which are needed when learners use the app (`learnapi`) but ofc also when adding/maintaining content from an admin perspective (`cms`).
+│   │   ├── migrations
+│   ├── static
+│   ├── staticfiles
+├── doc
+│   ├── img
+│   └── readmes
+├── frontend                                        # The learner-facing website, implemented in Vue3/ts/vite/tailwind/daisy.
+│   ├── public
+│   ├── src
+│   │   ├── composables
+│   │   ├── directives
+│   │   ├── modules
+│   │   │   ├── auth
+│   │   │   │   ├── login
+│   │   │   │   ├── logout
+│   │   │   │   ├── register
+│   │   │   │   └── show-user
+│   │   │   ├── backend-communication
+│   │   │   ├── learning-and-spaced-repetition
+│   │   │   ├── pages
+│   │   │   │   ├── dashboard
+│   │   │   │   └── profile
+│   │   │   ├── payment
+│   │   │   └── videos
+│   │   │       ├── video-list
+│   │   │       └── view-video
+│   │   │           ├── components
+│   │   │           │   ├── __tests__
+│   │   │           │   │   └── VideoCard.test.ts   # per module test example
+│   │   │           └── view-snippet
+│   │   │               ├── modes
+│   │   ├── shared
+│   │   │   ├── elements
+│   │   │   │   └── toast
+│   │   │   ├── types
+│   │   │   └── utils
+```s
+
 ### Vue Frontend
 
 ![screenshot frontend](/doc/img/frontend.png)
