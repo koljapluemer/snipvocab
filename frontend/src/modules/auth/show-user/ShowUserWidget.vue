@@ -10,6 +10,7 @@ const auth = useAuthState()
     <div v-if="auth.isAuthenticated.value" class="flex items-center gap-2">
       <router-link :to="{ name: 'profile' }" class="btn btn-ghost btn-sm">
         <span class="text-sm">{{ auth.userEmail.value }}</span>
+        <span v-if="auth.isPremium.value" class="ml-1 text-yellow-500">★</span>
       </router-link>
       <LogoutButton />
     </div>

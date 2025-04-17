@@ -21,7 +21,8 @@ const authState = {
   isAuthenticated: ref(false),
   isLoading: ref(true),
   error: ref<string | null>(null),
-  isInitialized: ref(false)
+  isInitialized: ref(false),
+  isPremium: ref(false)
 }
 
 // Helper function to handle API responses
@@ -76,6 +77,7 @@ const clearAuthState = () => {
   authState.isAuthenticated.value = false
   authState.userEmail.value = ''
   authState.error.value = null
+  authState.isPremium.value = false
 }
 
 // Auth state functions
@@ -84,9 +86,14 @@ export const checkAuth = async () => {
     authState.isLoading.value = true
     authState.error.value = null
     
-    const response = await handleApiResponse<AuthUserResponse>(api.get('/auth/user/'))
+    const [userResponse, subscriptionResponse] = await Promise.all([
+      handleApiResponse<AuthUserResponse>(api.get('/auth/user/')),
+      handleApiResponse<SubscriptionInfoResponse>(api.get('/payment/subscription-info/'))
+    ])
+    
     authState.isAuthenticated.value = true
-    authState.userEmail.value = response.email
+    authState.userEmail.value = userResponse.email
+    authState.isPremium.value = subscriptionResponse.subscription?.status === 'active'
   } catch (error) {
     clearAuthState()
   } finally {
@@ -172,6 +179,7 @@ export const useAuthState = () => {
     isAuthenticated: readonly(authState.isAuthenticated),
     isLoading: readonly(authState.isLoading),
     isInitialized: readonly(authState.isInitialized),
+    isPremium: readonly(authState.isPremium),
     error: readonly(authState.error),
     // Actions
     login,
