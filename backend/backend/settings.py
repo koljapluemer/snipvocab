@@ -77,7 +77,7 @@ if not DEBUG:
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
     "https://snipvocab-ar.netlify.app",  # Production frontend
-    "http://www.arabicwithvideos.com",
+    "https://arabicwithvideos.com",       # Production frontend
     "https://snipvocab-backend-4991c989741a.herokuapp.com",  # Production backend
     "https://snipvocab.com",  # Add your deployed frontend URL here
 ]
