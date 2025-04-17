@@ -50,7 +50,7 @@ def register(request):
         confirm_url = f"{settings.FRONTEND_PASSWORD_RESET_URL}/confirm-email?uid={uid}&token={token}"
         
         # Send confirmation email
-        subject = 'Welcome to SnipVocab - Confirm your email'
+        subject = 'Welcome to Arabic With Videos - Confirm your email'
         message = f'Thanks for registering! Click this link to confirm your email: {confirm_url}'
         from_email = settings.DEFAULT_FROM_EMAIL
         
