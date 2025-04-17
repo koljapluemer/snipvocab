@@ -79,15 +79,15 @@ CORS_ALLOWED_ORIGINS = [
     "https://snipvocab-ar.netlify.app",  # Production frontend
     "http://www.arabicwithvideos.com",
     "https://snipvocab-backend-4991c989741a.herokuapp.com",  # Production backend
+    "https://snipvocab.com",  # Add your deployed frontend URL here
 ]
 
 if DEBUG:
     CORS_ALLOWED_ORIGINS.extend([
         "http://127.0.0.1:5173",  # Additional dev server
+        "http://localhost:5173",   # Additional dev server
     ])
-    # In development, you might want to allow all origins
-    CORS_ALLOW_ALL_ORIGINS = True
-    CORS_ALLOW_CREDENTIALS = True
+
 
 # CORS Headers configuration
 CORS_ALLOW_HEADERS = [
@@ -112,14 +112,18 @@ CORS_ALLOW_METHODS = [
     'PUT',
 ]
 
-# Remove the URL regex restriction as it's causing issues
-# CORS_URLS_REGEX = r'^/api/.*$'  # Comment this out
-
+# CORS settings for production
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_PRIVATE_NETWORK = True
 
 # Add CORS_EXPOSE_HEADERS if you need to access any custom headers in frontend
-CORS_EXPOSE_HEADERS = ['Content-Type', 'X-API-Key']
+CORS_EXPOSE_HEADERS = [
+    'Content-Type',
+    'X-API-Key',
+]
+
+# Add URL regex to ensure CORS is applied to all API endpoints
+CORS_URLS_REGEX = r'^/api/.*$'
 
 ROOT_URLCONF = 'backend.urls'
 
