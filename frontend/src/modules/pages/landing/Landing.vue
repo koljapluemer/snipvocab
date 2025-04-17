@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import PremiumAdvantages from '@/modules/elements/premium-advantages/PremiumAdvantages.vue';
+
+</script>
+
 <template>
   <div class="container mx-auto px-4">
     <img 
@@ -54,6 +59,10 @@
         </li>
       </ul>
     </section>
+
+    <PremiumAdvantages />
+
+    
   </div>
 </template>
 
