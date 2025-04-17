@@ -7,6 +7,7 @@ import { useToast } from '@/modules/elements/toast/useToast'
 import Dashboard from '@/modules/pages/dashboard/Dashboard.vue'
 import SubscriptionSuccess from '@/modules/payment/SubscriptionSuccess.vue'
 import Profile from '@/modules/pages/profile/Profile.vue'
+import GetPremium from '@/modules/pages/get-premium/GetPremium.vue'
 import { useAuthState } from '@/modules/backend-communication/api'
 import Landing from '@/modules/pages/landing/Landing.vue'
 import Terms from '@/modules/pages/terms/Terms.vue'
@@ -48,6 +49,12 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: Profile,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/premium',
+      name: 'premium',
+      component: GetPremium,
       meta: { requiresAuth: true }
     },
     {
