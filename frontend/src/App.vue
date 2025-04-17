@@ -10,7 +10,11 @@ const { isAuthenticated } = useAuthState()
     <header class="bg-base-100 shadow-sm">
       <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
         <div class="flex gap-4">
-          <router-link :to="{ name: 'landing' }" class="btn btn-ghost text-xl font-bold">AwV</router-link>
+          <router-link :to="{ name: 'landing' }" class="btn btn-ghost text-xl font-bold">
+            <img src="/logo.png" class="w-8 h-8 mr-2" />
+            <span class="hidden md:block">
+              Arabic With Videos
+            </span></router-link>
           <router-link v-if="isAuthenticated" :to="{ name: 'home' }" class="btn btn-ghost text-lg">Dashboard</router-link>
           <router-link v-if="isAuthenticated" :to="{ name: 'premium' }" class="btn btn-ghost text-lg">Premium</router-link>
         </div>
