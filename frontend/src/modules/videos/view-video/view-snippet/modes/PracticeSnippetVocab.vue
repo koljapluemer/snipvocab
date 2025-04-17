@@ -116,9 +116,9 @@ onMounted(() => {
 
         <!-- Meanings (hidden until revealed) -->
         <div v-if="isRevealed || currentCard.isNew" class="mt-4 space-y-2">
-          <div v-for="meaning in currentCard.meanings" :key="meaning.en" class="p-2 bg-base-200 rounded">
+          <h2 v-for="meaning in currentCard.meanings" :key="meaning.en" class="p-2 bg-base-200 rounded">
             {{ meaning.en }}
-          </div>
+          </h2>
         </div>
 
         <!-- Action Buttons -->

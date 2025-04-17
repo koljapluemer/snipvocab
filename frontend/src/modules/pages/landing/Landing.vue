@@ -7,14 +7,14 @@
     />
 
     <section class="py-8 flex flex-col gap-2 items-center">
-      <h1 class="text-4xl font-bold text-center">Welcome to the <em>Arabic With Videos</em> App!</h1>
-      <h3 class="font-bold text-lg text-center">Learn a language with videos, the fun way.</h3>
+      <h1>Welcome to the <em>Arabic With Videos</em> App!</h1>
+      <h3>Learn a language with videos, the fun way.</h3>
       <router-link to="/dashboard" class="btn btn-primary btn-lg">Start Learning</router-link>
     </section>
 
     <section class="py-8">
-      <h2 class="text-3xl font-bold text-center mb-8">The Method:</h2>
-      <ol class="list-decimal pl-8 space-y-4 text-lg">
+      <h2>The Method:</h2>
+      <ol class="list-decimal pl-8 space-y-4">
         <li>Pick a video that looks interesting.</li>
         <li>Practice the vocabulary needed to understand a few seconds of the video.</li>
         <li>Watch the video snippet and evaluate how well you understood it.</li>
@@ -22,9 +22,8 @@
       </ol>
     </section>
 
-
-    <section class="py-8 text-lg">
-      <h2 class="text-3xl font-bold text-center mb-8">Learn More:</h2>
+    <section class="py-8">
+      <h2>Learn More:</h2>
       <p class="my-4">
         Hi, I'm 
         <a href="https://koljapluemer.com/" class="link link-primary" target="_blank" rel="noopener noreferrer">
@@ -55,8 +54,6 @@
         </li>
       </ul>
     </section>
-
-
   </div>
 </template>
 

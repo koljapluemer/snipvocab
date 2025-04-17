@@ -101,11 +101,11 @@ onMounted(() => {
       </div>
 
       <div v-else class="bg-base-100 shadow-xl rounded-lg p-6">
-        <h1 class="text-2xl font-bold mb-6">Profile</h1>
+        <h1 class="mb-6">Profile</h1>
 
         <div class="mb-6">
           <div class="flex items-center gap-4 mb-4">
-            <h2 class="text-xl font-semibold mb-2">Premium Subscription</h2>
+            <h2 class="mb-2">Premium Subscription</h2>
 
             <span class="badge" :class="{
               'badge-success': subscriptionStatus === 'active' && !isSubscriptionCanceling,

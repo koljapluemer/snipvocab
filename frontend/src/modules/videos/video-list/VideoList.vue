@@ -5,12 +5,11 @@ import {
   getVideosByTag,
   getNewestVideos,
   getPopularVideos,
-  type VideoInfo, 
-  type PaginatedResponse 
 } from '@/modules/backend-communication/api'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import VideoTile from '@/modules/videos/video-list/VideoTile.vue'
 import { DisplaySource } from './types'
+import type { PaginatedResponse, VideoInfo } from '@/modules/backend-communication/apiTypes'
 
 const props = defineProps<{
   source: DisplaySource
@@ -105,7 +104,7 @@ onMounted(() => {
 
 <template>
   <div class="container mx-auto py-8">
-    <h2 class="text-2xl font-bold mb-6 ml-14">
+    <h2 class="mb-6 ml-14">
       <template v-if="source === DisplaySource.ALL_VIDEOS">All Videos</template>
       <template v-else-if="source === DisplaySource.VIDEOS_WITH_TAG">{{ tag }}</template>
       <template v-else-if="source === DisplaySource.NEWEST_VIDEOS">Newly Added</template>
