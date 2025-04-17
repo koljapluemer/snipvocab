@@ -164,6 +164,22 @@ onMounted(() => {
 
       <div class="divider"></div>
 
+      <div class="flex flex-col items-center gap-4 mb-8">
+        <h2 class="text-2xl font-bold">Need Help?</h2>
+        <div class="text-center">
+          <p class="mb-2">Have questions, feedback, or need assistance?</p>
+          <p class="text-primary font-medium">arabicwithvideos.contact@gmail.com</p>
+          <a 
+            href="mailto:arabicwithvideos.contact@gmail.com" 
+            class="btn btn-ghost mt-4"
+          >
+            Contact Us
+          </a>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
       <div class="flex flex-col items-center gap-4">
         <h2 class="text-2xl font-bold text-error">Danger Zone</h2>
         <button 
