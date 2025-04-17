@@ -105,7 +105,7 @@ onMounted(() => {
 
         <div class="mb-6">
           <div class="flex items-center gap-4 mb-4">
-            <h2 class="text-xl font-semibold mb-2">PremiumSubscription</h2>
+            <h2 class="text-xl font-semibold mb-2">Premium Subscription</h2>
 
             <span class="badge" :class="{
               'badge-success': subscriptionStatus === 'active' && !isSubscriptionCanceling,
@@ -131,10 +131,15 @@ onMounted(() => {
             Manage Subscription
           </button>
 
-          <button v-else-if="!userInfo?.subscription" 
+          <div v-else-if="!userInfo?.subscription" >
+            <p>
+              Get premium and practice as many videos as you want.
+            </p>
+          <button
             class="btn btn-primary" @click="handleSubscribe" :disabled="isLoading">
             Subscribe Now
           </button>
+          </div>
         </div>
       </div>
     </div>
