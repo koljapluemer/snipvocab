@@ -105,7 +105,7 @@ onMounted(() => {
 
         <div class="mb-6">
           <div class="flex items-center gap-4 mb-4">
-            <h2 class="text-xl font-semibold mb-2">Subscription</h2>
+            <h2 class="text-xl font-semibold mb-2">PremiumSubscription</h2>
 
             <span class="badge" :class="{
               'badge-success': subscriptionStatus === 'active' && !isSubscriptionCanceling,
