@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { getUserInfo, cancelSubscription, createCheckoutSession } from '@/modules/backend-communication/api'
+import { getUserInfo, createCheckoutSession, createCustomerPortalSession } from '@/modules/backend-communication/api'
 import { useRouter } from 'vue-router'
+import type { UserInfoResponse } from '@/modules/backend-communication/apiTypes'
 
 const router = useRouter()
-const userInfo = ref<{ email: string; id: number; subscription: { status: string | null; period_end?: number; cancel_at?: number; cancel_at_period_end?: boolean; error?: string } | null } | null>(null)
+const userInfo = ref<UserInfoResponse | null>(null)
 const isLoading = ref(false)
 const error = ref<string | null>(null)
 
@@ -39,9 +40,7 @@ const fetchUserInfo = async () => {
   try {
     isLoading.value = true
     const response = await getUserInfo()
-    console.log('User info response:', response)
     userInfo.value = response
-    console.log('Current subscription status:', userInfo.value?.subscription?.status)
   } catch (err) {
     console.error('Error fetching user info:', err)
     error.value = err instanceof Error ? err.message : 'An error occurred'
@@ -50,14 +49,14 @@ const fetchUserInfo = async () => {
   }
 }
 
-const handleCancelSubscription = async () => {
+const handleManageSubscription = async () => {
   try {
     isLoading.value = true
-    await cancelSubscription()
-    await fetchUserInfo() // Refresh user info to get updated subscription status
+    const { portalUrl } = await createCustomerPortalSession()
+    window.location.href = portalUrl
   } catch (err) {
-    console.error('Error canceling subscription:', err)
-    error.value = err instanceof Error ? err.message : 'Failed to cancel subscription'
+    console.error('Error accessing customer portal:', err)
+    error.value = err instanceof Error ? err.message : 'Failed to access customer portal'
   } finally {
     isLoading.value = false
   }
@@ -79,7 +78,6 @@ const handleSubscribe = async () => {
 }
 
 onMounted(() => {
-  console.log('Profile component mounted')
   fetchUserInfo()
 })
 </script>
@@ -105,7 +103,8 @@ onMounted(() => {
             <span class="badge" :class="{
               'badge-success': subscriptionStatus === 'active' && !isSubscriptionCanceling,
               'badge-error': subscriptionStatus === 'canceled' || isSubscriptionCanceling,
-              'badge-warning': !subscriptionStatus || subscriptionStatus === 'Error fetching subscription details'
+              'badge-warning': subscriptionStatus === 'Error fetching subscription details',
+              'badge-info': subscriptionStatus === 'No subscription'
             }">
               {{ subscriptionStatus }}
             </span>
@@ -120,12 +119,12 @@ onMounted(() => {
             </p>
           </div>
 
-          <button v-if="userInfo?.subscription?.status === 'active' && !isSubscriptionCanceling" 
-            class="btn btn-error" @click="handleCancelSubscription" :disabled="isLoading">
-            Cancel Subscription
+          <button v-if="userInfo?.subscription?.status === 'active'" 
+            class="btn btn-primary" @click="handleManageSubscription" :disabled="isLoading">
+            Manage Subscription
           </button>
 
-          <button v-else-if="!userInfo?.subscription?.status" 
+          <button v-else-if="!userInfo?.subscription" 
             class="btn btn-primary" @click="handleSubscribe" :disabled="isLoading">
             Subscribe Now
           </button>

@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -7,15 +6,12 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 import stripe
-import json
 import logging
 
-from payment.models import Subscription
+from payment.models import StripeCustomer
 
 logger = logging.getLogger(__name__)
 stripe.api_key = settings.STRIPE_SECRET_KEY
-
-# Create your views here.
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -23,6 +19,18 @@ def create_checkout_session(request):
     try:
         logger.info(f"Creating checkout session for user {request.user.id}")
         
+        # Create or get Stripe customer
+        try:
+            stripe_customer = StripeCustomer.objects.get(user=request.user)
+            customer_id = stripe_customer.customer_id
+        except StripeCustomer.DoesNotExist:
+            customer = stripe.Customer.create(email=request.user.email)
+            stripe_customer = StripeCustomer.objects.create(
+                user=request.user,
+                customer_id=customer.id
+            )
+            customer_id = customer.id
+
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=[{
@@ -32,7 +40,7 @@ def create_checkout_session(request):
             mode='subscription',
             success_url=settings.STRIPE_SUCCESS_URL,
             cancel_url=settings.STRIPE_CANCEL_URL,
-            customer_email=request.user.email,
+            customer=customer_id,
             metadata={
                 'user_id': request.user.id
             }
@@ -41,6 +49,22 @@ def create_checkout_session(request):
         return Response({'checkoutUrl': checkout_session.url})
     except Exception as e:
         logger.error(f"Error creating checkout session: {str(e)}", exc_info=True)
+        return Response({'error': str(e)}, status=500)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_customer_portal_session(request):
+    try:
+        stripe_customer = StripeCustomer.objects.get(user=request.user)
+        session = stripe.billing_portal.Session.create(
+            customer=stripe_customer.customer_id,
+            return_url=settings.STRIPE_SUCCESS_URL,
+        )
+        return Response({'portalUrl': session.url})
+    except StripeCustomer.DoesNotExist:
+        return Response({'error': 'No Stripe customer found'}, status=400)
+    except Exception as e:
+        logger.error(f"Error creating customer portal session: {str(e)}", exc_info=True)
         return Response({'error': str(e)}, status=500)
 
 @csrf_exempt
@@ -63,49 +87,61 @@ def stripe_webhook(request):
     if event.type == 'checkout.session.completed':
         session = event.data.object
         user_id = session.metadata.get('user_id')
-        subscription_id = session.subscription
+        customer_id = session.customer
 
-        # Update user's subscription status
+        # Update user's Stripe customer ID if needed
         from django.contrib.auth import get_user_model
         User = get_user_model()
         try:
             user = User.objects.get(id=user_id)
-            from .models import Subscription
-            Subscription.objects.update_or_create(
+            StripeCustomer.objects.update_or_create(
                 user=user,
-                defaults={
-                    'subscription_id': subscription_id,
-                    'status': 'active'
-                }
+                defaults={'customer_id': customer_id}
             )
         except User.DoesNotExist:
             return HttpResponse(status=400)
 
     return HttpResponse(status=200)
 
-@api_view(['POST'])
+@api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def cancel_subscription(request):
+def get_subscription_info(request):
     try:
-        logger.info(f"Canceling subscription for user {request.user.id}")
+        stripe_customer = StripeCustomer.objects.get(user=request.user)
         
-        # Get the user's subscription
-        subscription = Subscription.objects.get(user=request.user)
-        
-        # Cancel the subscription in Stripe
-        stripe.Subscription.modify(
-            subscription.subscription_id,
-            cancel_at_period_end=True
+        # Get the customer's subscriptions
+        subscriptions = stripe.Subscription.list(
+            customer=stripe_customer.customer_id,
+            status='all',
+            limit=1
         )
         
-        # Update our database
-        subscription.status = 'canceled'
-        subscription.save()
+        if not subscriptions.data:
+            return Response({'subscription': None})
+            
+        subscription = subscriptions.data[0]
         
-        logger.info(f"Successfully canceled subscription {subscription.subscription_id}")
-        return Response({'message': 'Subscription will be canceled at the end of the billing period'})
-    except Subscription.DoesNotExist:
-        return Response({'error': 'No active subscription found'}, status=400)
-    except Exception as e:
-        logger.error(f"Error canceling subscription: {str(e)}", exc_info=True)
-        return Response({'error': str(e)}, status=500)
+        # Get the current period end from the first subscription item
+        current_period_end = None
+        if subscription.get('items', {}).get('data'):
+            current_period_end = subscription['items']['data'][0]['current_period_end']
+        
+        subscription_details = {
+            'status': subscription.status,
+            'period_end': current_period_end,
+            'cancel_at': subscription.get('cancel_at'),
+            'cancel_at_period_end': subscription.get('cancel_at_period_end', False)
+        }
+        
+        return Response({'subscription': subscription_details})
+    except StripeCustomer.DoesNotExist:
+        # User has no Stripe customer record yet, which is fine
+        return Response({'subscription': None})
+    except stripe.error.StripeError as e:
+        # Only log and return error for actual Stripe API errors
+        logger.error(f"Error fetching Stripe subscription: {str(e)}", exc_info=True)
+        return Response({
+            'subscription': {
+                'error': 'Failed to fetch subscription details'
+            }
+        }, status=500)

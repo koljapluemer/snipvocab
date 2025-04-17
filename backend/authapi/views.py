@@ -10,7 +10,6 @@ from django.utils.encoding import force_bytes, force_str
 from django.core.mail import send_mail
 from django.conf import settings
 from .forms import CreateUserForm
-from payment.models import Subscription
 from django.contrib.auth import get_user_model
 import logging
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -104,38 +103,9 @@ def logout_view(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_info(request):
-    subscription = None
-    subscription_details = None
-    
-    try:
-        subscription = Subscription.objects.get(user=request.user)
-        # Fetch subscription details from Stripe
-        stripe_subscription = stripe.Subscription.retrieve(subscription.subscription_id)
-        
-        # Get the current period end from the first subscription item
-        current_period_end = None
-        if stripe_subscription.get('items', {}).get('data'):
-            current_period_end = stripe_subscription['items']['data'][0]['current_period_end']
-        
-        subscription_details = {
-            'status': subscription.status,
-            'period_end': current_period_end,
-            'cancel_at': stripe_subscription.get('cancel_at'),
-            'cancel_at_period_end': stripe_subscription.get('cancel_at_period_end', False)
-        }
-    except Subscription.DoesNotExist:
-        pass
-    except stripe.error.StripeError as e:
-        logger.error(f"Error fetching Stripe subscription: {str(e)}", exc_info=True)
-        subscription_details = {
-            'status': subscription.status if subscription else None,
-            'error': 'Failed to fetch subscription details'
-        }
-
     return Response({
         'email': request.user.email,
-        'id': request.user.id,
-        'subscription': subscription_details
+        'id': request.user.id
     })
 
 @api_view(['POST'])

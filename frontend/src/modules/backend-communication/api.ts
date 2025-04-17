@@ -1,66 +1,19 @@
 import { ref, readonly } from 'vue'
 import type { Snippet, Word, SnippetDetails, WordFlashCard, LearningEvent, EnrichedSnippetDetails } from '@/shared/domainTypes'
+import type { 
+  AuthUserResponse, 
+  LoginResponse, 
+  RegisterResponse, 
+  SnippetPracticeResponse, 
+  VideoProgressResponse, 
+  EnrichedSnippetsResponse, 
+  VideoInfo, 
+  PaginatedResponse, 
+  UserInfoResponse, 
+  SubscriptionInfoResponse 
+} from './apiTypes'
 import axios from 'axios'
 import type { AxiosResponse } from 'axios'
-
-// API Response Types
-export interface AuthUserResponse {
-  email: string
-}
-
-export interface LoginResponse {
-  access: string
-  refresh: string
-}
-
-export interface RegisterResponse {
-  tokens: {
-    access: string
-    refresh: string
-  }
-}
-
-export interface SnippetPracticeResponse {
-  perceived_difficulty: number | null;
-  updated: string;
-}
-
-export interface VideoProgressResponse {
-  lastPracticed: string | null;
-  perceivedDifficulty?: number | null;
-  snippetPercentageWatched: number | null;
-}
-
-export interface EnrichedSnippetsResponse {
-  snippets: EnrichedSnippetDetails[];
-  title: string;
-  snippetPercentageWatched: number | null;
-  perceivedDifficulty: number | null;
-}
-
-export interface VideoInfo {
-  youtube_id: string;
-  youtube_title: string | null;
-}
-
-export interface PaginatedResponse<T> {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: T[];
-}
-
-export interface UserInfoResponse {
-  email: string;
-  id: number;
-  subscription: {
-    status: string | null;
-    period_end?: number;
-    cancel_at?: number;
-    cancel_at_period_end?: boolean;
-    error?: string;
-  } | null;
-}
 
 // Auth state management
 const authState = {
@@ -394,12 +347,30 @@ export const createCheckoutSession = async (): Promise<{ checkoutUrl: string }> 
   }
 }
 
+export const createCustomerPortalSession = async (): Promise<{ portalUrl: string }> => {
+  try {
+    return await handleApiResponse(api.post('/payment/create-portal-session/'))
+  } catch (error) {
+    console.error('Error creating customer portal session:', error)
+    throw new Error('Failed to access customer portal. Please try again later.')
+  }
+}
+
 export const getUserInfo = async (): Promise<UserInfoResponse> => {
   try {
     return await handleApiResponse(api.get('/auth/user/'))
   } catch (error) {
     console.error('Error fetching user info:', error)
     throw new Error('Failed to fetch user information. Please try again later.')
+  }
+}
+
+export const getSubscriptionInfo = async (): Promise<SubscriptionInfoResponse> => {
+  try {
+    return await handleApiResponse(api.get('/payment/subscription-info/'))
+  } catch (error) {
+    console.error('Error fetching subscription info:', error)
+    throw new Error('Failed to fetch subscription information. Please try again later.')
   }
 }
 
