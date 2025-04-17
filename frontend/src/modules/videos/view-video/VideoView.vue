@@ -76,13 +76,16 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import type { EnrichedSnippetDetails } from '@/shared/domainTypes';
 import { getVideoSnippets, getVideoEnrichedSnippets, updateVideoProgress } from '@/modules/backend-communication/api';
 import SnippetView from './view-snippet/SnippetView.vue';
 import SnippetTimeline from './components/SnippetTimeline.vue';
+import { useVideoWatchTracking } from '@/modules/pages/get-premium/trackNonPremiumUserBehavior';
 
 const route = useRoute();
+const router = useRouter();
+const { trackVideoWatch } = useVideoWatchTracking();
 const videoId = route.params.videoId as string;
 const enrichedSnippets = ref<EnrichedSnippetDetails[]>([]);
 const currentSnippetIndex = ref<number | null>(null);
@@ -122,6 +125,10 @@ const isComplete = computed(() => {
 
 const startPractice = () => {
   if (enrichedSnippets.value.length > 0) {
+    if (trackVideoWatch()) {
+      router.push({ name: 'premium' });
+      return;
+    }
     currentSnippetIndex.value = firstUnratedSnippetIndex.value;
   }
 };
