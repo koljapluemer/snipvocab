@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import ShowUserWidget from '@/modules/auth/show-user/ShowUserWidget.vue'
 import ToastContainer from '@/modules/elements/toast/ToastContainer.vue'
+import { useAuthState } from '@/modules/backend-communication/api'
+const { isAuthenticated } = useAuthState()
 </script>
 
 <template>
@@ -9,8 +11,8 @@ import ToastContainer from '@/modules/elements/toast/ToastContainer.vue'
       <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
         <div class="flex gap-4">
           <router-link :to="{ name: 'landing' }" class="btn btn-ghost text-xl font-bold">AwV</router-link>
-          <router-link :to="{ name: 'home' }" class="btn btn-ghost text-lg">Dashboard</router-link>
-          <router-link :to="{ name: 'premium' }" class="btn btn-ghost text-lg">Premium</router-link>
+          <router-link v-if="isAuthenticated" :to="{ name: 'home' }" class="btn btn-ghost text-lg">Dashboard</router-link>
+          <router-link v-if="isAuthenticated" :to="{ name: 'premium' }" class="btn btn-ghost text-lg">Premium</router-link>
         </div>
         <ShowUserWidget />
       </nav>
