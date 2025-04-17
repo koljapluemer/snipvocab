@@ -413,3 +413,12 @@ export const confirmPasswordReset = async (uid: string, token: string, password:
     throw new Error('Failed to reset password. Please try again later.')
   }
 }
+
+export const deleteUser = async (): Promise<{ message: string }> => {
+  try {
+    return await handleApiResponse(api.post('/auth/delete/'))
+  } catch (error) {
+    console.error('Error deleting user:', error)
+    throw new Error('Failed to delete user account. Please try again later.')
+  }
+}

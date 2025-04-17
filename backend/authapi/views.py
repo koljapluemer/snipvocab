@@ -173,3 +173,38 @@ def reset_password(request):
     logger.info(f"Password successfully reset for user {user.email}")
     
     return Response({'message': 'Password has been reset successfully'}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def delete_user(request):
+    try:
+        user = request.user
+        
+        # Delete Stripe customer and subscription if they exist
+        try:
+            from payment.models import StripeCustomer
+            stripe_customer = StripeCustomer.objects.get(user=user)
+            
+            # Cancel any active subscriptions
+            subscriptions = stripe.Subscription.list(
+                customer=stripe_customer.customer_id,
+                status='active'
+            )
+            for subscription in subscriptions.data:
+                stripe.Subscription.delete(subscription.id)
+            
+            # Delete the Stripe customer
+            stripe.Customer.delete(stripe_customer.customer_id)
+            stripe_customer.delete()
+        except StripeCustomer.DoesNotExist:
+            pass  # No Stripe customer exists, which is fine
+        
+        # Delete the user
+        user.delete()
+        
+        return Response({'message': 'User account deleted successfully'}, 
+                       status=status.HTTP_200_OK)
+    except Exception as e:
+        logger.error(f"Error deleting user: {str(e)}", exc_info=True)
+        return Response({'error': 'Failed to delete user account'}, 
+                       status=status.HTTP_500_INTERNAL_SERVER_ERROR)

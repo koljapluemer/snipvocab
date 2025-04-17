@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { getUserInfo, createCheckoutSession, createCustomerPortalSession, getSubscriptionInfo } from '@/modules/backend-communication/api'
+import { getUserInfo, createCheckoutSession, createCustomerPortalSession, getSubscriptionInfo, deleteUser } from '@/modules/backend-communication/api'
 import { useRouter } from 'vue-router'
 import type { UserInfoResponse, SubscriptionInfoResponse } from '@/modules/backend-communication/apiTypes'
 import PremiumAdvantages from '@/modules/elements/premium-advantages/PremiumAdvantages.vue'
@@ -85,6 +85,25 @@ const handleSubscribe = async () => {
   }
 }
 
+const handleDeleteAccount = async () => {
+  if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+    return
+  }
+
+  try {
+    isLoading.value = true
+    await deleteUser()
+    // Clear auth state and redirect to home
+    localStorage.clear()
+    router.push('/')
+  } catch (err) {
+    console.error('Error deleting account:', err)
+    error.value = err instanceof Error ? err.message : 'Failed to delete account'
+  } finally {
+    isLoading.value = false
+  }
+}
+
 onMounted(() => {
   fetchUserInfo()
 })
@@ -141,6 +160,19 @@ onMounted(() => {
             </button>
           </template>
         </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="flex flex-col items-center gap-4">
+        <h2 class="text-2xl font-bold text-error">Danger Zone</h2>
+        <button 
+          class="btn btn-error btn-lg" 
+          @click="handleDeleteAccount" 
+          :disabled="isLoading">
+          Delete Account
+        </button>
+        <p class="text-sm text-error">This action cannot be undone. All your data will be permanently deleted.</p>
       </div>
     </div>
   </div>
