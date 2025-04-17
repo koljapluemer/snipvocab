@@ -46,17 +46,17 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="group cursor-pointer" @click="handleViewVideo">
-    <div class="relative overflow-hidden rounded-lg aspect-video">
+  <div class="group relative cursor-pointer max-w-[240px] mx-auto" @click="handleViewVideo">
+    <div class="relative overflow-hidden rounded-lg">
       <img 
         :src="`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`" 
         :alt="`Video thumbnail for ${videoId}`"
-        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+        class="w-full transition-transform duration-300 group-hover:scale-105"
       />
       <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300" />
       <div 
         v-if="!loading && lastPracticed" 
-        class="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded"
+        class="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded"
       >
         Last practiced {{ lastPracticed }}
       </div>
@@ -68,7 +68,7 @@ onMounted(async () => {
       ></progress>
     </div>
     <div class="mt-2">
-      <h3 class="line-clamp-2 text-lg" :title="title || ''">
+      <h3 class="text-sm font-medium line-clamp-2" :title="title || ''">
         {{ title || 'Untitled Video' }}
       </h3>
     </div>

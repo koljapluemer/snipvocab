@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import { getUserInfo, createCheckoutSession, createCustomerPortalSession, getSubscriptionInfo } from '@/modules/backend-communication/api'
 import { useRouter } from 'vue-router'
 import type { UserInfoResponse, SubscriptionInfoResponse } from '@/modules/backend-communication/apiTypes'
+import PremiumAdvantages from '@/modules/elements/premium-advantages/PremiumAdvantages.vue'
 
 const router = useRouter()
 const userInfo = ref<UserInfoResponse | null>(null)
@@ -17,11 +18,11 @@ const subscriptionStatus = computed(() => {
 
 const subscriptionExpiration = computed(() => {
   if (!userInfo.value?.subscription) return null
-  
+
   // If subscription is being canceled, use cancel_at if available, otherwise use period_end
   const timestamp = userInfo.value.subscription.cancel_at || userInfo.value.subscription.period_end
   if (!timestamp) return null
-  
+
   const date = new Date(timestamp * 1000)
   return date.toLocaleDateString(undefined, {
     year: 'numeric',
@@ -31,9 +32,9 @@ const subscriptionExpiration = computed(() => {
 })
 
 const isSubscriptionCanceling = computed(() => {
-  return userInfo.value?.subscription?.cancel_at_period_end === true || 
-         (userInfo.value?.subscription?.cancel_at !== undefined && 
-          userInfo.value?.subscription?.cancel_at !== null)
+  return userInfo.value?.subscription?.cancel_at_period_end === true ||
+    (userInfo.value?.subscription?.cancel_at !== undefined &&
+      userInfo.value?.subscription?.cancel_at !== null)
 })
 
 const fetchUserInfo = async () => {
@@ -43,7 +44,7 @@ const fetchUserInfo = async () => {
       getUserInfo(),
       getSubscriptionInfo()
     ])
-    
+
     userInfo.value = {
       ...userResponse,
       subscription: subscriptionResponse.subscription
@@ -90,56 +91,55 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-8">
-    <div class="max-w-2xl mx-auto">
-      <div v-if="isLoading" class="flex justify-center">
-        <div class="loading loading-spinner loading-lg"></div>
-      </div>
+  <div>
+    <div v-if="isLoading" class="flex justify-center py-16">
+      <div class="loading loading-spinner loading-lg"></div>
+    </div>
 
-      <div v-else-if="error" class="alert alert-error">
-        <span>{{ error }}</span>
-      </div>
+    <div v-else-if="error" class="alert alert-error shadow-lg">
+      <span>{{ error }}</span>
+    </div>
 
-      <div v-else class="bg-base-100 shadow-xl rounded-lg p-6">
-        <h1 class="mb-6">Profile</h1>
+    <div v-else class="bg-base-100 shadow-xl rounded-xl p-8">
+      <h1 class="text-3xl font-bold text-primary mb-8 text-center">Profile</h1>
 
-        <div class="mb-6">
-          <div class="flex items-center gap-4 mb-4">
-            <h2 class="mb-2">Premium Subscription</h2>
+      <div class="mb-8">
+        <div class="flex items-center gap-4 mb-6">
+          <h2 class="text-2xl font-bold">Premium Subscription</h2>
 
-            <span class="badge" :class="{
-              'badge-success': subscriptionStatus === 'active' && !isSubscriptionCanceling,
-              'badge-error': subscriptionStatus === 'canceled' || isSubscriptionCanceling,
-              'badge-warning': subscriptionStatus === 'Error fetching subscription details',
-              'badge-info': subscriptionStatus === 'No subscription'
-            }">
-              {{ subscriptionStatus }}
-            </span>
-          </div>
+          <span class="badge badge-lg" :class="{
+            'badge-success': subscriptionStatus === 'active' && !isSubscriptionCanceling,
+            'badge-error': subscriptionStatus === 'canceled' || isSubscriptionCanceling,
+            'badge-warning': subscriptionStatus === 'Error fetching subscription details',
+            'badge-info': subscriptionStatus === 'No subscription'
+          }">
+            {{ subscriptionStatus }}
+          </span>
+        </div>
 
-          <div v-if="subscriptionExpiration" class="mb-4">
-            <p v-if="isSubscriptionCanceling" class="text-warning">
-              Your subscription will end on {{ subscriptionExpiration }}
-            </p>
-            <p v-else class="text-success">
-              Your subscription will renew on {{ subscriptionExpiration }}
-            </p>
-          </div>
+        <div v-if="subscriptionExpiration" class="mb-6">
+          <p v-if="isSubscriptionCanceling" class="text-warning">
+            Your subscription will end on {{ subscriptionExpiration }}
+          </p>
+          <p v-else class="text-success">
+            Your subscription will renew on {{ subscriptionExpiration }}
+          </p>
+        </div>
 
+        <div class="flex flex-col items-center gap-8">
           <button v-if="userInfo?.subscription?.status === 'active'" 
-            class="btn btn-primary" @click="handleManageSubscription" :disabled="isLoading">
+            class="btn btn-primary btn-lg" 
+            @click="handleManageSubscription" 
+            :disabled="isLoading">
             Manage Subscription
           </button>
 
-          <div v-else-if="!userInfo?.subscription" >
-            <p>
-              Get premium and practice as many videos as you want.
-            </p>
-          <button
-            class="btn btn-primary" @click="handleSubscribe" :disabled="isLoading">
-            Subscribe Now
-          </button>
-          </div>
+          <template v-else-if="!userInfo?.subscription">
+            <PremiumAdvantages />
+            <button class="btn btn-primary btn-lg" @click="handleSubscribe" :disabled="isLoading">
+              Subscribe Now
+            </button>
+          </template>
         </div>
       </div>
     </div>

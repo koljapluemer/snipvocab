@@ -7,7 +7,7 @@ const { handleLogout } = useLogout()
 <template>
   <button 
     @click="handleLogout" 
-    class="btn btn-ghost btn-sm"
+    class="btn btn-ghost"
   >
     Logout
   </button>

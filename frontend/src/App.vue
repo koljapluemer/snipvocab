@@ -4,18 +4,18 @@ import ToastContainer from '@/modules/elements/toast/ToastContainer.vue'
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col">
+  <div class="min-h-screen flex flex-col bg-base-100">
     <header class="bg-base-100 shadow-sm">
-      <nav class="container mx-auto px-4 py-2 flex justify-between items-center">
+      <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
         <div class="flex gap-4">
-          <router-link :to="{ name: 'landing' }" class="btn btn-ghost">AwV</router-link>
-          <router-link :to="{ name: 'home' }" class="btn btn-ghost">Dashboard</router-link>
+          <router-link :to="{ name: 'landing' }" class="btn btn-ghost text-xl font-bold">AwV</router-link>
+          <router-link :to="{ name: 'home' }" class="btn btn-ghost text-lg">Dashboard</router-link>
         </div>
         <ShowUserWidget />
       </nav>
     </header>
     
-    <main class="container mx-auto my-4 flex-grow">
+    <main class="container mx-auto px-4 py-8 flex-grow max-w-3xl">
       <router-view></router-view>
       <ToastContainer />
     </main>

@@ -4,7 +4,6 @@ import PremiumAdvantages from '@/modules/elements/premium-advantages/PremiumAdva
 </script>
 
 <template>
-  <div class="container mx-auto px-4">
     <img 
       src="/hero.png"
       alt="Demo image of how the Arabic With Videos App works: First, pick a video, then practice the vocabulary for a given section, then watch and evaluate the section"
@@ -86,6 +85,5 @@ import PremiumAdvantages from '@/modules/elements/premium-advantages/PremiumAdva
     </section>
 
     <PremiumAdvantages />
-  </div>
 </template>
 

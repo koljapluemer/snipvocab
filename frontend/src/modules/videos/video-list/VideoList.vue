@@ -104,7 +104,7 @@ onMounted(() => {
 
 <template>
   <div class="container mx-auto py-8">
-    <h2 class="mb-6 ml-14">
+    <h2 class="text-3xl font-bold text-primary mb-8 text-center">
       <template v-if="source === DisplaySource.ALL_VIDEOS">All Videos</template>
       <template v-else-if="source === DisplaySource.VIDEOS_WITH_TAG">{{ tag }}</template>
       <template v-else-if="source === DisplaySource.NEWEST_VIDEOS">Newly Added</template>

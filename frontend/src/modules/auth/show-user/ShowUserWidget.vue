@@ -8,8 +8,8 @@ const auth = useAuthState()
 <template>
   <div class="flex items-center gap-4">
     <div v-if="auth.isAuthenticated.value" class="flex items-center gap-2">
-      <router-link :to="{ name: 'profile' }" class="btn btn-ghost btn-sm">
-        <span class="text-sm">{{ auth.userEmail.value }}</span>
+      <router-link :to="{ name: 'profile' }" class="btn btn-ghost">
+        <span>{{ auth.userEmail.value }}</span>
         <span v-if="auth.isPremium.value" class="ml-1 text-yellow-500">★</span>
       </router-link>
       <LogoutButton />
@@ -18,13 +18,13 @@ const auth = useAuthState()
     <div v-else class="flex items-center gap-2">
       <router-link 
         :to="{ name: 'login' }" 
-        class="btn btn-ghost btn-sm"
+        class="btn btn-ghost"
       >
         Login
       </router-link>
       <router-link 
         :to="{ name: 'register' }" 
-        class="btn btn-primary btn-sm"
+        class="btn btn-primary"
       >
         Register
       </router-link>
