@@ -422,3 +422,16 @@ export const deleteUser = async (): Promise<{ message: string }> => {
     throw new Error('Failed to delete user account. Please try again later.')
   }
 }
+
+// Email Confirmation API function
+export const confirmEmail = async (uid: string, token: string): Promise<{ message: string }> => {
+  try {
+    return await handleApiResponse(api.post('/auth/confirm-email/', {
+      uid,
+      token
+    }))
+  } catch (error) {
+    console.error('Error confirming email:', error)
+    throw new Error('Failed to confirm email. Please try again later.')
+  }
+}

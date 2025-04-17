@@ -12,6 +12,7 @@ import { useAuthState } from '@/modules/backend-communication/api'
 import Landing from '@/modules/pages/landing/Landing.vue'
 import Terms from '@/modules/pages/terms/Terms.vue'
 import Privacy from '@/modules/pages/privacy/Privacy.vue'
+import HandleConfirmEmail from '@/modules/auth/confirm-email/HandleConfirmEmail.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -68,6 +69,11 @@ const router = createRouter({
       name: 'reset-password',
       component: ResetPassword,
       meta: { requiresGuest: true }
+    },
+    {
+      path: '/reset-password/confirm-email',
+      name: 'confirm-email',
+      component: HandleConfirmEmail
     },
     {
       path: '/terms',
