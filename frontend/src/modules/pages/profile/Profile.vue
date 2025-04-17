@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { getUserInfo, createCheckoutSession, createCustomerPortalSession } from '@/modules/backend-communication/api'
+import { getUserInfo, createCheckoutSession, createCustomerPortalSession, getSubscriptionInfo } from '@/modules/backend-communication/api'
 import { useRouter } from 'vue-router'
-import type { UserInfoResponse } from '@/modules/backend-communication/apiTypes'
+import type { UserInfoResponse, SubscriptionInfoResponse } from '@/modules/backend-communication/apiTypes'
 
 const router = useRouter()
 const userInfo = ref<UserInfoResponse | null>(null)
@@ -39,8 +39,15 @@ const isSubscriptionCanceling = computed(() => {
 const fetchUserInfo = async () => {
   try {
     isLoading.value = true
-    const response = await getUserInfo()
-    userInfo.value = response
+    const [userResponse, subscriptionResponse] = await Promise.all([
+      getUserInfo(),
+      getSubscriptionInfo()
+    ])
+    
+    userInfo.value = {
+      ...userResponse,
+      subscription: subscriptionResponse.subscription
+    }
   } catch (err) {
     console.error('Error fetching user info:', err)
     error.value = err instanceof Error ? err.message : 'An error occurred'
