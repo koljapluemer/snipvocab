@@ -65,7 +65,7 @@ onMounted(() => {
 
 <template>
     <div>
-        <div v-if="isLoading" class="flex justify-center py-16">
+        <div v-if="isLoading" class="flex justify-center py-8">
             <div class="loading loading-spinner loading-lg"></div>
         </div>
 

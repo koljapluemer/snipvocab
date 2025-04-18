@@ -111,7 +111,7 @@ onMounted(() => {
 
 <template>
   <div>
-    <div v-if="isLoading" class="flex justify-center py-16">
+    <div v-if="isLoading" class="flex justify-center py-8">
       <div class="loading loading-spinner loading-lg"></div>
     </div>
 
@@ -122,74 +122,54 @@ onMounted(() => {
     <div v-else class="bg-base-100 shadow-xl rounded-xl p-8">
       <h1 class="text-3xl font-bold text-primary mb-8 text-center">Profile</h1>
 
-      <div class="mb-8">
-        <div class="flex items-center gap-4 mb-6">
-          <h2 class="text-2xl font-bold">Premium Subscription</h2>
-
-          <span class="badge badge-lg" :class="{
-            'badge-success': subscriptionStatus === 'active' && !isSubscriptionCanceling,
-            'badge-error': subscriptionStatus === 'canceled' || isSubscriptionCanceling,
-            'badge-warning': subscriptionStatus === 'Error fetching subscription details',
-            'badge-info': subscriptionStatus === 'No subscription'
-          }">
-            {{ subscriptionStatus }}
-          </span>
-        </div>
-
-        <div v-if="subscriptionExpiration" class="mb-6">
-          <p v-if="isSubscriptionCanceling" class="text-warning">
-            Your subscription will end on {{ subscriptionExpiration }}
-          </p>
-          <p v-else class="text-success">
-            Your subscription will renew on {{ subscriptionExpiration }}
-          </p>
-        </div>
-
-        <div class="flex flex-col items-center gap-8">
-          <button v-if="userInfo?.subscription?.status === 'active'" 
-            class="btn btn-primary btn-lg" 
-            @click="handleManageSubscription" 
-            :disabled="isLoading">
-            Manage Subscription
-          </button>
-
-          <template v-else-if="!userInfo?.subscription">
-            <PremiumAdvantages />
-            <button class="btn btn-primary btn-lg" @click="handleSubscribe" :disabled="isLoading">
-              Subscribe Now
-            </button>
-          </template>
-        </div>
+      <p class="text-center">
+        {{ subscriptionStatus === 'active' ? 'You have a premium subscription' : 'You have a free account' }}
+      </p>
+      <div v-if="subscriptionExpiration" class="mb-6">
+        <p v-if="isSubscriptionCanceling" class="text-warning">
+          Your subscription will end on {{ subscriptionExpiration }}
+        </p>
+        <p v-else class="text-success">
+          Your subscription will renew on {{ subscriptionExpiration }}
+        </p>
       </div>
 
-      <div class="divider"></div>
-
-      <div class="flex flex-col items-center gap-4 mb-8">
-        <h2 class="text-2xl font-bold">Need Help?</h2>
-        <div class="text-center">
-          <p class="mb-2">Have questions, feedback, or need assistance?</p>
-          <p class="text-primary font-medium">arabicwithvideos.contact@gmail.com</p>
-          <a 
-            href="mailto:arabicwithvideos.contact@gmail.com" 
-            class="btn btn-ghost mt-4"
-          >
-            Contact Us
-          </a>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="flex flex-col items-center gap-4">
-        <h2 class="text-2xl font-bold text-error">Danger Zone</h2>
-        <button 
-          class="btn btn-error btn-lg" 
-          @click="handleDeleteAccount" 
-          :disabled="isLoading">
-          Delete Account
+      <div class="flex flex-col items-center gap-8">
+        <button v-if="userInfo?.subscription?.status === 'active'" class="btn btn-primary btn-lg"
+          @click="handleManageSubscription" :disabled="isLoading">
+          Manage Subscription
         </button>
-        <p class="text-sm text-error">This action cannot be undone. All your data will be permanently deleted.</p>
+
+        <template v-else-if="!userInfo?.subscription">
+          <PremiumAdvantages />
+          <button class="btn btn-primary btn-lg" @click="handleSubscribe" :disabled="isLoading">
+            Subscribe Now
+          </button>
+        </template>
       </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="flex flex-col items-center gap-4 mb-8">
+      <h2 class="text-2xl font-bold">Need Help?</h2>
+      <div class="text-center">
+        <p class="mb-2">Have questions, feedback, or need assistance?</p>
+        <p class="text-primary font-medium">arabicwithvideos.contact@gmail.com</p>
+        <a href="mailto:arabicwithvideos.contact@gmail.com" class="btn btn-ghost mt-4">
+          Contact Us
+        </a>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="flex flex-col items-center gap-4">
+      <h2 class="text-2xl font-bold text-error">Danger Zone</h2>
+      <button class="btn btn-error btn-lg" @click="handleDeleteAccount" :disabled="isLoading">
+        Delete Account
+      </button>
+      <p class="text-sm text-error">This action cannot be undone. All your data will be permanently deleted.</p>
     </div>
   </div>
 </template>
