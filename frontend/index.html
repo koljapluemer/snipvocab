@@ -1,23 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Arabic with Videos</title>
     <link rel="icon" href="/favicon.ico" />
-    <meta name="description" content="Arabic with Videos is a platform for learning Arabic with Youtube videos.">
-    <meta name="author" content="Sam Pluemer | pluemer webdesign">
-    <meta name="robots" content="index, follow">
-    <meta name="googlebot" content="index, follow">
-    <meta name="bingbot" content="index, follow">
-    <script>
-      window.goatcounter = { no_onload: true }
-    </script>
-    <script data-goatcounter="https://arabicwithvideos.goatcounter.com/count"
-            async src="//gc.zgo.at/count.js"></script>
+    <meta
+      name="description"
+      content="Arabic with Videos is a platform for learning Arabic with Youtube videos."
+    />
+    <meta name="author" content="Kolja Sam Pluemer | pluemer webdesign" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="bingbot" content="index, follow" />
   </head>
   <body class="prose prose-xl max-w-none">
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
+
+  <script>
+    window.goatcounter = { no_onload: true };
+
+    window.addEventListener("hashchange", function (e) {
+      window.goatcounter.count({
+        path: location.pathname + location.search + location.hash,
+      });
+    });
+  </script>
+  <script
+    data-goatcounter="https://arabicwithvideos.goatcounter.com/count"
+    async
+    src="//gc.zgo.at/count.js"
+  ></script>
 </html>
