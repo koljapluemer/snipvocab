@@ -17,20 +17,19 @@
   <body class="prose prose-xl max-w-none">
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
-  </body>
-
-  <script>
-    window.goatcounter = { no_onload: true };
-
-    window.addEventListener("hashchange", function (e) {
-      window.goatcounter.count({
-        path: location.pathname + location.search + location.hash,
+    <script>
+      window.goatcounter = { no_onload: true };
+  
+      window.addEventListener("hashchange", function (e) {
+        window.goatcounter.count({
+          path: location.pathname + location.search + location.hash,
+        });
       });
-    });
-  </script>
-  <script
-    data-goatcounter="https://arabicwithvideos.goatcounter.com/count"
-    async
-    src="//gc.zgo.at/count.js"
-  ></script>
+    </script>
+    <script
+      data-goatcounter="https://arabicwithvideos.goatcounter.com/count"
+      async
+      src="//gc.zgo.at/count.js"
+    ></script>
+  </body>
 </html>
