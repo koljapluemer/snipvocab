@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import Register from '@/modules/auth/register/Register.vue'
 import Login from '@/modules/auth/login/Login.vue'
 import ResetPassword from '@/modules/auth/reset-password/ResetPassword.vue'
@@ -15,7 +15,7 @@ import Privacy from '@/modules/pages/privacy/Privacy.vue'
 import HandleConfirmEmail from '@/modules/auth/confirm-email/HandleConfirmEmail.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
