@@ -1147,7 +1147,7 @@ def search_videos(request):
             # Get the last page token used for this search query
             last_page_token = request.session.get(f'last_page_token_{search_query}', '')
             
-            # Search for videos
+            # Search for videos with captions
             search_response = youtube.search().list(
                 q=search_query,
                 part='id,snippet',
@@ -1155,7 +1155,8 @@ def search_videos(request):
                 maxResults=10,
                 regionCode=region_code,
                 relevanceLanguage=language,
-                pageToken=last_page_token
+                pageToken=last_page_token,
+                videoCaption='any'  # Only include videos with captions
             ).execute()
             
             # Store the next page token for future searches
