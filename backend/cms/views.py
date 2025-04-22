@@ -21,6 +21,8 @@ from django.utils import timezone
 from datetime import timedelta
 from learnapi.models import VideoProgress, VocabPractice, SnippetPractice
 from django.contrib.auth.models import User
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
@@ -355,11 +357,18 @@ def list_all_videos(request):
     return render(request, 'list_all_videos.html', context)
 
 @staff_member_required
+@cache_page(60 * 15)  # Cache for 15 minutes
 def video_details(request, youtube_id):
     """View to show details of a specific video"""
     frontend = get_current_frontend(request)
     try:
-        video = Video.objects.get(youtube_id=youtube_id, frontend=frontend)
+        video = Video.objects.select_related().prefetch_related(
+            'tags',
+            'snippets',
+            'words',
+            'words__meanings',
+            'words__occurs_in_snippets'
+        ).get(youtube_id=youtube_id, frontend=frontend)
         
         # Get available languages if not already set
         if not video.available_subtitle_languages:
@@ -375,7 +384,7 @@ def video_details(request, youtube_id):
         snippet_count = video.snippets.count()
         
         # Get all words for this video with their meanings
-        words = Word.objects.filter(videos=video).prefetch_related('meanings')
+        words = video.words.all()
         
         context = {
             'video': video,
