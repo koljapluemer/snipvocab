@@ -39,6 +39,24 @@
         <!-- Tags -->
         <div class="mb-6">
             <h2 class="text-xl font-semibold mb-2">Tags</h2>
+            
+            <!-- Add Tag Form -->
+            <form action="{% url 'add_tag' video.youtube_id %}" method="post" class="mb-4">
+                {% csrf_token %}
+                <div class="join w-full max-w-md">
+                    <input type="text" 
+                           name="tag_name" 
+                           id="tagInput" 
+                           class="input input-bordered join-item w-full" 
+                           placeholder="Add a new tag..."
+                           autocomplete="off"
+                           data-autocomplete-url="{% url 'tag_autocomplete' %}">
+                    <button type="submit" class="btn btn-primary join-item">Add Tag</button>
+                </div>
+                <div id="tagSuggestions" class="mt-1 hidden absolute z-10 w-full max-w-md bg-white border border-gray-200 rounded-lg shadow-lg"></div>
+            </form>
+
+            <!-- Existing Tags -->
             {% if video.tags.all %}
                 <div class="flex flex-wrap gap-2">
                     {% for tag in video.tags.all %}
@@ -294,4 +312,54 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tagInput = document.getElementById('tagInput');
+    const suggestionsDiv = document.getElementById('tagSuggestions');
+    let timeoutId;
+
+    tagInput.addEventListener('input', function() {
+        clearTimeout(timeoutId);
+        const query = this.value.trim();
+        
+        if (query.length < 2) {
+            suggestionsDiv.classList.add('hidden');
+            return;
+        }
+
+        timeoutId = setTimeout(() => {
+            fetch(`${tagInput.dataset.autocompleteUrl}?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionsDiv.innerHTML = '';
+                    if (data.tags.length > 0) {
+                        data.tags.forEach(tag => {
+                            const div = document.createElement('div');
+                            div.className = 'p-2 hover:bg-gray-100 cursor-pointer';
+                            div.textContent = tag.name;
+                            div.addEventListener('click', () => {
+                                tagInput.value = tag.name;
+                                suggestionsDiv.classList.add('hidden');
+                            });
+                            suggestionsDiv.appendChild(div);
+                        });
+                        suggestionsDiv.classList.remove('hidden');
+                    } else {
+                        suggestionsDiv.classList.add('hidden');
+                    }
+                });
+        }, 300);
+    });
+
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!tagInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+            suggestionsDiv.classList.add('hidden');
+        }
+    });
+});
+</script>
 {% endblock %} 

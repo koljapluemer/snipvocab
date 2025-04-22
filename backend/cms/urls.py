@@ -32,4 +32,6 @@ urlpatterns = [
     path('tags/', views.manage_tags, name='manage_tags'),
     path('tags/<int:tag_id>/', views.manage_tags, name='edit_tag'),
     path('videos/<str:youtube_id>/remove-tag/<int:tag_id>/', views.remove_tag, name='remove_tag'),
+    path('videos/<str:youtube_id>/add-tag/', views.add_tag, name='add_tag'),
+    path('tags/autocomplete/', views.tag_autocomplete, name='tag_autocomplete'),
 ]
