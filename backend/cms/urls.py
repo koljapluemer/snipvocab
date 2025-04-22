@@ -29,4 +29,6 @@ urlpatterns = [
     path('enrich-metadata/', views.enrich_video_metadata, name='enrich_video_metadata'),
     path('publish-many-snippets/', views.publish_videos_with_many_snippets, name='publish_videos_with_many_snippets'),
     path('user-statistics/', views.user_statistics, name='user_statistics'),
+    path('tags/', views.manage_tags, name='manage_tags'),
+    path('tags/<int:tag_id>/', views.manage_tags, name='edit_tag'),
 ]
