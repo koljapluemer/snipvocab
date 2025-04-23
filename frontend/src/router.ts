@@ -13,6 +13,7 @@ import Landing from '@/modules/pages/landing/Landing.vue'
 import Terms from '@/modules/pages/terms/Terms.vue'
 import Privacy from '@/modules/pages/privacy/Privacy.vue'
 import HandleConfirmEmail from '@/modules/auth/confirm-email/HandleConfirmEmail.vue'
+import ChooseFirstVideo from '@/modules/onboarding/ChooseFirstVideo.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -84,6 +85,12 @@ const router = createRouter({
       path: '/privacy',
       name: 'privacy',
       component: Privacy
+    },
+    {
+      path: '/onboarding',
+      name: 'onboarding',
+      component: ChooseFirstVideo,
+      meta: { requiresAuth: true }
     }
   ]
 })

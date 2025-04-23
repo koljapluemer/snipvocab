@@ -22,7 +22,7 @@ export const useRegister = () => {
       error.value = ''
       
       await register(email.value, password.value)
-      router.push({ name: 'home' })
+      router.push({ name: 'onboarding' })
     } catch (err: any) {
       error.value = err.response?.data?.error || 'Registration failed. Please try again.'
     } finally {
