@@ -21,7 +21,7 @@ from django.utils import timezone
 from datetime import timedelta
 from learnapi.models import VideoProgress, VocabPractice, SnippetPractice
 from django.contrib.auth.models import User
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page, never_cache
 from django.utils.decorators import method_decorator
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
@@ -79,6 +79,7 @@ def get_current_frontend(request):
     return request.session.get('frontend', Frontend.ARABIC)
 
 @staff_member_required
+@never_cache
 def cms_home(request):
     """Home view for the CMS"""
     frontend = get_current_frontend(request)
@@ -246,6 +247,7 @@ def import_channel_videos(request):
     return render(request, 'import_channel_videos.html')
 
 @staff_member_required
+@never_cache
 def review_videos(request):
     """View to review videos that need review"""
     frontend = get_current_frontend(request)
@@ -320,6 +322,7 @@ def update_video_statuses(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 @staff_member_required
+@never_cache
 def list_all_videos(request):
     """View to list all videos with their status"""
     frontend = get_current_frontend(request)
