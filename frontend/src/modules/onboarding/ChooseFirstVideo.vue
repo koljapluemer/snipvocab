@@ -3,16 +3,17 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import VideoTile from '@/modules/videos/video-list/VideoTile.vue'
 import { getOnboardingVideos } from '@/modules/backend-communication/api'
-import type { OnboardingVideoInfo } from '@/modules/backend-communication/apiTypes'
+import type { VideoInfo } from '@/modules/backend-communication/apiTypes'
 
 const router = useRouter()
-const videos = ref<OnboardingVideoInfo[]>([])
+const videos = ref<VideoInfo[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 
 onMounted(async () => {
     try {
         videos.value = await getOnboardingVideos()
+        console.log('Onboarding videos:', videos.value) // Debug log
     } catch (err) {
         error.value = err instanceof Error ? err.message : 'Failed to load videos'
     } finally {

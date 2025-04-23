@@ -3,6 +3,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from shared.models import Video, Tag
 import random
+import logging
+
+logger = logging.getLogger(__name__)
 
 class VideosForOnboardingView(APIView):
     def get(self, request):
@@ -10,26 +13,19 @@ class VideosForOnboardingView(APIView):
             # Get the 'feature-in-onboarding' tag
             onboarding_tag = Tag.objects.get(name='feature-in-onboarding')
             
-            # Get all videos with this tag
-            videos = Video.objects.filter(tags=onboarding_tag)
+            # Get all videos with this tag and only the fields we need
+            videos = Video.objects.filter(tags=onboarding_tag).values('youtube_id', 'youtube_title')
+            logger.info(f"Found videos for onboarding: {list(videos)}")  # Debug log
             
             # If we have less than 3 videos, return all of them
-            if videos.count() <= 3:
+            if len(videos) <= 3:
                 selected_videos = list(videos)
             else:
                 # Randomly select 3 videos
                 selected_videos = random.sample(list(videos), 3)
             
-            # Serialize the videos
-            video_data = [{
-                'youtube_id': video.youtube_id,
-                'title': video.youtube_title,
-                'channel_name': video.channel_name,
-                'video_views': video.video_views,
-                'video_likes': video.video_likes
-            } for video in selected_videos]
-            
-            return Response(video_data, status=status.HTTP_200_OK)
+            logger.info(f"Returning selected videos: {selected_videos}")  # Debug log
+            return Response(selected_videos, status=status.HTTP_200_OK)
             
         except Tag.DoesNotExist:
             return Response(

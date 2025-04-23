@@ -11,7 +11,6 @@ import type {
   PaginatedResponse, 
   UserInfoResponse, 
   SubscriptionInfoResponse, 
-  OnboardingVideoInfo 
 } from './apiTypes'
 import axios from 'axios'
 import type { AxiosResponse } from 'axios'
@@ -346,7 +345,7 @@ export const updateVideoProgress = async (
   }
 }
 
-export const getOnboardingVideos = async (): Promise<OnboardingVideoInfo[]> => {
+export const getOnboardingVideos = async (): Promise<VideoInfo[]> => {
   try {
     return await handleApiResponse(api.get('/learn/videos/onboarding/'))
   } catch (error) {

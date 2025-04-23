@@ -32,7 +32,6 @@ onMounted(async () => {
     if (progress.lastPracticed) {
       const formattedDate = formatDate(progress.lastPracticed)
       lastPracticed.value = formattedDate
-    } else {
     }
     if (progress.snippetPercentageWatched !== null) {
       progressPercentage.value = progress.snippetPercentageWatched
