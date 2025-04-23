@@ -40,6 +40,12 @@ export interface VideoInfo {
   youtube_title: string | null;
 }
 
+export interface OnboardingVideoInfo extends VideoInfo {
+  channel_name: string | null;
+  video_views: number;
+  video_likes: number;
+}
+
 export interface PaginatedResponse<T> {
   count: number;
   next: string | null;

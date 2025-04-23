@@ -10,7 +10,8 @@ import type {
   VideoInfo, 
   PaginatedResponse, 
   UserInfoResponse, 
-  SubscriptionInfoResponse 
+  SubscriptionInfoResponse, 
+  OnboardingVideoInfo 
 } from './apiTypes'
 import axios from 'axios'
 import type { AxiosResponse } from 'axios'
@@ -342,6 +343,15 @@ export const updateVideoProgress = async (
   } catch (error) {
     console.error('Error updating video progress:', error)
     throw new Error('Failed to update video progress. Please try again later.')
+  }
+}
+
+export const getOnboardingVideos = async (): Promise<OnboardingVideoInfo[]> => {
+  try {
+    return await handleApiResponse(api.get('/learn/videos/onboarding/'))
+  } catch (error) {
+    console.error('Error fetching onboarding videos:', error)
+    throw new Error('Failed to fetch onboarding videos. Please try again later.')
   }
 }
 
