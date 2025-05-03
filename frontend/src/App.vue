@@ -2,7 +2,26 @@
 import ShowUserWidget from '@/modules/auth/show-user/ShowUserWidget.vue'
 import ToastContainer from '@/modules/elements/toast/ToastContainer.vue'
 import { useAuthState } from '@/modules/backend-communication/api'
+import { computed } from 'vue'
+
 const { isAuthenticated } = useAuthState()
+
+const lang = import.meta.env.VITE_APP_LANG as 'AR' | 'DE'
+
+const appConfig = computed(() => {
+  if (lang === 'DE') {
+    return {
+      appName: 'German With Videos',
+      contactEmail: 'germanwithvideos.contact@gmail.com',
+    }
+  }
+  return {
+    appName: 'Arabic With Videos',
+    contactEmail: 'arabicwithvideos.contact@gmail.com',
+  }
+})
+
+const { appName, contactEmail } = appConfig.value
 </script>
 
 <template>
@@ -11,7 +30,7 @@ const { isAuthenticated } = useAuthState()
       <router-link :to="{ name: 'landing' }" class="btn btn-ghost text-xl font-bold">
         <img src="/logo.png" class="w-8 h-8 mr-2" />
         <span class="hidden md:block">
-          Arabic With Videos
+          {{ appName }}
         </span>
         <span class="badge badge-outline hidden md:block">Beta</span>
 
@@ -37,10 +56,8 @@ const { isAuthenticated } = useAuthState()
       <nav class="grid grid-flow-col gap-4">
         <router-link to="/terms" class="link link-hover">Terms</router-link>
         <router-link to="/privacy" class="link link-hover">Privacy</router-link>
-        <a href="mailto:arabicwithvideos.contact@gmail.com" class="link link-hover">Contact</a>
+        <a :href="`mailto:${contactEmail}`" class="link link-hover">Contact</a>
       </nav>
-
-      <p>Copyright © {{ new Date().getFullYear() }} - Arabic With Videos</p>
 
       <p class="text-sm">
         This is an early version of the app. We are still working on it. If there's any issues, please contact us.

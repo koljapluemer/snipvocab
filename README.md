@@ -127,7 +127,7 @@
 ### Frontend
 
 1. go to `frontend/`
-2. run `npm run dev`
+2. run `npm run dev:de` or `npm run dev:ar`  
 
 
 ## Common Things You May Want To Do

@@ -21,3 +21,26 @@ router.afterEach((to) => {
     })
   }
 })
+
+// Set dynamic title and description based on VITE_APP_LANG
+type LangConfig = {
+  title: string;
+  description: string;
+};
+
+const langConfigs: Record<string, LangConfig> = {
+  AR: {
+    title: 'Arabic with Videos',
+    description: 'Arabic with Videos is a platform for learning Arabic with Youtube videos.'
+  },
+  DE: {
+    title: 'German with Videos',
+    description: 'German with Videos is a platform for learning German with Youtube videos.'
+  }
+};
+
+const lang = import.meta.env.VITE_APP_LANG as 'AR' | 'DE';
+const config = langConfigs[lang] || langConfigs['AR'];
+document.title = config.title;
+const descTag = document.querySelector('meta[name="description"]');
+if (descTag) descTag.setAttribute('content', config.description);

@@ -5,8 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:ar": "VITE_APP_LANG=AR vite",
+    "dev:de": "VITE_APP_LANG=DE vite",
     "build": "vue-tsc -b && vite build",
+    "build:ar": "VITE_APP_LANG=AR vue-tsc -b && vite build",
+    "build:de": "VITE_APP_LANG=DE vue-tsc -b && vite build",
     "preview": "vite preview",
+    "preview:ar": "VITE_APP_LANG=AR vite preview",
+    "preview:de": "VITE_APP_LANG=DE vite preview",
     "test": "vitest"
   },
   "dependencies": {
