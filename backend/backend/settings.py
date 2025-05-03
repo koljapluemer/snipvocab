@@ -81,6 +81,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://arabicwithvideos.com",       # Production frontend
     "https://snipvocab-backend-4991c989741a.herokuapp.com",  # Production backend
     "https://snipvocab.com",  # Add your deployed frontend URL here
+    "https://germanwithvideos.netlify.app",
+    "https://germanwithvideos.com",
 ]
 
 if DEBUG:
