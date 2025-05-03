@@ -3,6 +3,9 @@
 
 *my latest, nth attempt to build vvv, this time django+vue*.
 
+
+*now obsolete, more or less*
+
 - [SnipVocab](#snipvocab)
   - [User Stories](#user-stories)
   - [Architecture](#architecture)

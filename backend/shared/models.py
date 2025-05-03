@@ -33,8 +33,6 @@ class VideoStatus(models.TextChoices):
     BLACKLISTED = 'blacklisted', 'Blacklisted'
 
 
-
-
 class Video(models.Model):
     frontend = models.CharField(max_length=10, choices=Frontend.choices, default=Frontend.ARABIC)
     title = models.CharField(max_length=500, blank=True, null=True)

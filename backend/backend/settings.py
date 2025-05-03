@@ -1,12 +1,11 @@
 from pathlib import Path
 from datetime import timedelta
 import os
-from dotenv import load_dotenv
 import dj_database_url
 from decouple import config
 import logging
+from dotenv import load_dotenv
 
-# Load environment variables from .env file
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
