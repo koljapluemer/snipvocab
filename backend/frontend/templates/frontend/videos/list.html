@@ -1,11 +1,10 @@
 {% extends "frontend/base.html" %}
 
-{% block title %}German Videos{% endblock %}
+{% block title %}All Videos{% endblock %}
 
 {% block content %}
 <section class="section">
   <div class="container">
-    <h1 class="title has-text-centered mb-6">German Videos</h1>
     {% if videos %}
       <div class="columns is-multiline is-centered">
         {% for video in videos %}

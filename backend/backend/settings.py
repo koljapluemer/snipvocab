@@ -21,6 +21,8 @@ if not SECRET_KEY:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
+LANGUAGE_TO_LEARN = os.getenv('LANGUAGE_TO_LEARN', 'de')
+
 # Heroku dynamically assigns a hostname, so we need to handle that
 ALLOWED_HOSTS = ['*'] if DEBUG else [
     '127.0.0.1',
@@ -146,6 +148,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'frontend.context_processors.language_to_learn',
             ],
         },
     },

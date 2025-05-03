@@ -1,5 +1,6 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render
+from django.conf import settings
 from shared.models import Video, Frontend, VideoStatus
 from guest_user.decorators import allow_guest_user
 from learnapi.models import VideoProgress
@@ -9,10 +10,14 @@ def video_list(request):
     # Get page number from request, default to 1
     page_number = request.GET.get('page', 1)
     
-    # Get all live German videos
+    # Use the feature flag to select the frontend language
+    language_code = getattr(settings, 'LANGUAGE_TO_LEARN', 'de')
+    frontend_value = language_code  # 'de' or 'ar'
+
+    # Get all live videos for the selected frontend
     videos = Video.objects.filter(
         status=VideoStatus.LIVE,
-        frontend=Frontend.GERMAN
+        frontend=frontend_value
     ).order_by('-added_at')
     
     # Paginate with 20 items per page

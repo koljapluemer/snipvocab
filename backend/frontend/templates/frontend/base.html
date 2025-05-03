@@ -3,7 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>German with Videos | {% block title %} {% endblock %}</title>
+    <title>
+      {% if LANGUAGE_TO_LEARN == 'ar' %}
+        Arabic with Videos
+      {% else %}
+        German with Videos
+      {% endif %}
+      | {% block title %}{% endblock %}
+    </title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bulma@latest/css/bulma.min.css"
@@ -18,9 +25,11 @@
       <div class="navbar-brand">
         <a class="navbar-item" href="/app/videos/">
             {% load static %}
-            <img src="{% static 'images/logo.webp' %}" alt="German with Videos" />
-            
-            <!-- {% block name %}German with Videos{% endblock %} -->
+            {% if LANGUAGE_TO_LEARN == 'ar' %}
+              <img src="{% static 'images/logo-ar.webp' %}" alt="Arabic with Videos" />
+            {% else %}
+              <img src="{% static 'images/logo.webp' %}" alt="German with Videos" />
+            {% endif %}
         </a>
 
         <a
