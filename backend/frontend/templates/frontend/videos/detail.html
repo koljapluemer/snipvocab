@@ -22,24 +22,7 @@
         <progress class="progress is-primary" value="{{ progress }}" max="100">{{ progress }}%</progress>
         <p class="is-size-7 has-text-grey">Progress: {{ progress }}% ({{ total_snippets }} snippets)</p>
       </div>
-      <div class="mb-4">
-        <h3 class="subtitle is-6">Snippets</h3>
-        {% if snippets %}
-          <ul>
-            {% for snippet in snippets %}
-              <li class="box mb-2">
-                <span class="has-text-weight-semibold">Snippet {{ snippet.index }}:</span>
-                <span>{{ snippet.content|truncatechars:120 }}</span>
-                <span class="tag is-light ml-2">Start: {{ snippet.start }}s</span>
-                <span class="tag is-light ml-2">Duration: {{ snippet.duration }}s</span>
-              </li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <div class="notification is-warning">No snippets found for this video.</div>
-        {% endif %}
-      </div>
-      <a href="https://youtube.com/watch?v={{ video.youtube_id }}" target="_blank" class="button is-link is-light mt-4">Watch on YouTube</a>
+      
       <a href="/app/videos/" class="button is-text mt-4 ml-2">Back to list</a>
     </div>
   </div>
