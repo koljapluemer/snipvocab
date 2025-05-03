@@ -149,6 +149,11 @@ onMounted(() => {
               :title="video.youtube_title"
             />
           </div>
+          <div 
+            v-for="i in (4 - slides[currentPage - 1].length)" 
+            :key="`empty-${i}`"
+            class="w-full"
+          ></div>
         </template>
         <template v-else>
           <div v-for="i in 4" :key="i" class="w-full">

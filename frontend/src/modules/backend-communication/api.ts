@@ -237,6 +237,7 @@ export const getNewestVideos = async (page: number = 1, pageSize: number = 10): 
 export const getPopularVideos = async (page: number = 1, pageSize: number = 10): Promise<PaginatedResponse<VideoInfo>> => {
   try {
     const language = import.meta.env.VITE_APP_LANG
+    console.log('Language:', language)
     if (!language) {
       throw new Error('VITE_APP_LANG environment variable is not set')
     }
