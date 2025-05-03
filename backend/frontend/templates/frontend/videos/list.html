@@ -11,10 +11,15 @@
         {% for video in videos %}
           <div class="column is-12-mobile is-6-tablet is-4-desktop is-3-widescreen">
             <div class="card" style="height: 100%; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: box-shadow 0.2s;">
-              <div class="card-image">
+              <div class="card-image" style="position: relative;">
                 <figure class="image is-16by9">
                   <img src="https://img.youtube.com/vi/{{ video.youtube_id }}/mqdefault.jpg" 
                        alt="{{ video.youtube_title|default:'Video thumbnail' }}">
+                  {% if video.last_practiced %}
+                    <span class="tag is-rounded is-small has-background-light has-text-grey-dark" style="position: absolute; top: 0.5rem; right: 0.5rem; z-index: 2; opacity: 0.92;">
+                      {{ video.last_practiced|date:'Y-m-d' }}
+                    </span>
+                  {% endif %}
                 </figure>
               </div>
               <div class="card-content">

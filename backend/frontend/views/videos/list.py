@@ -2,6 +2,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 from shared.models import Video, Frontend, VideoStatus
 from guest_user.decorators import allow_guest_user
+from learnapi.models import VideoProgress
 
 @allow_guest_user
 def video_list(request):
@@ -17,6 +18,16 @@ def video_list(request):
     # Paginate with 20 items per page
     paginator = Paginator(videos, 20)
     page_obj = paginator.get_page(page_number)
+
+    # Attach last_practiced directly to each video object
+    if request.user.is_authenticated:
+        progresses = VideoProgress.objects.filter(user=request.user, video__in=page_obj.object_list)
+        progress_map = {vp.video_id: vp.last_practiced for vp in progresses}
+        for video in page_obj.object_list:
+            video.last_practiced = progress_map.get(video.id)
+    else:
+        for video in page_obj.object_list:
+            video.last_practiced = None
     
     context = {
         'videos': page_obj,
