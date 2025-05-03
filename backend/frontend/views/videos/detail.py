@@ -18,10 +18,12 @@ def video_detail(request, youtube_id):
         )
     # Placeholder: no perceivedDifficulty, so progress is always 0
     progress = 0
+    first_snippet = snippets.first() if snippets else None
     context = {
         'video': video,
         'snippets': snippets,
         'progress': progress,
         'total_snippets': total,
+        'first_snippet': first_snippet,
     }
     return render(request, 'frontend/videos/detail.html', context) 

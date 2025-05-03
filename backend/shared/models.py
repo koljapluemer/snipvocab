@@ -1,5 +1,6 @@
 from django.db import models
 import math
+from django.urls import reverse
 
 
 class TagType(models.TextChoices):
@@ -75,6 +76,9 @@ class Snippet(models.Model):
     @property
     def start_time(self):
         return math.floor(self.start - 1)
+
+    def get_absolute_url(self, mode='practice'):
+        return reverse('snippet_practice', kwargs={'pk': self.id})
 
 class Word(models.Model):
     original_word = models.CharField(max_length=100, unique=True)

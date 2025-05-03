@@ -22,7 +22,9 @@
         <progress class="progress is-primary" value="{{ progress }}" max="100">{{ progress }}%</progress>
         <p class="is-size-7 has-text-grey">Progress: {{ progress }}% ({{ total_snippets }} snippets)</p>
       </div>
-      
+      {% if first_snippet %}
+        <a href="{% url 'snippet_practice' pk=first_snippet.id %}" class="button is-primary is-large mb-4">Start Practice</a>
+      {% endif %}
       <a href="/app/videos/" class="button is-text mt-4 ml-2">Back to list</a>
     </div>
   </div>
