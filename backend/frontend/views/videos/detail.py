@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from shared.models import Video
+from guest_user.decorators import allow_guest_user
 
+@allow_guest_user
 def video_detail(request, youtube_id):
     video = get_object_or_404(Video, youtube_id=youtube_id)
     snippets = video.snippets.all().order_by('index')

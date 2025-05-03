@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'payment',
     'backend', # just for admin (and settings are here)
     'frontend',
+    'guest_user',  # Added for guest user support
 ]
 
 MIDDLEWARE = [
@@ -348,3 +349,8 @@ CACHES = {
 
 # CACHE_MIDDLEWARE_SECONDS = 60 * 15  # 15 minutes (DISABLED)
 # CACHE_MIDDLEWARE_KEY_PREFIX = 'snipvocab' (DISABLED)
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'guest_user.backends.GuestBackend',  # Added for guest user support
+]

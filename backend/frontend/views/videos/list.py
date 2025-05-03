@@ -1,7 +1,9 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render
 from shared.models import Video, Frontend, VideoStatus
+from guest_user.decorators import allow_guest_user
 
+@allow_guest_user
 def video_list(request):
     # Get page number from request, default to 1
     page_number = request.GET.get('page', 1)

@@ -39,7 +39,16 @@
 
       <div id="navbarBasicExample" class="navbar-menu" :class="{ 'is-active': isOpen }">
         <div class="navbar-end">
-          
+          <!-- Guest user debug widget -->
+          {% if request.user.is_authenticated and request.user.is_guest %}
+            <div class="navbar-item">
+              <span class="tag is-warning is-light">Guest User: {{ request.user.username }} (ID: {{ request.user.id }})</span>
+            </div>
+          {% elif request.user.is_authenticated %}
+            <div class="navbar-item">
+              <span class="tag is-info is-light">User: {{ request.user.username }} (ID: {{ request.user.id }})</span>
+            </div>
+          {% endif %}
         </div>
       </div>
     </nav>
