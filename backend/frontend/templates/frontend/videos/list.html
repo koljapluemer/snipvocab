@@ -1,0 +1,64 @@
+{% extends "frontend/base.html" %}
+
+{% block title %}German Videos{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1 class="title has-text-centered mb-6">German Videos</h1>
+    {% if videos %}
+      <div class="columns is-multiline is-centered">
+        {% for video in videos %}
+          <div class="column is-12-mobile is-6-tablet is-4-desktop is-3-widescreen">
+            <div class="card" style="height: 100%; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: box-shadow 0.2s;">
+              <div class="card-image">
+                <figure class="image is-16by9">
+                  <img src="https://img.youtube.com/vi/{{ video.youtube_id }}/mqdefault.jpg" 
+                       alt="{{ video.youtube_title|default:'Video thumbnail' }}">
+                </figure>
+              </div>
+              <div class="card-content">
+                <p class="title is-6" style="min-height: 3em;">{{ video.youtube_title|default:'Untitled Video' }}</p>
+              </div>
+              <footer class="card-footer">
+                <a href="{% url 'video_detail' youtube_id=video.youtube_id %}" class="card-footer-item has-text-info has-text-weight-semibold">
+                  View Details
+                </a>
+              </footer>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      {% if page_obj.paginator.num_pages > 1 %}
+        <nav class="pagination is-centered mt-5" role="navigation" aria-label="pagination">
+          {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="pagination-previous">Previous</a>
+          {% else %}
+            <a class="pagination-previous" disabled>Previous</a>
+          {% endif %}
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="pagination-next">Next</a>
+          {% else %}
+            <a class="pagination-next" disabled>Next</a>
+          {% endif %}
+          <ul class="pagination-list">
+            {% for num in page_obj.paginator.page_range %}
+              <li>
+                <a href="?page={{ num }}" 
+                   class="pagination-link {% if num == page_obj.number %}is-current{% endif %}"
+                   aria-label="Goto page {{ num }}">
+                  {{ num }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </nav>
+      {% endif %}
+    {% else %}
+      <div class="notification is-warning">
+        No videos found.
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

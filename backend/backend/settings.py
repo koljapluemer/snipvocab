@@ -46,16 +46,17 @@ INSTALLED_APPS = [
     'cms',
     'payment',
     'backend', # just for admin (and settings are here)
+    'frontend',
 ]
 
 MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.cache.UpdateCacheMiddleware',
+    # 'django.middleware.cache.UpdateCacheMiddleware',  # DISABLED
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
+    # 'django.middleware.cache.FetchFromCacheMiddleware',  # DISABLED
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -341,11 +342,9 @@ API_KEY_EXEMPT_PATHS = [
 # Cache configuration
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
 
-# Cache timeouts
-CACHE_MIDDLEWARE_SECONDS = 60 * 15  # 15 minutes
-CACHE_MIDDLEWARE_KEY_PREFIX = 'snipvocab'
+# CACHE_MIDDLEWARE_SECONDS = 60 * 15  # 15 minutes (DISABLED)
+# CACHE_MIDDLEWARE_KEY_PREFIX = 'snipvocab' (DISABLED)

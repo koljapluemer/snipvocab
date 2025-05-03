@@ -1,0 +1,170 @@
+{% extends "frontend/base.html" %}
+{% load lucide %}
+
+{% block content %}
+    <div class="container is-max-widescreen">
+        <div class="columns is-centered">
+            <div class="column">
+                <div x-data="flashcards"
+                     x-init="init({{ words_json }}, {{ snippet_data }})">
+                    
+                    <template x-if="currentWord">
+                        <div>
+                            <!-- Flashcard -->
+                            <div class="box has-text-centered py-6">
+                                <!-- Word Display -->
+                                <h2 class="title is-1 mb-6" x-text="currentWord.original_word"></h2>
+                                
+                                <!-- Meanings (Hidden by default) -->
+                                <div x-show="showMeanings" 
+                                     x-transition:enter="transition ease-out duration-300"
+                                     x-transition:enter-start="opacity-0 transform -translate-y-4"
+                                     x-transition:enter-end="opacity-100 transform translate-y-0"
+                                     class="mb-6">
+                                    <hr class="is-dashed mb-6">
+                                    <div class="content is-size-1">
+                                        <template x-for="meaning in currentWord.meanings">
+                                            <p class="mb-4" x-text="meaning"></p>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="buttons is-centered mt-5">
+                                <template x-if="!showMeanings">
+                                    <button @click="revealWord" 
+                                            class="button is-primary is-large">
+                                        <span>Reveal</span>
+                                    </button>
+                                </template>
+                                
+                                <template x-if="showMeanings">
+                                    <button @click="nextWord" 
+                                            class="button is-success is-large">
+                                        <span class="icon">
+                                            {% lucide "arrow-right" size=24 %}
+                                        </span>
+                                        <span>Next Word</span>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                    
+                    <template x-if="!currentWord">
+                        <div class="has-text-centered">
+                            <h2 class="title is-4 mb-6">Practice Complete!</h2>
+                            
+                            <!-- Video Player -->
+                            <figure class="image is-16by9">
+                                <iframe 
+                                    :src="'https://www.youtube.com/embed/' + snippetData.youtube_id + '?autoplay=1&start=' + snippetData.start_time + '&end=' + snippetData.end_time"
+                                    frameborder="0"
+                                    class="has-ratio"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen>
+                                </iframe>
+                            </figure>
+                            
+                            <div class="buttons is-centered mt-6">
+                                <template x-if="snippetData.next_snippet_url">
+                                    <a :href="snippetData.next_snippet_url" 
+                                       class="button is-primary is-large">
+                                        <span class="icon">
+                                            {% lucide "arrow-right" size=24 %}
+                                        </span>
+                                        <span>Practice Next Snippet</span>
+                                    </a>
+                                </template>
+                                
+                                <template x-if="!snippetData.next_snippet_url">
+                                    <a href="{% url 'german_with_videos:video_detail' snippet.video.youtube_id %}" 
+                                       class="button is-primary is-large">
+                                        <span class="icon">
+                                            {% lucide "arrow-left" size=24 %}
+                                        </span>
+                                        <span>Back to Video</span>
+                                    </a>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('flashcards', () => ({
+                words: [],
+                currentIndex: 0,
+                showMeanings: false,
+                snippetData: null,
+                db: null,
+                
+                async init(wordsData, snippetData) {
+                    this.words = wordsData;
+                    this.snippetData = snippetData;
+                    await this.initDB();
+                },
+
+                async initDB() {
+                    return new Promise((resolve, reject) => {
+                        const request = indexedDB.open('GermanWithVideosLearningDB', 1);
+                        
+                        request.onerror = () => {
+                            console.error('Error opening database');
+                            reject(request.error);
+                        };
+                        
+                        request.onsuccess = () => {
+                            this.db = request.result;
+                            resolve();
+                        };
+                        
+                        request.onupgradeneeded = (event) => {
+                            const db = event.target.result;
+                            if (!db.objectStoreNames.contains('flashcardInteractions')) {
+                                const store = db.createObjectStore('flashcardInteractions', { keyPath: 'id', autoIncrement: true });
+                                store.createIndex('timestamp', 'timestamp', { unique: false });
+                                store.createIndex('word', 'word', { unique: false });
+                            }
+                        };
+                    });
+                },
+
+                async logInteraction(word, action) {
+                    if (!this.db) return;
+                    
+                    const transaction = this.db.transaction(['flashcardInteractions'], 'readwrite');
+                    const store = transaction.objectStore('flashcardInteractions');
+                    
+                    const interaction = {
+                        timestamp: new Date().toISOString(),
+                        word: word,
+                        action: action
+                    };
+                    
+                    await store.add(interaction);
+                },
+                
+                get currentWord() {
+                    return this.words[this.currentIndex];
+                },
+                
+                async revealWord() {
+                    this.showMeanings = true;
+                    await this.logInteraction(this.currentWord.original_word, 'reveal');
+                },
+                
+                async nextWord() {
+                    await this.logInteraction(this.currentWord.original_word, 'next');
+                    this.showMeanings = false;
+                    this.currentIndex++;
+                }
+            }))
+        })
+    </script>
+{% endblock %} 

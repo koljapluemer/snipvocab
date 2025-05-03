@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>German with Videos | {% block title %} {% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@latest/css/bulma.min.css"
+    />
+    <script
+      defer
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+  </head>
+  <body>
+    <nav class="navbar" role="navigation" aria-label="main navigation" x-data="{ isOpen: false }">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            {% load static %}
+            <img src="{% static 'images/logo.webp' %}" alt="German with Videos" />
+            
+            {% block name %}German with Videos{% endblock %}
+        </a>
+
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          :class="{ 'is-active': isOpen }"
+          @click="isOpen = !isOpen"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="navbarBasicExample" class="navbar-menu" :class="{ 'is-active': isOpen }">
+        <div class="navbar-end">
+          
+        </div>
+      </div>
+    </nav>
+
+    {% if messages %}
+    <div class="container mx-auto px-4 py-4">
+      {% for message in messages %}
+        <div class="p-4 mb-4 text-sm rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-700{% elif message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'warning' %}bg-yellow-100 text-yellow-700{% else %}bg-blue-100 text-blue-700{% endif %}" role="alert">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="container">{% block content %}...{% endblock %}</div>
+  </body>
+</html>
