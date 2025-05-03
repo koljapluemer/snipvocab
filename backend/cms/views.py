@@ -360,7 +360,6 @@ def list_all_videos(request):
     return render(request, 'list_all_videos.html', context)
 
 @staff_member_required
-@cache_page(60 * 15)  # Cache for 15 minutes
 def video_details(request, youtube_id):
     """View to show details of a specific video"""
     frontend = get_current_frontend(request)

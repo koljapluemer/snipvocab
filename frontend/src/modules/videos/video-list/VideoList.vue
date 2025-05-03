@@ -16,6 +16,11 @@ const props = defineProps<{
   tag?: string
 }>()
 
+console.log('VideoList mounted with props:', {
+  source: props.source,
+  tag: props.tag
+})
+
 // Each page from the backend corresponds to exactly one slide
 const slides = ref<VideoInfo[][]>([])
 const loading = ref(true)
@@ -46,10 +51,13 @@ const fetchVideos = async (page: number = 1) => {
   
   try {
     const fetchFn = getFetchFunction()
+    console.log('Fetching videos with function:', fetchFn.name)
     const response: PaginatedResponse<VideoInfo> = await fetchFn(page)
+    console.log('Received response:', response)
     slides.value[page - 1] = response.results
     hasMore.value = !!response.next
   } catch (err) {
+    console.error('Error fetching videos:', err)
     error.value = err instanceof Error ? err.message : 'Failed to fetch videos'
   } finally {
     loading.value = false

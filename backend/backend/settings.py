@@ -87,6 +87,10 @@ if DEBUG:
     CORS_ALLOWED_ORIGINS.extend([
         "http://127.0.0.1:5173",  # Additional dev server
         "http://localhost:5173",   # Additional dev server
+        "http://127.0.0.1:5174",  # Additional dev server
+        "http://localhost:5174",  # Additional dev server
+        "http://127.0.0.1:8081",  # Additional dev server
+        "http://localhost:8081",  # Additional dev server
     ])
 
 

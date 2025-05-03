@@ -48,6 +48,11 @@ export const api = axios.create({
   withCredentials: true
 })
 
+console.log('API Configuration:', {
+  baseURL: import.meta.env.VITE_API_URL,
+  hasApiKey: !!import.meta.env.VITE_FRONTEND_API_KEY
+})
+
 // Add auth token to requests if it exists
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token')
@@ -192,7 +197,11 @@ export const useAuthState = () => {
 // Video API functions
 export const getVideos = async (page: number = 1, pageSize: number = 10): Promise<PaginatedResponse<VideoInfo>> => {
   try {
-    return await handleApiResponse(api.get(`/learn/videos/?page=${page}&page_size=${pageSize}`))
+    const language = import.meta.env.VITE_APP_LANG
+    if (!language) {
+      throw new Error('VITE_APP_LANG environment variable is not set')
+    }
+    return await handleApiResponse(api.get(`/learn/videos/?page=${page}&page_size=${pageSize}&lang=${language}`))
   } catch (error) {
     console.error('Error fetching videos:', error)
     throw new Error('Failed to fetch videos. Please try again later.')
@@ -201,7 +210,11 @@ export const getVideos = async (page: number = 1, pageSize: number = 10): Promis
 
 export const getVideosByTag = async (tagName: string, page: number = 1, pageSize: number = 10): Promise<PaginatedResponse<VideoInfo>> => {
   try {
-    return await handleApiResponse(api.get(`/learn/videos/tag/${tagName}/?page=${page}&page_size=${pageSize}`))
+    const language = import.meta.env.VITE_APP_LANG
+    if (!language) {
+      throw new Error('VITE_APP_LANG environment variable is not set')
+    }
+    return await handleApiResponse(api.get(`/learn/videos/tag/${tagName}/?page=${page}&page_size=${pageSize}&lang=${language}`))
   } catch (error) {
     console.error('Error fetching videos by tag:', error)
     throw new Error('Failed to fetch videos by tag. Please try again later.')
@@ -210,7 +223,11 @@ export const getVideosByTag = async (tagName: string, page: number = 1, pageSize
 
 export const getNewestVideos = async (page: number = 1, pageSize: number = 10): Promise<PaginatedResponse<VideoInfo>> => {
   try {
-    return await handleApiResponse(api.get(`/learn/videos/new/?page=${page}&page_size=${pageSize}`))
+    const language = import.meta.env.VITE_APP_LANG
+    if (!language) {
+      throw new Error('VITE_APP_LANG environment variable is not set')
+    }
+    return await handleApiResponse(api.get(`/learn/videos/new/?page=${page}&page_size=${pageSize}&lang=${language}`))
   } catch (error) {
     console.error('Error fetching newest videos:', error)
     throw new Error('Failed to fetch newest videos. Please try again later.')
@@ -219,10 +236,27 @@ export const getNewestVideos = async (page: number = 1, pageSize: number = 10): 
 
 export const getPopularVideos = async (page: number = 1, pageSize: number = 10): Promise<PaginatedResponse<VideoInfo>> => {
   try {
-    return await handleApiResponse(api.get(`/learn/videos/popular/?page=${page}&page_size=${pageSize}`))
+    const language = import.meta.env.VITE_APP_LANG
+    if (!language) {
+      throw new Error('VITE_APP_LANG environment variable is not set')
+    }
+    return await handleApiResponse(api.get(`/learn/videos/popular/?page=${page}&page_size=${pageSize}&lang=${language}`))
   } catch (error) {
     console.error('Error fetching popular videos:', error)
     throw new Error('Failed to fetch popular videos. Please try again later.')
+  }
+}
+
+export const getOnboardingVideos = async (): Promise<VideoInfo[]> => {
+  try {
+    const language = import.meta.env.VITE_APP_LANG
+    if (!language) {
+      throw new Error('VITE_APP_LANG environment variable is not set')
+    }
+    return await handleApiResponse(api.get(`/learn/videos/onboarding/?lang=${language}`))
+  } catch (error) {
+    console.error('Error fetching onboarding videos:', error)
+    throw new Error('Failed to fetch onboarding videos. Please try again later.')
   }
 }
 
@@ -345,14 +379,6 @@ export const updateVideoProgress = async (
   }
 }
 
-export const getOnboardingVideos = async (): Promise<VideoInfo[]> => {
-  try {
-    return await handleApiResponse(api.get('/learn/videos/onboarding/'))
-  } catch (error) {
-    console.error('Error fetching onboarding videos:', error)
-    throw new Error('Failed to fetch onboarding videos. Please try again later.')
-  }
-}
 
 // Payment API functions
 export const createCheckoutSession = async (): Promise<{ checkoutUrl: string }> => {
