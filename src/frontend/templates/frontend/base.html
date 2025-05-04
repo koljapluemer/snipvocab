@@ -21,28 +21,43 @@
     ></script>
   </head>
   <body>
-    <nav class="navbar" role="navigation" aria-label="main navigation" x-data="{ isOpen: false }">
-      <div class="navbar-brand">
-        <a class="navbar-item" href="/">
-            {% load static %}
-            {% if LANGUAGE_TO_LEARN == 'ar' %}
-              <img src="{% static 'images/logo-ar.webp' %}" alt="Arabic with Videos" />
-            {% else %}
-              <img src="{% static 'images/logo.webp' %}" alt="German with Videos" />
-            {% endif %}
-        </a>
-
-         <div class="navbar-end">
+    <nav class="navbar has-shadow" role="navigation" aria-label="main navigation" x-data="{ isOpen: false }">
+      <div class="container">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="/">
+              {% load static %}
+              {% if LANGUAGE_TO_LEARN == 'ar' %}
+                <img src="{% static 'logo-ar.webp' %}" alt="Arabic with Videos" class="is-32x32" />
+                <span class="">Arabic with Videos</span>
+              {% else %}
+                <img src="{% static 'logo-de.webp' %}" alt="German with Videos" class="is-32x32" />
+                <span class="">German with Videos</span>
+              {% endif %}
+          </a>
+  
+          <a role="button" 
+             class="navbar-burger" 
+             :class="{ 'is-active': isOpen }" 
+             @click="isOpen = !isOpen"
+             aria-label="menu" 
+             aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
+  
+        <div class="navbar-menu" :class="{ 'is-active': isOpen }">
+          <div class="navbar-end">
             <a class="navbar-item" href="{% url 'frontend:dashboard' %}">
-                Dashboard
+              Dashboard
             </a>
-
-        <a class="navbar-item" href="{% url 'frontend:video_list' %}">
-            Videos
-        </a>
+            <a class="navbar-item" href="{% url 'frontend:video_list' %}">
+              Videos
+            </a>
+          </div>
+        </div>
       </div>
-
-        
     </nav>
 
     {% if messages %}
