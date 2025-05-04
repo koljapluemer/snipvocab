@@ -22,6 +22,7 @@ if not SECRET_KEY:
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 LANGUAGE_TO_LEARN = os.getenv('LANGUAGE_TO_LEARN', 'de')
+print(f"LANGUAGE_TO_LEARN: {LANGUAGE_TO_LEARN}")
 
 # Heroku dynamically assigns a hostname, so we need to handle that
 ALLOWED_HOSTS = ['*'] if DEBUG else [

@@ -21,6 +21,9 @@ def video_list(request):
         search_term=search_term
     )
 
+    # Ensure we're only showing videos for the current frontend
+    videos_queryset = videos_queryset.filter(frontend=frontend_value)
+
     # Paginate the results
     paginator = Paginator(videos_queryset, 20)
     page_obj = paginator.get_page(page_number)
