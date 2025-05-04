@@ -1,3 +1,4 @@
+from django.shortcuts import render, redirect
 from django.conf import settings
 from googleapiclient.discovery import build
 from shared.models import Video, VideoStatus, Snippet, Word, Meaning, Frontend, Tag, TagType

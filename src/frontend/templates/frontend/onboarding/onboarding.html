@@ -1,0 +1,94 @@
+{% extends "frontend/base.html" %}
+
+{% block title %}Welcome to Language Learning{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-10-tablet is-8-desktop is-7-widescreen">
+        <h1 class="title is-2 has-text-centered mb-5">Choose a video to begin your learning journey</h1>
+        <p class="subtitle is-5 has-text-centered mb-6">We've selected these videos to help you get started. Pick one that interests you!</p>
+        {% if videos %}
+          <div class="columns is-multiline is-centered onboarding-video-grid">
+            {% for video in videos %}
+              <div class="column is-12-mobile is-6-tablet is-4-desktop">
+                <div class="onboarding-card card">
+                  <div class="card-image">
+                    <figure class="image is-16by9 onboarding-thumb">
+                      <img src="https://img.youtube.com/vi/{{ video.youtube_id }}/mqdefault.jpg" 
+                           alt="{{ video.youtube_title|default:'Video thumbnail' }}">
+                    </figure>
+                  </div>
+                  <div class="card-content onboarding-card-content">
+                    <p class="title is-6 has-text-centered" style="min-height: 3em;">{{ video.youtube_title|default:'Untitled Video' }}</p>
+                  </div>
+                  <footer class="card-footer">
+                    <a href="{% url 'video_detail' youtube_id=video.youtube_id %}" 
+                       class="card-footer-item has-text-info has-text-weight-semibold onboarding-btn">
+                      Start Learning
+                    </a>
+                  </footer>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="notification is-warning has-text-centered">
+            No featured videos found. Please check back later.
+          </div>
+        {% endif %}
+        <div class="mt-6 has-text-centered">
+          <a href="{% url 'video_list' %}" class="button is-text">
+            Or browse all videos
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.onboarding-video-grid {
+  margin-top: 2rem;
+}
+.onboarding-card.card {
+  box-shadow: 0 4px 24px rgba(30, 34, 90, 0.25);
+  border-radius: 1rem;
+  transition: transform 0.18s, box-shadow 0.18s;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #23272f;
+}
+.onboarding-card.card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 8px 32px rgba(30, 34, 90, 0.35);
+}
+.onboarding-thumb {
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  overflow: hidden;
+}
+.onboarding-card-content {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 0.5rem;
+}
+.onboarding-btn {
+  font-size: 1.1rem;
+  padding: 1rem 0;
+}
+@media (max-width: 768px) {
+  .onboarding-card.card {
+    margin-bottom: 1.5rem;
+  }
+  .onboarding-btn {
+    font-size: 1rem;
+    padding: 0.8rem 0;
+  }
+}
+</style>
+{% endblock %}
