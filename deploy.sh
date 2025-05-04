@@ -14,6 +14,5 @@ heroku run --app germanwithvideos python manage.py migrate
 heroku run python manage.py loaddata fixture.json --app germanwithvideos
 
 # 3) push to arabicwithvideos
-# git push arabicwithvideos HEAD:main
-# heroku run --app arabicwithvideos python manage.py migrate
-# heroku run --app arabicwithvideos python manage.py loaddata fixture.json
+# not necessary to migrate because db is shared with germanwithvideos
+git push arabicwithvideos HEAD:main
