@@ -23,7 +23,7 @@
   <body>
     <nav class="navbar" role="navigation" aria-label="main navigation" x-data="{ isOpen: false }">
       <div class="navbar-brand">
-        <a class="navbar-item" href="/videos">
+        <a class="navbar-item" href="/">
             {% load static %}
             {% if LANGUAGE_TO_LEARN == 'ar' %}
               <img src="{% static 'images/logo-ar.webp' %}" alt="Arabic with Videos" />
@@ -32,34 +32,17 @@
             {% endif %}
         </a>
 
-        <a
-          role="button"
-          class="navbar-burger"
-          aria-label="menu"
-          aria-expanded="false"
-          :class="{ 'is-active': isOpen }"
-          @click="isOpen = !isOpen"
-        >
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
+         <div class="navbar-end">
+            <a class="navbar-item" href="{% url 'frontend:dashboard' %}">
+                Dashboard
+            </a>
+
+        <a class="navbar-item" href="{% url 'frontend:video_list' %}">
+            Videos
         </a>
       </div>
 
-      <div id="navbarBasicExample" class="navbar-menu" :class="{ 'is-active': isOpen }">
-        <div class="navbar-end">
-          <!-- Guest user debug widget -->
-          {% if request.user.is_authenticated and request.user.is_guest %}
-            <div class="navbar-item">
-              <span class="tag is-warning is-light">Guest User: {{ request.user.username }} (ID: {{ request.user.id }})</span>
-            </div>
-          {% elif request.user.is_authenticated %}
-            <div class="navbar-item">
-              <span class="tag is-info is-light">User: {{ request.user.username }} (ID: {{ request.user.id }})</span>
-            </div>
-          {% endif %}
-        </div>
-      </div>
+        
     </nav>
 
     {% if messages %}

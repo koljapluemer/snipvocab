@@ -7,7 +7,7 @@
   <div class="container">
     <div class="columns is-centered mb-5">
       <div class="column is-8">
-        <form method="get" action="{% url 'video_list' %}" class="field has-addons">
+        <form method="get" action="{% url 'frontend:video_list' %}" class="field has-addons">
           <div class="control is-expanded">
             <input class="input" type="text" name="q" value="{{ search_term }}" placeholder="What kind of videos are you looking for?">
           </div>
@@ -48,7 +48,7 @@
                 <p class="title is-6" style="min-height: 3em;">{{ video.youtube_title|default:'Untitled Video' }}</p>
               </div>
               <footer class="card-footer" style="margin-top: auto;">
-                <a href="{% url 'video_detail' youtube_id=video.youtube_id %}" class="card-footer-item has-text-info has-text-weight-semibold">
+                <a href="{% url 'frontend:video_detail' youtube_id=video.youtube_id %}" class="card-footer-item has-text-info has-text-weight-semibold">
                   Practice
                 </a>
               </footer>

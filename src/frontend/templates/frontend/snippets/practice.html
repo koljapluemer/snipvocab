@@ -3,7 +3,7 @@
 
 {% block content %}
     <div class="container is-max-widescreen">
-        <a href="{% url 'video_detail' snippet.video.youtube_id %}" class="button is-small">
+        <a href="{% url 'frontend:video_detail' snippet.video.youtube_id %}" class="button is-small">
             {% lucide "arrow-left" size=16 %}
             Back to video
         </a>
@@ -72,7 +72,7 @@
                     <template x-if="!currentWord">
                         <div class="has-text-centered">
                             <h2 class="title is-4 mb-6">Practice Complete!</h2>
-                            <form id="ratingsForm" method="POST" action="{% url 'save_practiced_words' %}">
+                            <form id="ratingsForm" method="POST" action="{% url 'frontend:save_practiced_words' %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="ratings_json" x-model="ratingsJson">
                                 <input type="hidden" name="snippet_id" :value="snippetData.snippet_id">

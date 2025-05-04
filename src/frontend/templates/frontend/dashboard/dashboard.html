@@ -26,7 +26,7 @@
                   <p class="title is-6">{{ video.youtube_title|default:'Untitled Video' }}</p>
                 </div>
                 <footer class="card-footer">
-                  <a href="{% url 'video_detail' youtube_id=video.youtube_id %}" class="card-footer-item">Practice</a>
+                  <a href="{% url 'frontend:video_detail' youtube_id=video.youtube_id %}" class="card-footer-item">Practice</a>
                 </footer>
               </div>
             </div>
@@ -62,7 +62,7 @@
     <div class="box">
       <h2 class="subtitle">Quick Links</h2>
       <div class="buttons">
-        <a href="{% url 'video_list' %}" class="button is-primary">
+        <a href="{% url 'frontend:video_list' %}" class="button is-primary">
           <span class="icon">
             <i class="fas fa-list"></i>
           </span>

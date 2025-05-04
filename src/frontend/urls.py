@@ -9,6 +9,8 @@ from frontend.views.dashboard import dashboard
 from frontend.views.onboarding import onboarding
 from frontend.views.landing import landing
 
+app_name = 'frontend'
+
 urlpatterns = [
     path('', dashboard, name='dashboard'),
     path('landing/', landing, name='landing'),

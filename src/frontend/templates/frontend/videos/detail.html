@@ -28,7 +28,7 @@
         <div style="position: relative; width: 100%; height: 48px; background: #222; border-radius: 0.5rem; overflow: hidden;">
           {% for snippet in enriched_snippets %}
             <a 
-              href="{% url 'snippet_practice' pk=snippet.id %}"
+              href="{% url 'frontend:snippet_practice' pk=snippet.id %}"
               class="snippet-timeline-bar"
               style="left: {{ forloop.counter0|get_left_position:enriched_snippets }}%; width: {{ snippet|get_width:enriched_snippets }}%; background-color: {{ snippet|get_difficulty_color:forloop.counter0 }};"
               title="Snippet {{ forloop.counter }}: {{ snippet.start_time|format_time }} - {{ snippet.end_time|format_time }}
@@ -45,9 +45,9 @@ Understanding: {{ snippet.perceived_difficulty|default:'Not rated' }}"
       </div>
 
       {% if first_snippet %}
-        <a href="{% url 'snippet_practice' pk=first_snippet.id %}" class="button is-primary is-large mb-4">Start Practice</a>
+        <a href="{% url 'frontend:snippet_practice' pk=first_snippet.id %}" class="button is-primary is-large mb-4">Start Practice</a>
       {% endif %}
-      <a href="/app/videos/" class="button is-text mt-4 ml-2">Back to list</a>
+      <a href="{% url 'frontend:video_list' %}" class="button is-text mt-4 ml-2">Back to list</a>
     </div>
   </div>
 </section>

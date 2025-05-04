@@ -24,7 +24,7 @@
                     <p class="title is-6 has-text-centered" style="min-height: 3em;">{{ video.youtube_title|default:'Untitled Video' }}</p>
                   </div>
                   <footer class="card-footer">
-                    <a href="{% url 'video_detail' youtube_id=video.youtube_id %}" 
+                    <a href="{% url 'frontend:video_detail' youtube_id=video.youtube_id %}" 
                        class="card-footer-item has-text-info has-text-weight-semibold onboarding-btn">
                       Start Learning
                     </a>
@@ -39,7 +39,7 @@
           </div>
         {% endif %}
         <div class="mt-6 has-text-centered">
-          <a href="{% url 'video_list' %}" class="button is-text">
+          <a href="{% url 'frontend:video_list' %}" class="button is-text">
             Or browse all videos
           </a>
         </div>
