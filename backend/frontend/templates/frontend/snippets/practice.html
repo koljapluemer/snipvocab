@@ -56,36 +56,20 @@
                         <div class="has-text-centered">
                             <h2 class="title is-4 mb-6">Practice Complete!</h2>
                             
-                            <!-- Video Player -->
-                            <figure class="image is-16by9">
-                                <iframe 
-                                    :src="'https://www.youtube.com/embed/' + snippetData.youtube_id + '?autoplay=1&start=' + snippetData.start_time + '&end=' + snippetData.end_time"
-                                    frameborder="0"
-                                    class="has-ratio"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowfullscreen>
-                                </iframe>
-                            </figure>
-                            
                             <div class="buttons is-centered mt-6">
-                                <template x-if="snippetData.next_snippet_url">
-                                    <a :href="snippetData.next_snippet_url" 
-                                       class="button is-primary is-large">
-                                        <span class="icon">
-                                            {% lucide "arrow-right" size=24 %}
-                                        </span>
-                                        <span>Practice Next Snippet</span>
-                                    </a>
-                                </template>
+                                <a href="{% url 'snippet_practice' pk=snippet.id %}" class="button is-primary is-large">
+                                    <span class="icon">
+                                        {% lucide "rotate-ccw" size=24 %}
+                                    </span>
+                                    <span>Practice Again</span>
+                                </a>
                                 
-                                <template x-if="!snippetData.next_snippet_url">
-                                    <a href="{% url 'video_detail' youtube_id=snippet.video.youtube_id %}" class="button is-primary is-large">
-                                        <span class="icon">
-                                            {% lucide "arrow-left" size=24 %}
-                                        </span>
-                                        <span>Back to Video</span>
-                                    </a>
-                                </template>
+                                <a href="{% url 'snippet_watch' pk=snippet.id %}" class="button is-success is-large">
+                                    <span class="icon">
+                                        {% lucide "play" size=24 %}
+                                    </span>
+                                    <span>Watch Snippet</span>
+                                </a>
                             </div>
                         </div>
                     </template>

@@ -6,7 +6,7 @@ import re
 
 class SnippetDetailView(DetailView):
     model = Snippet
-    template_name = 'frontend/snippets/detail.html'
+    template_name = 'frontend/snippets/practice.html'
     context_object_name = 'snippet'
 
     def _deduplicate_meanings(self, meanings):
@@ -32,7 +32,6 @@ class SnippetDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['mode'] = self.kwargs.get('mode', 'practice')  # Default to practice mode
         
         # Prepare words data for Alpine.js
         words_data = []
@@ -50,11 +49,28 @@ class SnippetDetailView(DetailView):
         # Randomize the order
         shuffle(words_data)
         
+        # Add to context as JSON
+        context['words_json'] = json.dumps(words_data)
+        context['snippet_data'] = json.dumps({
+            'youtube_id': self.object.video.youtube_id,
+            'start_time': self.object.start_time,
+            'end_time': self.object.end_time,
+            'snippet_id': self.object.id
+        })
+        
+        return context
+
+class SnippetWatchView(DetailView):
+    model = Snippet
+    template_name = 'frontend/snippets/watch.html'
+    context_object_name = 'snippet'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
         # Get next snippet
         next_snippet = self.object.video.snippets.filter(index__gt=self.object.index).first()
         
-        # Add to context as JSON
-        context['words_json'] = json.dumps(words_data)
         context['snippet_data'] = json.dumps({
             'youtube_id': self.object.video.youtube_id,
             'start_time': self.object.start_time,
