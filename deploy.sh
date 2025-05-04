@@ -11,7 +11,7 @@ git commit -m "deploy script: dump updated fixtures" --no-verify || true
 # 2) push to germanwithvideos
 git push germanwithvideos HEAD:main
 heroku run --app germanwithvideos python manage.py migrate
-heroku run --app germanwithvideos python manage.py loaddata fixture.json
+heroku run python manage.py loaddata fixture.json --app germanwithvideos
 
 # 3) push to arabicwithvideos
 # git push arabicwithvideos HEAD:main
