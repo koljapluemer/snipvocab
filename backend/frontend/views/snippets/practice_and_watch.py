@@ -3,7 +3,7 @@ from shared.models import Snippet
 import json
 from random import shuffle
 import re
-
+from frontend.interactors.enrich_snippet_vocab_with_user_progress import enrich_snippet_vocab_with_user_progress
 class SnippetDetailView(DetailView):
     model = Snippet
     template_name = 'frontend/snippets/practice.html'
@@ -33,9 +33,13 @@ class SnippetDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
+        user = self.request.user
+        enriched_words = enrich_snippet_vocab_with_user_progress(self.object, user)
+        print('nr of words: ', len(self.object.words.all()), 'nr of enriched words: ', len(enriched_words))
+
         # Prepare words data for Alpine.js
         words_data = []
-        for word in self.object.words.all():
+        for word in enriched_words:
             # Get all meanings and deduplicate them
             meanings = [meaning.en for meaning in word.meanings.all()]
             unique_meanings = self._deduplicate_meanings(meanings)
