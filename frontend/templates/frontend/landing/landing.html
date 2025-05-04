@@ -8,10 +8,16 @@
     <div class="columns is-centered">
       <div class="column is-10-tablet is-8-desktop is-7-widescreen">
         <div class="has-text-centered mb-6">
-          <h1 class="title is-1 mb-4">Learn a Language with Real Videos</h1>
-          <p class="subtitle is-4 mb-5">Start understanding native-speaker content from day one—no grammar drills, no boring vocab lists.</p>
+          <h1 class="title is-1 mb-4">Learn {% if LANGUAGE_TO_LEARN == 'de' %}German{% else %}Spoken Arabic{% endif %} with Real Videos</h1>
+          <p class="subtitle is-4 mb-5">Comprehensible input from day one.</p>
         </div>
-        <div class="landing-info-box mb-6">
+        <div class="has-text-centered mt-6">
+          <a href="{% url 'frontend:onboarding' %}" class="button is-primary is-large is-rounded px-6 py-4" style="font-size: 1.6rem;">
+            Start Learning
+          </a>
+          <div class="is-size-6 has-text-grey-light mt-2">free, no signup needed</div>
+        </div>
+        <div class="landing-info-box my-4">
           <div class="landing-info-columns">
             <div class="landing-info-col">
               <h2 class="title is-4">How it works</h2>
@@ -22,7 +28,11 @@
                 <li><b>Repeat</b> until you finish the video!</li>
               </ol>
             </div>
-            <div class="landing-divider"></div>
+           
+          </div>
+        </div>
+        <div class="landing-info-box my-4">
+          <div class="landing-info-columns">
             <div class="landing-info-col">
               <h2 class="title is-4">Why you'll love it</h2>
               <ul class="landing-list landing-ul">
@@ -33,12 +43,6 @@
               </ul>
             </div>
           </div>
-        </div>
-        <div class="has-text-centered mt-6">
-          <a href="{% url 'onboarding' %}" class="button is-primary is-large is-rounded px-6 py-4" style="font-size: 1.6rem;">
-            Start Learning
-          </a>
-          <div class="is-size-6 has-text-grey-light mt-2">free, no signup needed</div>
         </div>
       </div>
     </div>
