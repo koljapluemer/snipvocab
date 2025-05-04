@@ -5,60 +5,62 @@
     <div class="container is-max-widescreen">
         <div class="columns is-centered">
             <div class="column">
-                <div x-data="snippetWatch" x-init="init({{ snippet_data }})">
+                <div>
                     <!-- Video Player -->
                     <figure class="image is-16by9">
                         <iframe 
-                            :src="'https://www.youtube.com/embed/' + snippetData.youtube_id + '?autoplay=1&start=' + snippetData.start_time + '&end=' + snippetData.end_time"
+                            src="https://www.youtube.com/embed/{{ snippet.video.youtube_id }}?autoplay=1&start={{ snippet.start_time|floatformat:0 }}&end={{ snippet.end_time|floatformat:0 }}"
                             frameborder="0"
                             class="has-ratio"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowfullscreen>
                         </iframe>
                     </figure>
-                    
-                    <div class="buttons is-centered mt-6">
-                        <a href="{% url 'snippet_practice' pk=snippet.id %}" class="button is-primary is-large">
-                            <span class="icon">
-                                {% lucide "rotate-ccw" size=24 %}
-                            </span>
-                            <span>Practice Again</span>
-                        </a>
-                        
-                        <template x-if="snippetData.next_snippet_url">
-                            <a :href="snippetData.next_snippet_url" 
-                               class="button is-success is-large">
-                                <span class="icon">
-                                    {% lucide "arrow-right" size=24 %}
-                                </span>
-                                <span>Next Snippet</span>
-                            </a>
-                        </template>
-                        
-                        <template x-if="!snippetData.next_snippet_url">
-                            <a href="{% url 'video_detail' youtube_id=snippet.video.youtube_id %}" 
-                               class="button is-info is-large">
-                                <span class="icon">
-                                    {% lucide "arrow-left" size=24 %}
-                                </span>
-                                <span>Back to Video</span>
-                            </a>
-                        </template>
+                    {% if not rating_saved %}
+                    <form method="POST" action="{% url 'save_snippet_rating' %}" class="box mt-6" style="max-width: 500px; margin-left: auto; margin-right: auto;">
+                        {% csrf_token %}
+                        <input type="hidden" name="snippet_id" value="{{ snippet.id }}">
+                        <label for="difficultyRating" class="label is-large mb-4">
+                            <span class="has-text-weight-semibold">How well did you understand the snippet?</span>
+                        </label>
+                        <div class="field is-grouped is-align-items-center mb-5" style="width: 100%;">
+                            <div class="control">
+                                <span class="is-size-7 has-text-grey">Not at all</span>
+                            </div>
+                            <div class="control" style="flex: 1 1 0; min-width: 0;">
+                                <input 
+                                    type="range" 
+                                    min="0" 
+                                    max="100" 
+                                    name="rating"
+                                    id="difficultyRating"
+                                    style="width: 100%; height: 1.5rem;"
+                                    required
+                                />
+                            </div>
+                            <div class="control">
+                                <span class="is-size-7 has-text-grey">100%, easy</span>
+                            </div>
+                        </div>
+                        <div class="field is-grouped is-justify-content-center mt-4">
+                            <div class="control" style="width: 100%;">
+                                <button type="submit" class="button is-primary is-medium is-fullwidth px-6">
+                                    <span class="has-text-weight-semibold">Save Rating</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    {% endif %}
+                    {% if rating_saved %}
+                    <div class="flex gap-2 mt-6">
+                        {% if next_snippet_url %}
+                            <a href="{{ next_snippet_url }}" class="button is-success">Next Snippet</a>
+                        {% endif %}
+                        <a href="{% url 'snippet_practice' pk=snippet.id %}" class="button is-primary">Practice Vocabulary Again</a>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('snippetWatch', () => ({
-                snippetData: null,
-                
-                init(snippetData) {
-                    this.snippetData = snippetData;
-                }
-            }))
-        })
-    </script>
 {% endblock %} 
