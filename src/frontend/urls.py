@@ -7,9 +7,11 @@ from frontend.views.snippets.practice_and_watch import SnippetDetailView, Snippe
 from frontend.views.snippets.redirect_to_next_snippet import redirect_to_next_snippet
 from frontend.views.dashboard import dashboard
 from frontend.views.onboarding import onboarding
+from frontend.views.landing import landing
 
 urlpatterns = [
     path('', dashboard, name='dashboard'),
+    path('landing/', landing, name='landing'),
     path('onboarding/', onboarding, name='onboarding'),
     path('videos/', video_list, name='video_list'),
     path('videos/<slug:youtube_id>/', video_detail, name='video_detail'),

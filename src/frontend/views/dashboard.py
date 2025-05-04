@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils import timezone
 from datetime import timedelta
 from frontend.models import VideoProgress, VocabPractice, SnippetPractice
@@ -9,6 +9,10 @@ from guest_user.functions import is_guest_user
 
 @allow_guest_user
 def dashboard(request):
+    # If user is new (no VideoProgress), redirect to landing
+    if not VideoProgress.objects.filter(user=request.user).exists():
+        return redirect('landing')
+
     # Get 3 most recently practiced videos
     recent_videos = VideoProgress.objects.filter(
         user=request.user

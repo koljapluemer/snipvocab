@@ -1,0 +1,107 @@
+{% extends "frontend/base.html" %}
+
+{% block title %}Welcome to Your Language Journey{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-10-tablet is-8-desktop is-7-widescreen">
+        <div class="has-text-centered mb-6">
+          <h1 class="title is-1 mb-4">Learn a Language with Real Videos</h1>
+          <p class="subtitle is-4 mb-5">Start understanding native-speaker content from day one—no grammar drills, no boring vocab lists.</p>
+        </div>
+        <div class="landing-info-box mb-6">
+          <div class="landing-info-columns">
+            <div class="landing-info-col">
+              <h2 class="title is-4">How it works</h2>
+              <ol class="landing-list landing-ol">
+                <li><b>Choose</b> an interesting video</li>
+                <li><b>Learn</b> the vocab needed for a short snippet</li>
+                <li><b>Watch</b> and <b>rate</b> the snippet</li>
+                <li><b>Repeat</b> until you finish the video!</li>
+              </ol>
+            </div>
+            <div class="landing-divider"></div>
+            <div class="landing-info-col">
+              <h2 class="title is-4">Why you'll love it</h2>
+              <ul class="landing-list landing-ul">
+                <li>Real, native-speaker content in your target language</li>
+                <li>No grammar lessons or dry vocab drills</li>
+                <li>Jump right into authentic language from the start</li>
+                <li>Fun, bite-sized learning—at your pace</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="has-text-centered mt-6">
+          <a href="{% url 'onboarding' %}" class="button is-primary is-large is-rounded px-6 py-4" style="font-size: 1.6rem;">
+            Start Learning
+          </a>
+          <div class="is-size-6 has-text-grey-light mt-2">free, no signup needed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.landing-info-box {
+  background: #23272f;
+  color: #fff;
+  border-radius: 1.2rem;
+  padding: 2.5rem 2rem 2rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  box-shadow: 0 4px 24px rgba(30, 34, 90, 0.18);
+}
+.landing-info-columns {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: stretch;
+  gap: 2.5rem;
+}
+.landing-info-col {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+.landing-list {
+  margin-top: 1.2rem;
+  margin-bottom: 0;
+  font-size: 1.18rem;
+  line-height: 2.1;
+  padding-left: 1.2em;
+}
+.landing-ol {
+  list-style-position: inside;
+}
+.landing-ul {
+  list-style: disc inside;
+}
+.landing-divider {
+  width: 2px;
+  background: linear-gradient(to bottom, #444 10%, #333 90%);
+  border-radius: 1px;
+  margin: 0 1.5rem;
+  opacity: 0.18;
+}
+@media (max-width: 900px) {
+  .landing-info-columns {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .landing-divider {
+    display: none;
+  }
+  .landing-info-col {
+    align-items: center;
+    text-align: center;
+  }
+}
+</style>
+{% endblock %} 
