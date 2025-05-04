@@ -7,4 +7,4 @@ def redirect_to_next_snippet(request, pk:int):
     next_snippet_url = get_next_snippet_url(snippet)
     if next_snippet_url:
         return redirect(next_snippet_url)
-    return redirect('snippet_list') 
+    return redirect('frontend:snippet_list') 

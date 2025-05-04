@@ -11,7 +11,7 @@ from guest_user.functions import is_guest_user
 def dashboard(request):
     # If user is new (no VideoProgress), redirect to landing
     if not VideoProgress.objects.filter(user=request.user).exists():
-        return redirect('landing')
+        return redirect('frontend:landing')
 
     # Get 3 most recently practiced videos
     recent_videos = VideoProgress.objects.filter(

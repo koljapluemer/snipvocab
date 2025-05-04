@@ -41,7 +41,7 @@ def update_video_priorities(request):
         messages.error(request, f"Error updating priorities: {str(e)}")
     
     # Redirect back to the list view with the same filters
-    redirect_url = reverse('list_all_videos')
+    redirect_url = reverse('cms:list_all_videos')
     if status_filter:
         redirect_url += f"?status={status_filter}"
     if comment_filter:
