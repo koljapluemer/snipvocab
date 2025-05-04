@@ -35,7 +35,6 @@ class SnippetDetailView(DetailView):
         
         user = self.request.user
         enriched_words = enrich_snippet_vocab_with_user_progress(self.object, user)
-        print('nr of words: ', len(self.object.words.all()), 'nr of enriched words: ', len(enriched_words))
 
         # Prepare words data for Alpine.js
         words_data = []
@@ -47,6 +46,7 @@ class SnippetDetailView(DetailView):
             words_data.append({
                 'id': word.id,
                 'original_word': word.original_word,
+                'is_new': word.is_new,
                 'meanings': unique_meanings
             })
         
