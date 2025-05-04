@@ -1,0 +1,129 @@
+{% extends "frontend/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1 class="title">Your Learning Dashboard</h1>
+    
+    <!-- Recent Videos Section -->
+    <div class="box">
+      <h2 class="subtitle">Recently Practiced Videos</h2>
+      {% if recent_videos %}
+        <div class="columns is-multiline">
+          {% for video in recent_videos %}
+            <div class="column is-4">
+              <div class="card">
+                <div class="card-image">
+                  <figure class="image is-16by9">
+                    <img src="https://img.youtube.com/vi/{{ video.youtube_id }}/mqdefault.jpg" 
+                         alt="{{ video.youtube_title|default:'Video thumbnail' }}">
+                    <span class="tag is-rounded is-small has-background-light has-text-grey-dark" style="position: absolute; top: 0.5rem; right: 0.5rem; z-index: 2; opacity: 0.92;">
+                      {{ video.last_practiced|date:'Y-m-d' }}
+                    </span>
+                  </figure>
+                </div>
+                <div class="card-content">
+                  <p class="title is-6">{{ video.youtube_title|default:'Untitled Video' }}</p>
+                </div>
+                <footer class="card-footer">
+                  <a href="{% url 'video_detail' youtube_id=video.youtube_id %}" class="card-footer-item">Practice</a>
+                </footer>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="notification is-warning">
+          You haven't practiced any videos yet.
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Practice Statistics Section -->
+    <div class="columns">
+      <!-- Vocabulary Practice Chart -->
+      <div class="column is-6">
+        <div class="box">
+          <h2 class="subtitle">Vocabulary Practice (Last 10 Days)</h2>
+          <canvas id="vocabChart"></canvas>
+        </div>
+      </div>
+      
+      <!-- Snippet Practice Chart -->
+      <div class="column is-6">
+        <div class="box">
+          <h2 class="subtitle">Snippet Practice (Last 10 Days)</h2>
+          <canvas id="snippetChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="box">
+      <h2 class="subtitle">Quick Links</h2>
+      <div class="buttons">
+        <a href="{% url 'video_list' %}" class="button is-primary">
+          <span class="icon">
+            <i class="fas fa-list"></i>
+          </span>
+          <span>View All Videos</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Vocabulary Practice Chart
+  const vocabCtx = document.getElementById('vocabChart').getContext('2d');
+  const vocabChart = new Chart(vocabCtx, {
+    type: 'bar',
+    data: {
+      labels: JSON.parse('{{ vocab_dates|escapejs }}'),
+      datasets: [{
+        label: 'Words Practiced',
+        data: JSON.parse('{{ vocab_counts|escapejs }}'),
+        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        borderColor: 'rgb(54, 162, 235)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  // Snippet Practice Chart
+  const snippetCtx = document.getElementById('snippetChart').getContext('2d');
+  const snippetChart = new Chart(snippetCtx, {
+    type: 'bar',
+    data: {
+      labels: JSON.parse('{{ snippet_dates|escapejs }}'),
+      datasets: [{
+        label: 'Snippets Practiced',
+        data: JSON.parse('{{ snippet_counts|escapejs }}'),
+        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+        borderColor: 'rgb(75, 192, 192)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}
