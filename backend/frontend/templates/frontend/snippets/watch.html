@@ -3,7 +3,11 @@
 
 {% block content %}
     <div class="container is-max-widescreen">
-        <div class="columns is-centered">
+        <a href="{% url 'video_detail' snippet.video.youtube_id %}" class="button is-small">
+            {% lucide "arrow-left" size=16 %}
+            Back to video
+        </a>
+        <div class="columns is-centered mt-4">
             <div class="column">
                 <div>
                     <!-- Video Player -->
