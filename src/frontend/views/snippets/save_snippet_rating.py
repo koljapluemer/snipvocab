@@ -24,7 +24,7 @@ class SaveSnippetRatingView(LoginRequiredMixin, View):
         practice.save()
         # Prepare context for re-render
         next_snippet = snippet.video.snippets.filter(index__gt=snippet.index).first()
-        next_snippet_url = reverse('snippet_watch', kwargs={'pk': next_snippet.id}) if next_snippet else None
+        next_snippet_url = reverse('frontend:snippet_watch', kwargs={'pk': next_snippet.id}) if next_snippet else None
         return render(request, 'frontend/snippets/watch.html', {
             'snippet': snippet,
             'rating_saved': True,

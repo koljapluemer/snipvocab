@@ -78,7 +78,7 @@ class Snippet(models.Model):
         return math.floor(self.start - 1)
 
     def get_absolute_url(self, mode='practice'):
-        return reverse('snippet_practice', kwargs={'pk': self.id})
+        return reverse('frontend:snippet_practice', kwargs={'pk': self.id})
 
 class Word(models.Model):
     original_word = models.CharField(max_length=100, unique=True)
