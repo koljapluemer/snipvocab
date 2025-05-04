@@ -23,7 +23,7 @@ def update_video_statuses(request):
                 video.status = bulk_status
                 video.save()
             messages.success(request, f"Successfully updated status for all videos to {bulk_status}.")
-            return redirect('review_videos')
+            return redirect('cms:review_videos')
         
         # Process individual video statuses
         for key, value in post_data.items():
@@ -43,7 +43,7 @@ def update_video_statuses(request):
                 except Video.DoesNotExist:
                     continue
         
-        return redirect('review_videos')
+        return redirect('cms:review_videos')
         
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)

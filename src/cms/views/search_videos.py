@@ -11,6 +11,7 @@ def search_videos(request):
     """View to search YouTube videos and automatically import them"""
     frontend = get_current_frontend(request)
     search_query = request.GET.get('q', '')
+    short_videos = request.GET.get('short_videos', False) == 'on'
     
     # Set country and language based on frontend
     if frontend == Frontend.ARABIC:
@@ -30,17 +31,24 @@ def search_videos(request):
             # Get the last page token used for this search query
             last_page_token = request.session.get(f'last_page_token_{search_query}', '')
             
-            # Search for videos with captions
-            search_response = youtube.search().list(
-                q=search_query,
-                part='id,snippet',
-                type='video',
-                maxResults=10,
-                regionCode=region_code,
-                relevanceLanguage=language,
-                pageToken=last_page_token,
-                videoCaption='any'  # Only include videos with captions
-            ).execute()
+            # Build search parameters
+            search_params = {
+                'q': search_query,
+                'part': 'id,snippet',
+                'type': 'video',
+                'maxResults': 10,
+                'regionCode': region_code,
+                'relevanceLanguage': language,
+                'pageToken': last_page_token,
+                'videoCaption': 'closedCaption',  # Only include videos with closed captions
+            }
+            
+            # Add short videos filter if requested
+            if short_videos:
+                search_params['videoDuration'] = 'short'
+            
+            # Search for videos
+            search_response = youtube.search().list(**search_params).execute()
             
             # Store the next page token for future searches
             next_page_token = search_response.get('nextPageToken')
@@ -71,18 +79,21 @@ def search_videos(request):
             context = {
                 'search_query': search_query,
                 'imported_count': imported_count,
-                'frontend': frontend
+                'frontend': frontend,
+                'short_videos': short_videos
             }
             
         except Exception as e:
             context = {
                 'error': str(e),
                 'search_query': search_query,
-                'frontend': frontend
+                'frontend': frontend,
+                'short_videos': short_videos
             }
     else:
         context = {
-            'frontend': frontend
+            'frontend': frontend,
+            'short_videos': short_videos
         }
     
     return render(request, 'search_videos.html', context)

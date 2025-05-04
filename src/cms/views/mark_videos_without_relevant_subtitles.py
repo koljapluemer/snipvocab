@@ -41,4 +41,4 @@ def mark_videos_without_relevant_subtitles(request):
     except Exception as e:
         messages.error(request, f"Error marking videos: {str(e)}")
     
-    return redirect('list_all_videos')
+    return redirect('cms:list_all_videos')

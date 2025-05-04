@@ -26,4 +26,4 @@ def reduce_review_priorities(request):
     except Exception as e:
         messages.error(request, f"Error updating priorities: {str(e)}")
     
-    return redirect('review_videos')
+    return redirect('cms:review_videos')

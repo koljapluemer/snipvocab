@@ -25,4 +25,4 @@ def update_video_status(request, youtube_id):
     except Exception as e:
         messages.error(request, f"Error updating video status: {str(e)}")
     
-    return redirect('video_details', youtube_id=youtube_id)
+    return redirect('cms:video_details', youtube_id=youtube_id)

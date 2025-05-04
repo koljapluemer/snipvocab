@@ -21,4 +21,4 @@ def remove_tag(request, youtube_id, tag_id):
     except Exception as e:
         messages.error(request, f"Error removing tag: {str(e)}")
     
-    return redirect('video_details', youtube_id=youtube_id)
+    return redirect('cms:video_details', youtube_id=youtube_id)

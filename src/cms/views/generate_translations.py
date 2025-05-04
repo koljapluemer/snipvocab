@@ -15,7 +15,7 @@ def generate_translations(request, youtube_id):
         
         if not video.snippets.exists():
             messages.error(request, "No snippets available. Please generate snippets first.")
-            return redirect('video_details', youtube_id=youtube_id)
+            return redirect('cms:video_details', youtube_id=youtube_id)
         
         # Delete existing words and meanings
         Word.objects.filter(videos=video).delete()
@@ -55,4 +55,4 @@ def generate_translations(request, youtube_id):
     except Exception as e:
         messages.error(request, f"Error generating translations: {str(e)}")
     
-    return redirect('video_details', youtube_id=youtube_id)
+    return redirect('cms:video_details', youtube_id=youtube_id)

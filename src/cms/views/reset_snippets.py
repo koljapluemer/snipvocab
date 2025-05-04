@@ -16,7 +16,7 @@ def reset_snippets(request, youtube_id):
                               VideoStatus.SNIPPETS_AND_TRANSLATIONS_GENERATED, 
                               VideoStatus.LIVE]:
             messages.error(request, "Video must have snippets generated to reset them.")
-            return redirect('video_details', youtube_id=youtube_id)
+            return redirect('cms:video_details', youtube_id=youtube_id)
         
         # Delete snippets (this will cascade delete words and meanings)
         video.snippets.all().delete()
@@ -32,4 +32,4 @@ def reset_snippets(request, youtube_id):
     except Exception as e:
         messages.error(request, f"Error resetting snippets: {str(e)}")
     
-    return redirect('video_details', youtube_id=youtube_id)
+    return redirect('cms:video_details', youtube_id=youtube_id)

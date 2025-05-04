@@ -5,16 +5,26 @@
     <h1 class="mb-8 text-3xl font-bold">Search Videos</h1>
     
     <form method="get" class="mb-8">
-        <div class="flex items-center gap-4">
-            <input type="text" 
-                   name="q" 
-                   value="{{ search_query }}" 
-                   placeholder="Enter search query..."
-                   class="flex-1 px-4 py-2 border rounded"
-                   required>
-            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                Search & Import
-            </button>
+        <div class="flex flex-col gap-4">
+            <div class="flex items-center gap-4">
+                <input type="text" 
+                       name="q" 
+                       value="{{ search_query }}" 
+                       placeholder="Enter search query..."
+                       class="flex-1 px-4 py-2 border rounded"
+                       required>
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                    Search & Import
+                </button>
+            </div>
+            <div class="flex items-center gap-2">
+                <input type="checkbox" 
+                       name="short_videos" 
+                       id="short_videos"
+                       {% if short_videos %}checked{% endif %}
+                       class="rounded">
+                <label for="short_videos" class="text-sm text-gray-600">Search for short videos only</label>
+            </div>
         </div>
     </form>
 

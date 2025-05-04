@@ -11,4 +11,4 @@ def set_frontend(request):
     frontend = request.POST.get('frontend')
     if frontend in [f[0] for f in Frontend.choices]:
         request.session['frontend'] = frontend
-    return redirect(request.POST.get('next', 'cms_home'))
+    return redirect(request.POST.get('next', 'cms:cms_home'))

@@ -30,4 +30,4 @@ def publish_videos_with_many_snippets(request):
     except Exception as e:
         messages.error(request, f"Error publishing videos: {str(e)}")
     
-    return redirect('actions')
+    return redirect('cms:actions')

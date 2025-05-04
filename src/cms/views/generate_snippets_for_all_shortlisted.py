@@ -91,4 +91,4 @@ def generate_snippets_for_all_shortlisted(request):
     except Exception as e:
         messages.error(request, f"Error processing videos: {str(e)}")
     
-    return redirect('list_all_videos')
+    return redirect('cms:list_all_videos')

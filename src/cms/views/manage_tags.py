@@ -13,7 +13,7 @@ def manage_tags(request, tag_id=None):
             tag = Tag.objects.get(id=tag_id)
         except Tag.DoesNotExist:
             messages.error(request, "Tag not found.")
-            return redirect('manage_tags')
+            return redirect('cms:manage_tags')
 
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -21,7 +21,7 @@ def manage_tags(request, tag_id=None):
 
         if not name:
             messages.error(request, "Tag name is required.")
-            return redirect('manage_tags')
+            return redirect('cms:manage_tags')
 
         try:
             if tag:
@@ -34,10 +34,10 @@ def manage_tags(request, tag_id=None):
                 # Create new tag
                 Tag.objects.create(name=name, type=type)
                 messages.success(request, "Tag created successfully.")
-            return redirect('manage_tags')
+            return redirect('cms:manage_tags')
         except Exception as e:
             messages.error(request, f"Error saving tag: {str(e)}")
-            return redirect('manage_tags')
+            return redirect('cms:manage_tags')
 
     # Get all tags for the list
     tags = Tag.objects.all().order_by('name')

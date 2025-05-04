@@ -28,7 +28,7 @@ def generate_snippets(request, youtube_id):
                 video.available_subtitle_languages = []
                 video.save()
                 messages.error(request, f"Error fetching available languages: {str(e)}")
-                return redirect('video_details', youtube_id=youtube_id)
+                return redirect('cms:video_details', youtube_id=youtube_id)
         
         # Try to get the transcript in the target language (prefer manual over auto-generated)
         target_transcripts = []
@@ -49,7 +49,7 @@ def generate_snippets(request, youtube_id):
                 if not target_transcripts:
                     print(f"No {frontend} transcripts found")
                     messages.error(request, f"No {frontend} subtitles available for this video.")
-                    return redirect('video_details', youtube_id=youtube_id)
+                    return redirect('cms:video_details', youtube_id=youtube_id)
                 
                 # Prefer manual transcripts over auto-generated ones
                 manual_transcript = next((t for t in target_transcripts if not t.is_generated), None)
@@ -95,4 +95,4 @@ def generate_snippets(request, youtube_id):
         print(f"Unexpected error: {str(e)}")
         messages.error(request, f"An unexpected error occurred: {str(e)}")
     
-    return redirect('video_details', youtube_id=youtube_id)
+    return redirect('cms:video_details', youtube_id=youtube_id)
