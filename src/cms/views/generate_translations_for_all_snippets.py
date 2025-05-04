@@ -51,7 +51,7 @@ def generate_translations_for_all_snippets(request):
                         # Create the meaning
                         Meaning.objects.create(
                             word=word_obj,
-                            en=word_entry.meaning,
+                            en=word_entry.translation,
                             snippet_context=snippet,
                             creation_method="ChatGPT 1.0.0"
                         )
