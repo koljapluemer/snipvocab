@@ -11,6 +11,6 @@ def get_onboarding_videos():
         status=VideoStatus.LIVE,
         frontend=frontend_value,
         tags__name='feature-in-onboarding'
-    ).order_by('-added_at')[:3]
+    ).order_by('added_at')[:3]
     
     return videos
