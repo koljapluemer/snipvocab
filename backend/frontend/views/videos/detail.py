@@ -24,7 +24,7 @@ def video_detail(request, youtube_id):
     first_snippet = snippets.first() if snippets else None
     context = {
         'video': video,
-        'snippets': snippets,
+        'enriched_snippets': enriched_snippets,
         'progress': progress,
         'total_snippets': total,
         'first_snippet': first_snippet,
