@@ -6,7 +6,7 @@ source .venv/bin/activate
 # 1) dump fixtures and make commit
 python manage.py dumpdata shared --indent 2 > fixture.json
 git add fixture.json
-git commit -m "deploy script: dump updated fixtures" --no-verify
+git commit -m "deploy script: dump updated fixtures" --no-verify || true
 
 # 2) push to germanwithvideos
 git push germanwithvideos HEAD:main
