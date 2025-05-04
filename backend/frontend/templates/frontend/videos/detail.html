@@ -29,7 +29,8 @@
           {% for snippet in enriched_snippets %}
             <a 
               href="{% url 'snippet_practice' pk=snippet.id %}"
-              style="position: absolute; top: 0; left: {{ forloop.counter0|get_left_position:enriched_snippets }}%; width: {{ snippet|get_width:enriched_snippets }}%; height: 100%; background-color: {{ snippet|get_difficulty_color:forloop.counter0 }}; border-right: 1px solid #222;"
+              class="snippet-timeline-bar"
+              style="left: {{ forloop.counter0|get_left_position:enriched_snippets }}%; width: {{ snippet|get_width:enriched_snippets }}%; background-color: {{ snippet|get_difficulty_color:forloop.counter0 }};"
               title="Snippet {{ forloop.counter }}: {{ snippet.start_time|format_time }} - {{ snippet.end_time|format_time }}
 Understanding: {{ snippet.perceived_difficulty|default:'Not rated' }}"
             ></a>
@@ -50,4 +51,19 @@ Understanding: {{ snippet.perceived_difficulty|default:'Not rated' }}"
     </div>
   </div>
 </section>
+
+<style>
+.snippet-timeline-bar {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-right: 1px solid #222;
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.2s;
+}
+.snippet-timeline-bar:hover {
+  filter: brightness(1.1);
+  transform: scale(1.02);
+}
+</style>
 {% endblock %} 
