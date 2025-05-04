@@ -118,6 +118,11 @@
                 },
                 async rateWord(rating) {
                     this.ratings.push({ word_id: this.currentWord.id, rating: rating });
+                    // If rated 1 or 2, add a copy to the end for more practice
+                    if (rating === 1 || rating === 2) {
+                        const wordCopy = { ...this.currentWord, is_new: false };
+                        this.words.push(wordCopy);
+                    }
                     this.showMeanings = false;
                     this.currentIndex++;
                 }
