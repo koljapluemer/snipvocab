@@ -1,5 +1,7 @@
 # SnipVocab
 
+![screenshots of the app](static/screenshot.webp)
+
 ## Running it
 
 - Go into `venv`, `LANGUAGE_TO_LEARN=ar python manage.py runserver 8081` or `LANGUAGE_TO_LEARN=de python manage.py runserver 8081`
