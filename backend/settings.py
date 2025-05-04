@@ -28,7 +28,19 @@ ALLOWED_HOSTS = ['*'] if DEBUG else [
     '127.0.0.1',
     'localhost',
     '.herokuapp.com',
-    'snipvocab-backend-4991c989741a.herokuapp.com'
+
+
+    "https://arabicwithvideos.com",      
+    "https://germanwithvideos.com",
+
+    "https://www.arabicwithvideos.com",
+    "https://www.germanwithvideos.com",
+
+    'arabicwithvideos.com',
+    'germanwithvideos.com',
+
+    'www.arabicwithvideos.com',
+    'www.germanwithvideos.com',
 ]
 
 # Application definition
@@ -80,12 +92,14 @@ if not DEBUG:
 
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
-    "https://arabicwithvideos.com",       # Production frontend
+    "https://arabicwithvideos.com",      
     "https://germanwithvideos.com",
-    "https://arabicwithvideos-60e11afebdfb.herokuapp.com/",
-    "https://germanwithvideos-ec787d6320bb.herokuapp.com/",
+
     "https://www.arabicwithvideos.com",
     "https://www.germanwithvideos.com",
+
+    "https://arabicwithvideos-60e11afebdfb.herokuapp.com",
+    "https://germanwithvideos-ec787d6320bb.herokuapp.com",
 ]
 
 if DEBUG:
