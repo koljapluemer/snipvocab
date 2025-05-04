@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -19,18 +20,22 @@
       defer
       src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
+    {% if LANGUAGE_TO_LEARN == 'ar' %}
+      <link rel="icon" href="{% static 'favicon-ar.ico' %}" />
+    {% else %}
+      <link rel="icon" href="{% static 'favicon-de.ico' %}" />
+    {% endif %}
   </head>
   <body>
     <nav class="navbar has-shadow" role="navigation" aria-label="main navigation" x-data="{ isOpen: false }">
       <div class="container">
         <div class="navbar-brand">
           <a class="navbar-item" href="/">
-              {% load static %}
               {% if LANGUAGE_TO_LEARN == 'ar' %}
-                <img src="{% static 'logo-ar.webp' %}" alt="Arabic with Videos" class="is-32x32" />
+                <img src="{% static 'logo-ar.webp' %}" alt="Arabic with Videos" class="is-32x32 pt-2" />
                 <span class="">Arabic with Videos</span>
               {% else %}
-                <img src="{% static 'logo-de.webp' %}" alt="German with Videos" class="is-32x32" />
+                <img src="{% static 'logo-de.webp' %}" alt="German with Videos" class="is-32x32 pt-2" />
                 <span class="">German with Videos</span>
               {% endif %}
           </a>
