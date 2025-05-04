@@ -1,3 +1,21 @@
+from django.shortcuts import render
+from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from shared.models import Video, VideoStatus
+from .get_current_frontend import get_current_frontend
+
+def extract_youtube_id(url):
+    """Extract YouTube video ID from URL"""
+    import re
+    patterns = [
+        r'(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})',
+        r'^([^"&?\/\s]{11})$'
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            return match.group(1)
+    return None
 
 @staff_member_required
 def bulk_import_videos(request):

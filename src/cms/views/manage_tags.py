@@ -1,3 +1,9 @@
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+
+from shared.models import Tag, TagType
+
 @staff_member_required
 def manage_tags(request, tag_id=None):
     """View to manage tags - add, edit, and list"""

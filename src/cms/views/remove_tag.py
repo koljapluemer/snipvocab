@@ -1,3 +1,10 @@
+from django.contrib.admin.views.decorators import staff_member_required
+from django.views.decorators.http import require_http_methods
+from django.shortcuts import redirect
+from django.contrib import messages
+
+from shared.models import Video, Tag
+
 @staff_member_required
 @require_http_methods(["POST"])
 def remove_tag(request, youtube_id, tag_id):

@@ -1,3 +1,12 @@
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from django.views.decorators.http import require_http_methods
+from django.conf import settings
+from googleapiclient.discovery import build
+from shared.models import Video, VideoStatus, Tag, TagType
+from .get_current_frontend import get_current_frontend
+
 @staff_member_required
 @require_http_methods(["POST"])
 def enrich_video_metadata(request):
@@ -132,4 +141,4 @@ def enrich_video_metadata(request):
         print(f"Error in enrich_video_metadata: {str(e)}")  # Debug log
         messages.error(request, f"Error enriching video metadata: {str(e)}")
     
-    return redirect('actions')
+    return redirect('cms:actions')

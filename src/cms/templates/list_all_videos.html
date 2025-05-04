@@ -9,12 +9,12 @@
         <div class="flex flex-wrap gap-4">
             <!-- Status Filter -->
             <div class="flex flex-wrap gap-2">
-                <a href="{% url 'list_all_videos' %}{% if comment_filter %}?comment={{ comment_filter }}{% endif %}" 
+                <a href="{% url 'cms:list_all_videos' %}{% if comment_filter %}?comment={{ comment_filter }}{% endif %}" 
                    class="px-3 py-1 text-sm rounded {% if not status_filter %}bg-blue-500 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
                     All
                 </a>
                 {% for status_value, status_label in status_choices %}
-                    <a href="{% url 'list_all_videos' %}?status={{ status_value }}{% if comment_filter %}&comment={{ comment_filter }}{% endif %}" 
+                    <a href="{% url 'cms:list_all_videos' %}?status={{ status_value }}{% if comment_filter %}&comment={{ comment_filter }}{% endif %}" 
                        class="px-3 py-1 text-sm rounded {% if status_filter == status_value %}bg-blue-500 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
                         {{ status_label }}
                     </a>
@@ -35,7 +35,7 @@
                     Filter
                 </button>
                 {% if comment_filter %}
-                    <a href="{% url 'list_all_videos' %}{% if status_filter %}?status={{ status_filter }}{% endif %}" 
+                    <a href="{% url 'cms:list_all_videos' %}{% if status_filter %}?status={{ status_filter }}{% endif %}" 
                        class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
                         Clear
                     </a>
@@ -46,7 +46,7 @@
     
     <!-- Priority Update Buttons -->
     <div class="mb-6">
-        <form method="post" action="{% url 'update_video_priorities' %}" class="flex gap-4">
+        <form method="post" action="{% url 'cms:update_video_priorities' %}" class="flex gap-4">
             {% csrf_token %}
             {% if status_filter %}
                 <input type="hidden" name="status_filter" value="{{ status_filter }}">
@@ -91,7 +91,7 @@
                                 {{ video.comment|truncatechars:50 }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <a href="{% url 'video_details' video.youtube_id %}" class="text-blue-600 hover:text-blue-900">Practice</a>
+                                <a href="{% url 'cms:video_details' video.youtube_id %}" class="text-blue-600 hover:text-blue-900">Practice</a>
                             </td>
                         </tr>
                     {% endfor %}
@@ -125,7 +125,7 @@
     {% else %}
         <div class="text-center py-8">
             <p class="text-gray-600">No videos found.</p>
-            <a href="{% url 'import_channel_videos' %}" class="text-blue-500 hover:text-blue-700">
+            <a href="{% url 'cms:import_channel_videos' %}" class="text-blue-500 hover:text-blue-700">
                 Import some videos
             </a>
         </div>

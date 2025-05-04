@@ -1,16 +1,26 @@
-
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from django.views.decorators.http import require_http_methods
+from shared.models import Video, VideoStatus
+from youtube_transcript_api import YouTubeTranscriptApi
+from .get_current_frontend import get_current_frontend
 
 @staff_member_required
 @require_http_methods(["POST"])
 def bulk_check_subtitles(request):
     """View to check subtitles for all videos that haven't been checked yet"""
     try:
+        frontend = get_current_frontend(request)
+        
         # Get all videos that haven't been checked for Arabic subtitles and aren't marked as not relevant
         videos = Video.objects.filter(
+            frontend=frontend,
             checked_for_relevant_subtitles=False
         ).exclude(
             status=VideoStatus.NOT_RELEVANT
         )
+        
         processed_count = 0
         error_count = 0
         error_videos = []
@@ -38,4 +48,4 @@ def bulk_check_subtitles(request):
     except Exception as e:
         messages.error(request, f"Error checking subtitles: {str(e)}")
     
-    return redirect('actions')
+    return redirect('cms:actions')

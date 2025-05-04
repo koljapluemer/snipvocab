@@ -1,3 +1,12 @@
+from django.contrib.admin.views.decorators import staff_member_required
+from django.views.decorators.http import require_http_methods
+from django.shortcuts import redirect
+from django.contrib import messages
+
+from shared.models import Video, Frontend, VideoStatus, Word, Meaning
+from .get_current_frontend import get_current_frontend
+from .get_words_with_translations import get_words_with_translations
+
 @staff_member_required
 @require_http_methods(["POST"])
 def generate_translations_for_all_snippets(request):

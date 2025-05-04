@@ -1,3 +1,11 @@
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from django.views.decorators.http import require_http_methods
+from django.http import HttpResponse
+from shared.models import Video
+import csv
+
 @staff_member_required
 @require_http_methods(["GET"])
 def export_snippets_csv(request, youtube_id):
@@ -29,7 +37,7 @@ def export_snippets_csv(request, youtube_id):
         
     except Video.DoesNotExist:
         messages.error(request, "Video not found.")
-        return redirect('video_details', youtube_id=youtube_id)
+        return redirect('cms:video_details', youtube_id=youtube_id)
     except Exception as e:
         messages.error(request, f"Error exporting snippets: {str(e)}")
-        return redirect('video_details', youtube_id=youtube_id)
+        return redirect('cms:video_details', youtube_id=youtube_id)

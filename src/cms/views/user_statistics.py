@@ -1,4 +1,11 @@
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import render
+from django.contrib.auth.models import User
+from django.db.models import Count
+from django.utils import timezone
+from datetime import timedelta
 
+from frontend.models import VideoProgress, VocabPractice
 
 @staff_member_required
 def user_statistics(request):

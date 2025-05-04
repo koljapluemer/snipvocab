@@ -52,7 +52,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ existing_tag.name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ existing_tag.get_type_display }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <a href="{% url 'edit_tag' existing_tag.id %}" class="text-blue-600 hover:text-blue-900">Edit</a>
+                                <a href="{% url 'cms:edit_tag' existing_tag.id %}" class="text-blue-600 hover:text-blue-900">Edit</a>
                             </td>
                         </tr>
                         {% empty %}

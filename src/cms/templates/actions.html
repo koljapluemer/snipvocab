@@ -17,7 +17,7 @@
                 All videos have been checked for subtitles.
                 {% endif %}
             </p>
-            <form method="post" action="{% url 'bulk_check_subtitles' %}">
+            <form method="post" action="{% url 'cms:bulk_check_subtitles' %}">
                 {% csrf_token %}
                 <button type="submit" class="w-full px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600">
                     Check Subtitles for Unchecked Videos
@@ -29,7 +29,7 @@
         <div class="bg-white p-6 rounded-lg shadow-sm">
             <h2 class="text-xl font-semibold mb-4">Mark Videos Without Target Language Subtitles</h2>
             <p class="text-gray-600 mb-4">Mark all videos that don't have Arabic/German subtitles as not relevant.</p>
-            <form method="post" action="{% url 'mark_videos_without_arabic' %}">
+            <form method="post" action="{% url 'cms:mark_videos_without_arabic' %}">
                 {% csrf_token %}
                 <button type="submit" class="w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
                     Mark Videos Without Subtitles
@@ -41,7 +41,7 @@
         <div class="bg-white p-6 rounded-lg shadow-sm">
             <h2 class="text-xl font-semibold mb-4">Generate Snippets</h2>
             <p class="text-gray-600 mb-4">Generate snippets for all shortlisted videos with Arabic subtitles.</p>
-            <form method="post" action="{% url 'generate_snippets_all' %}">
+            <form method="post" action="{% url 'cms:generate_snippets_all' %}">
                 {% csrf_token %}
                 <button type="submit" class="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                     Generate Snippets for All Shortlisted Videos
@@ -53,7 +53,7 @@
         <div class="bg-white p-6 rounded-lg shadow-sm">
             <h2 class="text-xl font-semibold mb-4">Generate Translations</h2>
             <p class="text-gray-600 mb-4">Generate translations for all videos that have snippets.</p>
-            <form method="post" action="{% url 'generate_translations_all' %}">
+            <form method="post" action="{% url 'cms:generate_translations_all' %}">
                 {% csrf_token %}
                 <button type="submit" class="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
                     Generate Translations for All Videos with Snippets
@@ -68,7 +68,7 @@
                 Fetch and update metadata for all live videos and videos with snippets and translations.
                 This will add YouTube tags, topics, and update titles.
             </p>
-            <form method="post" action="{% url 'enrich_video_metadata' %}">
+            <form method="post" action="{% url 'cms:enrich_video_metadata' %}">
                 {% csrf_token %}
                 <button type="submit" class="w-full px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">
                     Enrich Video Metadata
@@ -83,7 +83,7 @@
                 Automatically publish all videos that have more than 5 snippets and are ready for publishing.
                 This will set their status to LIVE.
             </p>
-            <form method="post" action="{% url 'publish_videos_with_many_snippets' %}">
+            <form method="post" action="{% url 'cms:publish_videos_with_many_snippets' %}">
                 {% csrf_token %}
                 <button type="submit" class="w-full px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600">
                     Publish Videos with Many Snippets

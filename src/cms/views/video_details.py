@@ -1,3 +1,10 @@
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import render
+from youtube_transcript_api import YouTubeTranscriptApi
+
+from shared.models import Video, VideoStatus
+from .get_current_frontend import get_current_frontend
+
 
 @staff_member_required
 def video_details(request, youtube_id):

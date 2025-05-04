@@ -5,7 +5,7 @@
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-4xl mx-auto">
         <!-- Back to list link -->
-        <a href="{% url 'list_all_videos' %}" class="inline-flex items-center text-blue-600 hover:text-blue-900 mb-6">
+        <a href="{% url 'cms:list_all_videos' %}" class="inline-flex items-center text-blue-600 hover:text-blue-900 mb-6">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
@@ -41,7 +41,7 @@
             <h2 class="text-xl font-semibold mb-2">Tags</h2>
             
             <!-- Add Tag Form -->
-            <form action="{% url 'add_tag' video.youtube_id %}" method="post" class="mb-4">
+            <form action="{% url 'cms:add_tag' video.youtube_id %}" method="post" class="mb-4">
                 {% csrf_token %}
                 <div class="join w-full max-w-md">
                     <input type="text" 
@@ -50,7 +50,7 @@
                            class="input input-bordered join-item w-full" 
                            placeholder="Add a new tag..."
                            autocomplete="off"
-                           data-autocomplete-url="{% url 'tag_autocomplete' %}">
+                           data-autocomplete-url="{% url 'cms:tag_autocomplete' %}">
                     <button type="submit" class="btn btn-primary join-item">Add Tag</button>
                 </div>
                 <div id="tagSuggestions" class="mt-1 hidden absolute z-10 w-full max-w-md bg-white border border-gray-200 rounded-lg shadow-lg"></div>
@@ -60,7 +60,7 @@
             {% if video.tags.all %}
                 <div class="flex flex-wrap gap-2">
                     {% for tag in video.tags.all %}
-                        <form action="{% url 'remove_tag' video.youtube_id tag.id %}" method="post" class="inline">
+                        <form action="{% url 'cms:remove_tag' video.youtube_id tag.id %}" method="post" class="inline">
                             {% csrf_token %}
                             <button type="submit" class="inline-flex items-center px-3 py-1 rounded-full text-sm hover:opacity-75 transition-opacity">
                                 {% if tag.type == 'from_youtube' %}
@@ -98,7 +98,7 @@
         <!-- Status Update -->
         <div class="mb-8 bg-white p-6 rounded-lg shadow-sm">
             <h2 class="text-xl font-semibold mb-4">Update Video Status</h2>
-            <form action="{% url 'update_video_status' video.youtube_id %}" method="post" class="flex flex-col gap-4">
+            <form action="{% url 'cms:update_video_status' video.youtube_id %}" method="post" class="flex flex-col gap-4">
                 {% csrf_token %}
                 <div class="flex flex-col gap-2">
                     <label for="status_select" class="text-sm font-medium text-gray-700">Select new status:</label>
@@ -155,7 +155,7 @@
                 </p>
                 <div class="flex flex-wrap gap-4">
                     {% if video.status != 'snippets_generated' and video.status != 'snippets_and_translations_generated' and video.status != 'live' %}
-                        <form action="{% url 'generate_snippets' video.youtube_id %}" method="post">
+                        <form action="{% url 'cms:generate_snippets' video.youtube_id %}" method="post">
                             {% csrf_token %}
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Generate Snippets
@@ -164,7 +164,7 @@
                     {% endif %}
                     
                     {% if video.status == 'snippets_generated' %}
-                        <form action="{% url 'generate_translations' video.youtube_id %}" method="post">
+                        <form action="{% url 'cms:generate_translations' video.youtube_id %}" method="post">
                             {% csrf_token %}
                             <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                                 Generate Translations
@@ -173,7 +173,7 @@
                     {% endif %}
 
                     {% if video.status == 'snippets_and_translations_generated' %}
-                        <form action="{% url 'publish_video' video.youtube_id %}" method="post">
+                        <form action="{% url 'cms:publish_video' video.youtube_id %}" method="post">
                             {% csrf_token %}
                             <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
                                 Publish Video
@@ -182,7 +182,7 @@
                     {% endif %}
 
                     {% if video.status == 'snippets_generated' or video.status == 'snippets_and_translations_generated' or video.status == 'live' %}
-                        <form action="{% url 'reset_snippets' video.youtube_id %}" method="post">
+                        <form action="{% url 'cms:reset_snippets' video.youtube_id %}" method="post">
                             {% csrf_token %}
                             <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                                 Reset Snippets
@@ -191,14 +191,14 @@
                     {% endif %}
 
                     {% if video.snippets.exists %}
-                        <a href="{% url 'export_snippets_csv' video.youtube_id %}" 
+                        <a href="{% url 'cms:export_snippets_csv' video.youtube_id %}" 
                            class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                             Export Snippets CSV
                         </a>
                     {% endif %}
 
                     {% if video.status != 'blacklisted' %}
-                        <form action="{% url 'blacklist_video' video.youtube_id %}" method="post">
+                        <form action="{% url 'cms:blacklist_video' video.youtube_id %}" method="post">
                             {% csrf_token %}
                             <button type="submit" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded">
                                 Blacklist Video
@@ -207,7 +207,7 @@
                     {% endif %}
 
                     {% if video.status == 'blacklisted' %}
-                        <form action="{% url 'update_video_statuses' %}" method="post" class="flex items-center gap-2">
+                        <form action="{% url 'cms:update_video_statuses' %}" method="post" class="flex items-center gap-2">
                             {% csrf_token %}
                             <input type="hidden" name="status_{{ video.youtube_id }}" value="needs_review">
                             <select name="status_{{ video.youtube_id }}" class="border rounded px-3 py-2">

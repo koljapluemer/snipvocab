@@ -5,13 +5,13 @@
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Review Videos</h1>
         <div class="flex gap-4">
-            <form method="post" action="{% url 'reduce_review_priorities' %}" class="inline">
+            <form method="post" action="{% url 'cms:reduce_review_priorities' %}" class="inline">
                 {% csrf_token %}
                 <button type="submit" class="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2">
                     <i class="fas fa-arrow-down mr-2"></i>Reduce Priorities
                 </button>
             </form>
-            <form method="post" action="{% url 'update_video_statuses' %}" class="inline">
+            <form method="post" action="{% url 'cms:update_video_statuses' %}" class="inline">
                 {% csrf_token %}
                 <button type="submit" 
                         class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
@@ -25,7 +25,7 @@
     {% if videos %}
     <div class="mb-8 bg-white p-6 rounded-lg shadow-sm">
         <h2 class="text-xl font-semibold mb-4">Bulk Status Update</h2>
-        <form method="post" action="{% url 'update_video_statuses' %}" class="flex items-center gap-4">
+        <form method="post" action="{% url 'cms:update_video_statuses' %}" class="flex items-center gap-4">
             {% csrf_token %}
             <select name="bulk_status" class="border rounded px-3 py-2">
                 <option value="">Select an action...</option>
@@ -43,7 +43,7 @@
     {% endif %}
     
     {% if videos %}
-        <form method="post" action="{% url 'update_video_statuses' %}" class="space-y-8">
+        <form method="post" action="{% url 'cms:update_video_statuses' %}" class="space-y-8">
             {% csrf_token %}
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -126,7 +126,7 @@
                         class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                     Save All Changes
                 </button>
-                <a href="{% url 'review_videos' %}" 
+                <a href="{% url 'cms:review_videos' %}" 
                    class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
                     Cancel
                 </a>
@@ -135,7 +135,7 @@
     {% else %}
         <div class="text-center py-8">
             <p class="text-gray-600">No videos need review at the moment.</p>
-            <a href="{% url 'import_channel_videos' %}" class="text-blue-500 hover:text-blue-700">
+            <a href="{% url 'cms:import_channel_videos' %}" class="text-blue-500 hover:text-blue-700">
                 Import more videos
             </a>
         </div>

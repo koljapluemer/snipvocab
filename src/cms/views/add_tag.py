@@ -1,4 +1,8 @@
-
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from django.views.decorators.http import require_http_methods
+from shared.models import Video, Tag, TagType
 
 @staff_member_required
 @require_http_methods(["POST"])
@@ -10,7 +14,7 @@ def add_tag(request, youtube_id):
         
         if not tag_name:
             messages.error(request, "Tag name cannot be empty.")
-            return redirect('video_details', youtube_id=youtube_id)
+            return redirect('cms:video_details', youtube_id=youtube_id)
         
         # Get or create the tag (only manual tags can be created this way)
         tag, created = Tag.objects.get_or_create(
@@ -31,4 +35,4 @@ def add_tag(request, youtube_id):
     except Exception as e:
         messages.error(request, f"Error adding tag: {str(e)}")
     
-    return redirect('video_details', youtube_id=youtube_id)
+    return redirect('cms:video_details', youtube_id=youtube_id)
