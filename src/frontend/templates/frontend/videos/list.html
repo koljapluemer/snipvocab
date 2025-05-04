@@ -5,11 +5,34 @@
 {% block content %}
 <section class="section">
   <div class="container">
+    <div class="columns is-centered mb-5">
+      <div class="column is-8">
+        <form method="get" action="{% url 'video_list' %}" class="field has-addons">
+          <div class="control is-expanded">
+            <input class="input" type="text" name="q" value="{{ search_term }}" placeholder="What kind of videos are you looking for?">
+          </div>
+          <div class="control">
+            <button type="submit" class="button is-info">
+              <span class="icon">
+                <i class="fas fa-search"></i>
+              </span>
+              <span>Search</span>
+            </button>
+          </div>
+        </form>
+        {% if search_term %}
+          <p class="has-text-grey mt-2">
+            Found {{ total_count }} video{{ total_count|pluralize }} for "{{ search_term }}"
+          </p>
+        {% endif %}
+      </div>
+    </div>
+
     {% if videos %}
-      <div class="columns is-multiline is-centered">
+      <div class="columns is-multiline is-centered is-flex is-flex-wrap-wrap" style="align-items: stretch;">
         {% for video in videos %}
           <div class="column is-12-mobile is-6-tablet is-4-desktop is-3-widescreen">
-            <div class="card" style="height: 100%; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: box-shadow 0.2s;">
+            <div class="card video-tile" style="height: 100%; display: flex; flex-direction: column; justify-content: stretch; min-height: 370px;">
               <div class="card-image" style="position: relative;">
                 <figure class="image is-16by9">
                   <img src="https://img.youtube.com/vi/{{ video.youtube_id }}/mqdefault.jpg" 
@@ -21,10 +44,10 @@
                   {% endif %}
                 </figure>
               </div>
-              <div class="card-content">
+              <div class="card-content" style="flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-end;">
                 <p class="title is-6" style="min-height: 3em;">{{ video.youtube_title|default:'Untitled Video' }}</p>
               </div>
-              <footer class="card-footer">
+              <footer class="card-footer" style="margin-top: auto;">
                 <a href="{% url 'video_detail' youtube_id=video.youtube_id %}" class="card-footer-item has-text-info has-text-weight-semibold">
                   Practice
                 </a>
@@ -33,36 +56,51 @@
           </div>
         {% endfor %}
       </div>
-      {% if page_obj.paginator.num_pages > 1 %}
-        <nav class="pagination is-centered mt-5" role="navigation" aria-label="pagination">
-          {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}" class="pagination-previous">Previous</a>
-          {% else %}
-            <a class="pagination-previous" disabled>Previous</a>
-          {% endif %}
-          {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" class="pagination-next">Next</a>
-          {% else %}
-            <a class="pagination-next" disabled>Next</a>
-          {% endif %}
-          <ul class="pagination-list">
-            {% for num in page_obj.paginator.page_range %}
-              <li>
-                <a href="?page={{ num }}" 
-                   class="pagination-link {% if num == page_obj.number %}is-current{% endif %}"
-                   aria-label="Goto page {{ num }}">
-                  {{ num }}
-                </a>
-              </li>
-            {% endfor %}
-          </ul>
-        </nav>
-      {% endif %}
     {% else %}
       <div class="notification is-warning">
-        No videos found.
+        {% if search_term %}
+          No videos found for "{{ search_term }}"
+        {% else %}
+          No videos found.
+        {% endif %}
       </div>
+    {% endif %}
+
+    {% if page_obj.paginator.num_pages > 1 %}
+      <nav class="pagination is-centered mt-5" role="navigation" aria-label="pagination">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}{% if search_term %}&q={{ search_term }}{% endif %}" class="pagination-previous">Previous</a>
+        {% else %}
+          <a class="pagination-previous" disabled>Previous</a>
+        {% endif %}
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}{% if search_term %}&q={{ search_term }}{% endif %}" class="pagination-next">Next</a>
+        {% else %}
+          <a class="pagination-next" disabled>Next</a>
+        {% endif %}
+        <ul class="pagination-list">
+          {% for num in page_obj.paginator.page_range %}
+            <li>
+              <a href="?page={{ num }}{% if search_term %}&q={{ search_term }}{% endif %}" 
+                 class="pagination-link {% if num == page_obj.number %}is-current{% endif %}"
+                 aria-label="Goto page {{ num }}">
+                {{ num }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
     {% endif %}
   </div>
 </section>
+
+<style>
+  /* Make all video tiles the same height */
+  .video-tile {
+    min-height: 370px;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+  }
+</style>
 {% endblock %}

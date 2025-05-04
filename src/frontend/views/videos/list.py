@@ -4,24 +4,25 @@ from django.conf import settings
 from shared.models import Video, Frontend, VideoStatus
 from guest_user.decorators import allow_guest_user
 from frontend.models import VideoProgress
+from frontend.interactors.get_videos_for_search import get_videos_for_search
 
 @allow_guest_user
 def video_list(request):
-    # Get page number from request, default to 1
+    # Get page number and search query from request
     page_number = request.GET.get('page', 1)
+    search_term = request.GET.get('q', '').strip()
     
     # Use the feature flag to select the frontend language
     language_code = getattr(settings, 'LANGUAGE_TO_LEARN', 'de')
     frontend_value = language_code  # 'de' or 'ar'
 
-    # Get all live videos for the selected frontend
-    videos = Video.objects.filter(
-        status=VideoStatus.LIVE,
-        frontend=frontend_value
-    ).order_by('-added_at')
-    
-    # Paginate with 20 items per page
-    paginator = Paginator(videos, 20)
+    # Get videos using the search interactor (returns full queryset)
+    videos_queryset, total_count = get_videos_for_search(
+        search_term=search_term
+    )
+
+    # Paginate the results
+    paginator = Paginator(videos_queryset, 20)
     page_obj = paginator.get_page(page_number)
 
     # Attach last_practiced directly to each video object
@@ -37,6 +38,8 @@ def video_list(request):
     context = {
         'videos': page_obj,
         'page_obj': page_obj,
+        'search_term': search_term,
+        'total_count': total_count,
     }
     
     return render(request, 'frontend/videos/list.html', context)

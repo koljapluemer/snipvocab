@@ -68,3 +68,11 @@ class Feedback(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.content[:30]}"
+    
+
+class SearchQuery(models.Model):
+    term = models.CharField(max_length=255)
+    count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.term} - {self.count}"
