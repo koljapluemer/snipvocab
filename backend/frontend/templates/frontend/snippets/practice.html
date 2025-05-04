@@ -40,13 +40,24 @@
                                 </template>
                                 
                                 <template x-if="showMeanings">
-                                    <button @click="nextWord" 
-                                            class="button is-success is-large">
-                                        <span class="icon">
-                                            {% lucide "arrow-right" size=24 %}
-                                        </span>
-                                        <span>Next Word</span>
-                                    </button>
+                                    <div class="buttons is-centered">
+                                        <button @click="rateWord(1)" 
+                                                class="button is-danger is-large">
+                                            <span>Again</span>
+                                        </button>
+                                        <button @click="rateWord(2)" 
+                                                class="button is-warning is-large">
+                                            <span>Hard</span>
+                                        </button>
+                                        <button @click="rateWord(3)" 
+                                                class="button is-success is-large">
+                                            <span>Good</span>
+                                        </button>
+                                        <button @click="rateWord(4)" 
+                                                class="button is-info is-large">
+                                            <span>Easy</span>
+                                        </button>
+                                    </div>
                                 </template>
                             </div>
                         </div>
@@ -55,22 +66,25 @@
                     <template x-if="!currentWord">
                         <div class="has-text-centered">
                             <h2 class="title is-4 mb-6">Practice Complete!</h2>
-                            
-                            <div class="buttons is-centered mt-6">
-                                <a href="{% url 'snippet_practice' pk=snippet.id %}" class="button is-primary is-large">
-                                    <span class="icon">
-                                        {% lucide "rotate-ccw" size=24 %}
-                                    </span>
-                                    <span>Practice Again</span>
-                                </a>
-                                
-                                <a href="{% url 'snippet_watch' pk=snippet.id %}" class="button is-success is-large">
-                                    <span class="icon">
-                                        {% lucide "play" size=24 %}
-                                    </span>
-                                    <span>Watch Snippet</span>
-                                </a>
-                            </div>
+                            <form id="ratingsForm" method="POST" action="{% url 'save_practiced_words' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="ratings_json" x-model="ratingsJson">
+                                <input type="hidden" name="snippet_id" :value="snippetData.snippet_id">
+                                <div class="buttons is-centered mt-6">
+                                    <button type="submit" name="action" value="practice_again" class="button is-primary is-large">
+                                        <span class="icon">
+                                            {% lucide "rotate-ccw" size=24 %}
+                                        </span>
+                                        <span>Practice Again</span>
+                                    </button>
+                                    <button type="submit" name="action" value="watch_snippet" class="button is-success is-large">
+                                        <span class="icon">
+                                            {% lucide "play" size=24 %}
+                                        </span>
+                                        <span>Watch Snippet</span>
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </template>
                 </div>
@@ -79,71 +93,43 @@
     </div>
 
     <script>
+        // Add getCookie function for CSRF token extraction
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
         document.addEventListener('alpine:init', () => {
             Alpine.data('flashcards', () => ({
                 words: [],
                 currentIndex: 0,
                 showMeanings: false,
                 snippetData: null,
-                db: null,
-                
-                async init(wordsData, snippetData) {
+                ratings: [],
+                get ratingsJson() {
+                    return JSON.stringify(this.ratings);
+                },
+                init(wordsData, snippetData) {
                     this.words = wordsData;
                     this.snippetData = snippetData;
-                    await this.initDB();
                 },
-
-                async initDB() {
-                    return new Promise((resolve, reject) => {
-                        const request = indexedDB.open('GermanWithVideosLearningDB', 1);
-                        
-                        request.onerror = () => {
-                            console.error('Error opening database');
-                            reject(request.error);
-                        };
-                        
-                        request.onsuccess = () => {
-                            this.db = request.result;
-                            resolve();
-                        };
-                        
-                        request.onupgradeneeded = (event) => {
-                            const db = event.target.result;
-                            if (!db.objectStoreNames.contains('flashcardInteractions')) {
-                                const store = db.createObjectStore('flashcardInteractions', { keyPath: 'id', autoIncrement: true });
-                                store.createIndex('timestamp', 'timestamp', { unique: false });
-                                store.createIndex('word', 'word', { unique: false });
-                            }
-                        };
-                    });
-                },
-
-                async logInteraction(word, action) {
-                    if (!this.db) return;
-                    
-                    const transaction = this.db.transaction(['flashcardInteractions'], 'readwrite');
-                    const store = transaction.objectStore('flashcardInteractions');
-                    
-                    const interaction = {
-                        timestamp: new Date().toISOString(),
-                        word: word,
-                        action: action
-                    };
-                    
-                    await store.add(interaction);
-                },
-                
                 get currentWord() {
                     return this.words[this.currentIndex];
                 },
-                
                 async revealWord() {
                     this.showMeanings = true;
-                    await this.logInteraction(this.currentWord.original_word, 'reveal');
                 },
-                
-                async nextWord() {
-                    await this.logInteraction(this.currentWord.original_word, 'next');
+                async rateWord(rating) {
+                    this.ratings.push({ word_id: this.currentWord.id, rating: rating });
                     this.showMeanings = false;
                     this.currentIndex++;
                 }
