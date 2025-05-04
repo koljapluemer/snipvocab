@@ -16,6 +16,5 @@ def enrich_video_snippets_with_user_progress(video:Video, user:User):
             snippet.perceived_difficulty = snippet_practices.get(snippet=snippet).perceived_difficulty
         else:
             snippet.perceived_difficulty = None
-    print('Enriched snippets: ', snippets)
     return snippets
 
