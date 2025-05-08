@@ -1,5 +1,6 @@
 {% extends "frontend/base.html" %}
 {% load video_filters %}
+{% load lucide %}
 
 {% block title %}{{ video.youtube_title|default:"Video" }}{% endblock %}
 
@@ -49,6 +50,22 @@ Understanding: {{ snippet.perceived_difficulty|default:'Not rated' }}"
       {% endif %}
       <a href="{% url 'frontend:video_list' %}" class="button is-text mt-4 ml-2">Back to list</a>
     </div>
+
+    <!-- Share button below the card -->
+    <div class="has-text-centered mt-5">
+      <button 
+        class="button is-small is-light is-flex is-align-items-center is-justify-content-center"
+        style="gap: 0.5em;"
+        x-data="{ copied: false }"
+        @click="navigator.clipboard.writeText(window.location.origin + '{% url 'frontend:video_share' youtube_id=video.youtube_id %}'); copied = true; setTimeout(() => copied = false, 2000)"
+        :class="{ 'is-success': copied }"
+      >
+        <span style="gap: 0.3em; display: flex; align-items: center;">
+          <span x-show="!copied" x-cloak><span class="lucide-align-fix">{% lucide "share-2" class="w-4 h-4" %}</span> <span>Share</span></span>
+          <span x-show="copied" x-cloak><span class="lucide-align-fix">{% lucide "check" class="w-4 h-4" %}</span> <span>Copied!</span></span>
+        </span>
+      </button>
+    </div>
   </div>
 </section>
 
@@ -64,6 +81,10 @@ Understanding: {{ snippet.perceived_difficulty|default:'Not rated' }}"
 .snippet-timeline-bar:hover {
   filter: brightness(1.1);
   transform: scale(1.02);
+}
+.lucide-align-fix svg {
+  vertical-align: middle;
+  margin-bottom: 2px;
 }
 </style>
 {% endblock %} 
