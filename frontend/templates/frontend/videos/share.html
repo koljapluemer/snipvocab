@@ -1,0 +1,64 @@
+{% extends "frontend/base.html" %}
+{% load video_filters %}
+
+{% block title %}{{ video.youtube_title|default:"Video" }}{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width: 800px;">
+    <div class="box">
+      <!-- Video Preview -->
+      <div class="mb-5">
+        <figure class="image is-16by9 mb-4">
+          <img src="https://img.youtube.com/vi/{{ video.youtube_id }}/mqdefault.jpg" 
+               alt="{{ video.youtube_title|default:'Video thumbnail' }}"
+               class="has-rounded-corners">
+        </figure>
+        <h2 class="title is-4">{{ video.youtube_title|default:'Untitled Video' }}</h2>
+        <p class="has-text-grey mb-5">{{ video.channel_name|default:'Unknown' }}</p>
+      </div>
+
+      <!-- How it works box -->
+      <div class="content">
+        <h3 class="title is-4 mb-4">Learn {% if LANGUAGE_TO_LEARN == 'de' %}German{% else %}Arabic{% endif %} with this video</h3>
+        <p class="mb-4">This app helps you learn {% if LANGUAGE_TO_LEARN == 'de' %}German{% else %}Arabic{% endif %} through real videos, broken down into manageable snippets. Here's how it works:</p>
+        <ol class="mb-5">
+          <li class="mb-3"><strong>Learn the vocabulary</strong> needed to understand a snippet of the video</li>
+          <li class="mb-3"><strong>Watch the snippet</strong> and rate how well you understood it</li>
+          <li class="mb-3"><strong>Repeat</strong> until you've mastered the whole video!</li>
+        </ol>
+        <p class="has-text-grey mb-5">No signup required - start learning right away!</p>
+
+        {% if first_snippet %}
+          <div class="has-text-centered">
+            <a href="{% url 'frontend:snippet_practice' pk=first_snippet.id %}" 
+               class="button is-primary is-large is-rounded px-6 py-4" 
+               style="font-size: 1.4rem; min-width: 200px;">
+              Start Learning Now
+            </a>
+            <div class="mt-3">
+              <a href="{% url 'frontend:video_list' %}" 
+                 class="button is-light is-rounded">
+                See all videos
+              </a>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.has-rounded-corners {
+  border-radius: 8px;
+}
+@media (max-width: 768px) {
+  .button.is-large {
+    font-size: 1.2rem !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+}
+</style>
+{% endblock %} 
