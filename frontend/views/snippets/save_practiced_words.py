@@ -59,7 +59,7 @@ class SavePracticedWordsView(LoginRequiredMixin, View):
             practice.last_review = card.last_review
             practice.save()
         if action == 'practice_again':
-            return HttpResponseRedirect(reverse('frontend:snippet_practice', kwargs={'pk': snippet.id}))
+            return HttpResponseRedirect(reverse('frontend:snippet_practice_all', kwargs={'pk': snippet.id}))
         elif action == 'watch_snippet':
             return HttpResponseRedirect(reverse('frontend:snippet_watch', kwargs={'pk': snippet.id}))
         else:

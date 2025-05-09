@@ -4,6 +4,7 @@ import json
 from random import shuffle
 import re
 from frontend.interactors.enrich_snippet_vocab_with_user_progress import enrich_snippet_vocab_with_user_progress
+
 class SnippetDetailView(DetailView):
     model = Snippet
     template_name = 'frontend/snippets/practice.html'
@@ -47,6 +48,46 @@ class SnippetDetailView(DetailView):
                 'id': word.id,
                 'original_word': word.original_word,
                 'is_new': word.is_new,
+                'meanings': unique_meanings
+            })
+        
+        # Randomize the order
+        shuffle(words_data)
+        
+        # Add to context as JSON
+        context['words_json'] = json.dumps(words_data)
+        context['snippet_data'] = json.dumps({
+            'youtube_id': self.object.video.youtube_id,
+            'start_time': self.object.start_time,
+            'end_time': self.object.end_time,
+            'snippet_id': self.object.id
+        })
+        
+        return context
+
+class SnippetAllWordsView(SnippetDetailView):
+    """View for practicing all words in a snippet, regardless of whether they're due."""
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Get all words for this snippet
+        words = self.object.words.all()
+        
+        # Prepare words data for Alpine.js
+        words_data = []
+        for word in words:
+            # Get all meanings and deduplicate them
+            meanings = [meaning.en for meaning in word.meanings.all()]
+            unique_meanings = self._deduplicate_meanings(meanings)
+            
+            # Check if user has practiced this word before
+            has_progress = word.vocab_practices.filter(user=self.request.user).exists()
+            
+            words_data.append({
+                'id': word.id,
+                'original_word': word.original_word,
+                'is_new': not has_progress,  # Mark as new if user hasn't practiced it before
                 'meanings': unique_meanings
             })
         

@@ -58,7 +58,7 @@
                     {% if rating_saved %}
                     <div class="flex gap-2 mt-6">
                         <a href="{% url 'frontend:redirect_to_next_snippet' pk=snippet.id %}" class="button is-success">Next Snippet</a>
-                        <a href="{% url 'frontend:snippet_practice' pk=snippet.id %}" class="button is-primary">Practice Vocabulary Again</a>
+                        <a href="{% url 'frontend:snippet_practice_all' pk=snippet.id %}" class="button is-info">Practice Vocabulary Again</a>
                     </div>
                     {% endif %}
                 </div>
