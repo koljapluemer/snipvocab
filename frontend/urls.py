@@ -9,6 +9,7 @@ from frontend.views.snippets.redirect_to_next_snippet import redirect_to_next_sn
 from frontend.views.dashboard import dashboard
 from frontend.views.onboarding import onboarding
 from frontend.views.landing import landing
+from frontend.views.suggest_content import SuggestContentView
 
 app_name = 'frontend'
 
@@ -25,4 +26,5 @@ urlpatterns = [
     path('save_practiced_words/', SavePracticedWordsView.as_view(), name='save_practiced_words'),
     path('save_snippet_rating/', SaveSnippetRatingView.as_view(), name='save_snippet_rating'),
     path('redirect_to_next_snippet/<int:pk>/', redirect_to_next_snippet, name='redirect_to_next_snippet'),
+    path('suggest-content/', SuggestContentView.as_view(), name='suggest_content'),
 ] 

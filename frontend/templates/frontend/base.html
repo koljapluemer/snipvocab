@@ -60,6 +60,9 @@
             <a class="navbar-item" href="{% url 'frontend:video_list' %}">
               Videos
             </a>
+            <a class="navbar-item" href="{% url 'frontend:suggest_content' %}">
+              Suggest Content
+            </a>
           </div>
         </div>
       </div>
@@ -68,8 +71,9 @@
     {% if messages %}
     <div class="container mx-auto px-4 py-4">
       {% for message in messages %}
-        <div class="p-4 mb-4 text-sm rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-700{% elif message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'warning' %}bg-yellow-100 text-yellow-700{% else %}bg-blue-100 text-blue-700{% endif %}" role="alert">
-          {{ message }}
+        <div x-data="{ show: true }" x-show="show" class="notification {% if message.tags == 'error' %}is-danger{% elif message.tags == 'success' %}is-success{% elif message.tags == 'warning' %}is-warning{% else %}is-info{% endif %} has-text-centered p-3" style="max-width: 480px; margin: 0 auto; font-size: 1rem; line-height: 1.3; display: flex; align-items: center; min-height: 2.5rem;">
+          <span style="flex:1;">{{ message }}</span>
+          <button class="delete is-small ml-2" @click="show = false"></button>
         </div>
       {% endfor %}
     </div>

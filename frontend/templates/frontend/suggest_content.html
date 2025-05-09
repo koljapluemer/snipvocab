@@ -1,0 +1,35 @@
+{% extends 'frontend/base.html' %}
+
+{% block title %}Suggest Content{% endblock %}
+
+{% block content %}
+<div class="columns is-centered">
+    <div class="column is-half">
+        <div class="box">
+            <h1 class="title is-4 has-text-centered mb-5">Suggest Content</h1>
+            <form method="post">
+                {% csrf_token %}
+                <div class="field">
+                    <label class="label">What content would you like to see? You can suggest a video, a channel, a topic or anything else.</label>
+                    <div class="control">
+                        {{ form.wish }}
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Additional Details (optional)</label>
+                    <div class="control">
+                        {{ form.extra_message }}
+                    </div>
+                </div>
+                <div class="field mt-5">
+                    <div class="control">
+                        <button type="submit" class="button is-primary is-fullwidth">
+                            Submit Suggestion
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

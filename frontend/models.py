@@ -76,3 +76,15 @@ class SearchQuery(models.Model):
 
     def __str__(self):
         return f"{self.term} - {self.count}"
+
+class ContentWish(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="content_wishes")
+    wish = models.TextField()
+    extra_message = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    is_relevant = models.BooleanField(default=False)
+    is_processed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user} - {self.wish[:120]}"
