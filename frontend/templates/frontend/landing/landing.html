@@ -13,7 +13,11 @@
         </div>
         <!-- hero image with screenshot -->
          {% load static %}
-         <img src="{% static 'screenshot.webp' %}" alt="screenshot of the app" class="mb-6 ">
+         {% if LANGUAGE_TO_LEARN == 'de' %}
+         <img src="{% static 'demo_de.webp' %}" alt="screenshot of the app" class="mb-6 ">
+         {% else %}
+         <img src="{% static 'demo_ar.webp' %}" alt="screenshot of the app" class="mb-6 ">
+         {% endif %}
         <div class="has-text-centered mt-6">
           <a href="{% url 'frontend:onboarding' %}" class="button is-primary is-large is-rounded px-6 py-4" style="font-size: 1.6rem;">
             Start Learning
